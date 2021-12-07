@@ -27,8 +27,8 @@ import java.util.List;
 public class FormDefinitionServiceImpl extends ServiceImpl<FormDefinitionMapper, FormDefinition> implements FormDefinitionService {
 
     @Override
-    public IPage<FormDefinitionVo> findList(Page page, FormDefinitionDto formDefinitionDto) {
-        return baseMapper.findList(page, formDefinitionDto);
+    public IPage<FormDefinitionVo> findList(Page page, FormDefinitionVo formDefinitionVo) {
+        return baseMapper.findList(page, formDefinitionVo);
     }
 
 }

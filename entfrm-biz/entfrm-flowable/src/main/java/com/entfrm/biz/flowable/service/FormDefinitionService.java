@@ -20,6 +20,6 @@ import java.util.List;
  */
 public interface FormDefinitionService extends IService<FormDefinition> {
 
-    IPage<FormDefinitionVo> findList(Page page, FormDefinitionDto formDefinitionDto);
+    IPage<FormDefinitionVo> findList(Page page, FormDefinitionVo formDefinitionVo);
 
 }

@@ -21,6 +21,6 @@ import java.util.List;
  */
 public interface FormDefinitionMapper extends BaseMapper<FormDefinition> {
 
-    IPage<FormDefinitionVo> findList(Page page, @Param("formDefinitionDto") FormDefinitionDto formDefinitionDto);
+    IPage<FormDefinitionVo> findList(Page page, @Param("formDefinitionVo") FormDefinitionVo formDefinitionVo);
 
 }

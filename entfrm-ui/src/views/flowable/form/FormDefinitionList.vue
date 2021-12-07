@@ -24,8 +24,8 @@
                    :data="formCategoryTreeData"
                    :props="{
                              value: 'id',             // ID字段名
-                             label: 'name',         // 显示名称
-                             children: 'children'    // 子级字段名
+                             label: 'name',           // 显示名称
+                             children: 'children'     // 子级字段名
                            }"
                    default-expand-all
                    :filter-node-method="filterNode"
@@ -37,12 +37,9 @@
                     <span class="custom-tree-node" slot-scope="{ node, data}">
                       <span>{{ node.label }}</span>
                       <span>
-                        <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="() => addChildTreeNode(data)">
-                        </el-button>
-                          <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="() => editTreeNode(data)">
-                        </el-button>
-                          <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="() => delTreeNode(data)">
-                        </el-button>
+                        <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="addChildTreeNode(data)"/>
+                        <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="editTreeNode(data)"/>
+                        <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="delTreeNode(data)"/>
                       </span>
                     </span>
           </el-tree>
@@ -51,9 +48,9 @@
       <!--流程表单数据-->
       <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="表单名称" prop="formDefinitionName">
+          <el-form-item label="表单名称" prop="formDefinition.name">
             <el-input
-              v-model="queryParams.formDefinitionName"
+              v-model="queryParams.formDefinition.name"
               placeholder="请输入表单名称"
               clearable
               size="small"
@@ -201,10 +198,14 @@ export default {
       queryParams: {
         current: 1,
         size: 10,
-        formDefinitionName: undefined
+        formDefinition: {
+          name : undefined
+        }
       },
       // 表单定义数据
       formDefinitionList: [],
+      // 表单定义分类树形数据
+      formCategoryTreeData: [],
       // 显示搜索条件
       showSearch: true,
       // 总条数
@@ -233,8 +234,7 @@ export default {
           this.formDefinitionList = response.data;
           this.total = response.total;
           this.loading = false;
-        }
-      );
+      });
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -250,6 +250,18 @@ export default {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
+    },
+    // 树形结构筛选节点
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    // 处理节点点击操作
+    handleNodeClick (data) {
+      // 本地处理表单定义数据过滤
+      const formDefinitionList = this.formDefinitionList.filter(item => item.formCategory.id === data.id)
+      this.formDefinitionList = formDefinitionList
+      this.total = formDefinitionList.length
     },
   }
 }

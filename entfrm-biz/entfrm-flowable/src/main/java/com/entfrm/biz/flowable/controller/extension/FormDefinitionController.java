@@ -27,8 +27,8 @@ public class FormDefinitionController {
     private final FormDefinitionService FormDefinitionService;
 
     @GetMapping("/list")
-    public R list(Page page, FormDefinitionDto formDefinitionDto) {
-        IPage<FormDefinitionVo> buttonIPage = FormDefinitionService.findList(page, formDefinitionDto);
+    public R list(Page page, FormDefinitionVo formDefinitionVo) {
+        IPage<FormDefinitionVo> buttonIPage = FormDefinitionService.findList(page, formDefinitionVo);
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
 

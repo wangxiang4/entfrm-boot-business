@@ -4,7 +4,7 @@ import {MessageBox, Message} from 'element-ui'
 import store from '@/store'
 import errorCode from '@/utils/errorCode'
 import {getAccessToken} from '@/utils/auth'
-
+import qs from 'qs'
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status <= 500 // 默认的
@@ -33,6 +33,17 @@ service.interceptors.request.use(
     if (config.method === 'post' && config.headers.serialize) {
       config.data = serialize(config.data);
       //delete config.data.serialize;
+    }
+    // 配置url拼接参数格式处理
+    const type = config.method
+    const arrayFormat = config.headers.arrayFormat || 'indices'
+    if (type === 'post' && config.headers['Content-Type'] === 'application/x-www-form-urlencoded; charset=utf-8') {
+      // post请求参数处理
+      config.data = qs.stringify(config.data, { allowDots: true, arrayFormat: arrayFormat })
+    } else if (type === 'get') {
+      // get请求参数处理
+      config.params = qs.stringify(config.params, { allowDots: true, arrayFormat: arrayFormat })
+      config.params = qs.parse(config.params)
     }
     return config
     // 经过对内部源码的剖析,内部采用Promise.resolve(config)链式调用,所以此处没有拒绝回调

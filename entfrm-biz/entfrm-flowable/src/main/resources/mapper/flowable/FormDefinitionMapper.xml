@@ -41,11 +41,11 @@
 		<where>
 			a.del_flag = '0'
 			AND ( c.is_primary = '1' or c.is_primary is null)
-			<if test="formDefinitionDto.formDefinitionName != null and formDefinitionDto.formDefinitionName != ''">
-				AND a.name = #{formDefinitionDto.formDefinitionName}
+			<if test="formDefinitionVo.formDefinition != null and formDefinitionVo.formDefinition.name != null and formDefinitionVo.formDefinition.name != ''">
+				AND a.name = #{formDefinitionVo.formDefinition.name}
 			</if>
-			<if test="formDefinitionDto.formDefinitionDesignDataStatus != null and formDefinitionDto.formDefinitionDesignDataStatus != ''">
-				AND c.status = #{formDefinitionDto.formDefinitionDesignDataStatus}
+			<if test="formDefinitionVo.formDefinitionDesignData != null and formDefinitionVo.formDefinitionDesignData.status != null and formDefinitionVo.formDefinitionDesignData.status != ''">
+				AND c.status = #{formDefinitionVo.formDefinitionDesignData.status}
 			</if>
 		</where>
 	</select>

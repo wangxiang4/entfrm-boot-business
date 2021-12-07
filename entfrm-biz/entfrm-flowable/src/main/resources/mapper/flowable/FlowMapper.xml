@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.flowable.mapper.FlowMapper">
+
+
+    <select id="getFormRenderData" resultType="java.lang.String">
+        select data from dev_form where code=#{code} and type='1' order by version desc
+    </select>
+
+    <select id="selectFormData" resultType="java.util.Map">
+        select * from ${businessTable} where  id = #{businessId} limit 1
+    </select>
+
+    <update id="updateProcInsIdByBusinessId">
+        UPDATE ${businessTable} SET
+            proc_ins_id = #{procInsId}
+        WHERE id = #{businessId}
+    </update>
+
+    <select id="selectDynamicFormList" resultType="java.util.Map">
+        select * from dev_form  where  type='1' order by version desc
+    </select>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.intelligent.mapper.ControlStewardMapper">
+
+
+    <update id="createControlsTable">
+
+        CREATE TABLE `${TableName}`(
+            `id` int(11) not null primary key auto_increment,
+            <foreach collection="FieldList" item="item" close=","
+                     index="index" separator=",">
+                ${item}
+            </foreach>
+            `field_length` int(11),
+            `field_current` varchar(10),
+            `data_mapping_table` varchar(120),
+            `create_by` varchar(64),
+            `create_time` datetime(0) default CURRENT_TIMESTAMP,
+            `form_extend_id` int(11),
+            `data_mapping_table_prefix` varchar(100),
+            `data_mapping_table_suffix` varchar(100)
+        );
+    </update>
+
+
+    <delete id="deleteControlsTable">
+        drop table <foreach collection="Tables" item="item" separator="," >`${item}`</foreach>
+    </delete>
+
+
+    <select id="selectControlsTable" resultType="java.lang.Integer">
+        select count(1) from `${TableName}`
+    </select>
+
+
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.toolkit.mapper.FormMapper">
+
+    <resultMap type="Form" id="FormResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="type" column="type"/>
+        <result property="datasourceId" column="datasource_id"/>
+        <result property="tableName" column="table_name"/>
+        <result property="data" column="data"/>
+        <result property="autoCreate" column="auto_create"/>
+        <result property="version" column="version"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+   <!-- 也可以返回上面map   resultMap="FormResult"-->
+    <select id="selectCustomQuery" resultType="Form">
+        SELECT *, u.nick_name FROM dev_form a
+        LEFT JOIN sys_user u ON u.user_name = a.create_by
+        <where>
+            <if test="query.type != null and query.type != ''">
+                AND a.type = #{type}
+            </if>
+            <if test="query.name != null and query.name != ''">
+                AND a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="query.beginTime != null and query.beginTime != '' and query.endTime != null and query.endTime != ''">
+                AND a.create_time BETWEEN #{query.beginTime} AND #{query.endTime}
+            </if>
+        </where>
+        group by a.type
+    </select>
+</mapper>

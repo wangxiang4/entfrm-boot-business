@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.toolkit.mapper.DatasetMapper">
+
+    <resultMap type="Dataset" id="DatasetResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="fType" column="f_type"/>
+        <result property="pdata" column="pdata"/>
+        <result property="fdata" column="fdata"/>
+        <result property="scripts" column="scripts"/>
+        <result property="alias" column="alias"/>
+        <result property="code" column="code"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.intelligent.mapper.BusinessIntegratedProcessMapper">
+
+
+    <insert id="businessInsert">
+        insert into `${TableName}`
+        <foreach collection="BusinessTableAllField" item="item" open="(" close=") "
+                 index="index" separator=",">`${item}`
+        </foreach>
+        <foreach collection="BusinessTableAllField" item="item" open="values(" close=") "
+                 index="index" separator=",">
+            ${@com.entfrm.biz.intelligent.util.ProcessUtil@insertSiphonValue(BusinessInsertData,item)}
+        </foreach>
+    </insert>
+
+
+    <update id="businessUpdate">
+        update `${TableName}`
+        <foreach collection="BusinessTableAllField" item="item" open="set"
+                 index="index" separator=",">
+            ${@com.entfrm.biz.intelligent.util.ProcessUtil@updateSiphonValue(BusinessUpdateData,item)}
+        </foreach>
+        <where>
+            business_id=#{BusinessId} and business_version=#{Version}
+        </where>
+    </update>
+
+
+
+    <delete id="businessDelete">
+        delete from `${TableName}`
+        <where>
+            business_id in
+            <foreach collection="BusinessIds" item="item"  open="(" close=")"
+                     index="index" separator="," >#{item}
+            </foreach>
+            and business_version=#{Version}
+        </where>
+    </delete>
+
+
+    <select id="businessSelect" resultType="java.util.Map">
+        select * from `${TableName}`
+        <where>
+            business_id=#{BusinessId}
+            and business_version=#{Version}
+        </where>
+    </select>
+
+
+</mapper>

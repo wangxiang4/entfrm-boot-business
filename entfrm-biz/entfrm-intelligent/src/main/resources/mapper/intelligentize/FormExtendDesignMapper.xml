@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.intelligent.mapper.FormExtendDesignMapper">
+
+
+    <insert id="insertControlsMappingTable">
+        insert into `${Table}`
+        <foreach collection="TableFields" item="item" open="(" close=") "
+                 index="index" separator=",">`${item}`
+        </foreach>
+        <foreach collection="TableFields" item="item" open="values(" close=") "
+                 index="index" separator=",">
+            ${@com.entfrm.biz.intelligent.util.ProcessUtil@insertSiphonValue(TableValues,item)}
+        </foreach>
+    </insert>
+
+
+    <update id="updateControlsMappingTable">
+        update `${Table}`
+        <foreach collection="TableFields" item="item" open="set"
+                 index="index" separator=",">
+            ${@com.entfrm.biz.intelligent.util.ProcessUtil@updateSiphonValue(TableValues,item)}
+        </foreach>
+        <where>
+            form_extend_id=#{FormExtendId}
+            and config_form_id=#{ConfigFormId}
+        </where>
+    </update>
+
+
+    <delete id="deleteSingleControlsMappingTable">
+        delete from `${Table}`
+        <where>
+            form_extend_id=#{FormExtendId}
+            and config_form_id=#{ConfigFormId}
+        </where>
+    </delete>
+
+
+    <delete id="deleteControlsMappingTable">
+        delete from `${TableName}`
+        <where>
+            form_extend_id=#{FormExtendId}
+        </where>
+    </delete>
+
+
+    <delete id="deleteTable">
+        drop table `${TableName}`
+    </delete>
+
+
+    <select id="selectTableFields" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select column_name from information_schema.COLUMNS
+            where table_name = #{Table}
+            and table_schema = (select DATABASE())
+            and column_key<![CDATA[<>]]>'PRI'
+            and column_name not in('create_time')
+            order by ordinal_position asc
+    </select>
+
+
+    <select id="selectAllControlsMappingTableFieldCurrent" resultType="java.lang.String">
+        select field_current from `${TableName}`
+        <where>
+            form_extend_id=#{FormExtendId}
+            order by field_current asc
+        </where>
+    </select>
+
+    <select id="selectAllControlsMappingTableData" resultType="java.util.Map">
+        select * from `${TableName}`
+        <where>
+            form_extend_id=#{FormExtendId}
+            order by field_current asc
+        </where>
+    </select>
+
+    <select id="selectBusinessTableFields" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select column_name from information_schema.COLUMNS
+            where table_name = #{Table}
+            and column_name like 'field%'
+            order by ordinal_position asc
+    </select>
+
+
+    <select id="selectBusinessTableFieldsAll" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select column_name from information_schema.COLUMNS
+        <where>
+            table_name = #{Table}
+            and table_schema = (select DATABASE())
+            and column_key<![CDATA[<>]]>'PRI'
+            order by ordinal_position asc
+        </where>
+    </select>
+
+
+
+    <select id="selectControlsMappingTable" resultType="java.util.Map">
+        select * from `${TableName}`
+        <where>
+            form_extend_id=#{FormExtendId}
+            order by field_current asc
+        </where>
+    </select>
+
+    <select id="selectSingleControlsMappingTable" resultType="java.util.Map">
+        select * from `${TableName}`
+        <where>
+            form_extend_id=#{FormExtendId}
+            and config_form_id=#{ConfigFormId}
+        </where>
+    </select>
+
+
+
+    <select id="validatorBusinessTable" resultType="java.lang.Integer">
+        select count(1) from information_schema.TABLES  where table_schema = (select DATABASE()) and table_name = #{TableName}
+    </select>
+
+
+    <update id="createTable">
+        CREATE TABLE `${TableName}`(
+            id int not null primary key auto_increment,
+            business_id VARCHAR(64) NOT NULL,
+            business_version float(11,2) NOT NULL,
+            ${SqlCode}
+        );
+    </update>
+
+
+    <update id="updateFieldType">
+        alter table `${TableName}` modify ${SqlCode}
+    </update>
+
+
+    <update id="insertFieldType">
+        alter table `${TableName}` add ${SqlCode};
+    </update>
+
+
+    <update id="reTableName">
+        alter table `${OldTableName}` rename to `${NewTableName}`;
+    </update>
+
+    <update id="settingsFieldNull">
+        update `${TableName}`
+        <set>
+           ${Field} = null
+        </set>
+    </update>
+
+
+
+</mapper>

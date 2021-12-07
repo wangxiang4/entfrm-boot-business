@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.intelligent.mapper.FormExtendMapper">
+
+    <resultMap id="selectSingleResultMap" type="com.entfrm.biz.intelligent.entity.FormExtend">
+        <result property="id" column="id"></result>
+        <result property="code" column="code"></result>
+        <result property="name" column="name"></result>
+        <result property="drawingControls" column="drawing_controls"></result>
+        <result property="treeNodeId" column="tree_node_id"></result>
+        <result property="idGlobal" column="id_global"></result>
+        <association property="dataConf" javaType="java.util.Map">
+            <result property="formExtendId" column="form_extend_id"></result>
+            <result property="dataMappingTablePrepend" column="data_mapping_table_prepend"></result>
+            <result property="dataMappingTable" column="data_mapping_table"></result>
+            <result property="fieldLength" column="field_length"></result>
+        </association>
+    </resultMap>
+
+    <select id="selectSingle" resultMap="selectSingleResultMap">
+        select * from intelligent_form_extend a JOIN intelligent_data_conf b on a.id=b.form_extend_id
+        <where>
+            a.id=#{id}
+            and drawing_controls is not null
+            and id_global is not null
+            and form_extend_id is not null
+        </where>
+    </select>
+
+
+    <select id="findByCodeOne" resultType="java.lang.String">
+        select drawing_controls from intelligent_form_extend
+        <where>
+            code=#{code}
+        </where>
+    </select>
+
+
+
+
+</mapper>

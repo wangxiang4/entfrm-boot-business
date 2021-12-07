@@ -1,0 +1,167 @@
+package ${packageName}.controller;
+
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+#if($table.tplCategory == 'crud' || $table.tplCategory == 'msub')
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+#end
+import ${packageName}.entity.${ClassName};
+import ${packageName}.service.${ClassName}Service;
+#if($table.tplCategory == 'msub')
+import ${packageName}.entity.${subClassName};
+import ${packageName}.service.${subClassName}Service;
+import org.springframework.transaction.annotation.Transactional;
+#end
+import com.entfrm.log.annotation.OperLog;
+import org.springframework.security.access.prepost.PreAuthorize;
+import com.entfrm.base.api.R;
+import com.entfrm.base.util.ExcelUtil;
+import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+#if($table.genApi == '0')
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+#end
+import java.util.List;
+import java.util.Arrays;
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ *
+ * @description ${functionName}Controller
+ */
+#if($table.genApi == '0')
+@Api("${functionName}管理")
+#end
+@RestController
+@AllArgsConstructor
+@RequestMapping("/${moduleName}/${businessName}")
+public class ${ClassName}Controller {
+
+    private final ${ClassName}Service ${className}Service;
+    #if($table.tplCategory == 'msub')
+    private final ${subClassName}Service ${subclassName}Service;
+    #end
+
+    private QueryWrapper<${ClassName}> getQueryWrapper(${ClassName} ${className}) {
+            return new QueryWrapper<${ClassName}>()
+        #foreach ($column in $columns)
+            #if(${column.isQuery} == '1' && "createTime" != ${column.javaField} && "Integer" != ${column.javaType} && "Date" != ${column.javaType})
+                    .${column.queryType}(StrUtil.isNotBlank(${className}.get${column.uJavaField()}()), "${column.lJavaField()}", ${className}.get${column.uJavaField()}())
+            #elseif(${column.isQuery} == '1' && "createTime" != ${column.javaField} && ("Integer" == ${column.javaType} || "Date" == ${column.javaType}))
+                .${column.queryType}(!StrUtil.isEmptyIfStr(${className}.get${column.uJavaField()}()), "${column.lJavaField()}", ${className}.get${column.uJavaField()}())
+            #elseif(${column.isQuery} == '1' && "createTime" == ${column.javaField} && ${column.queryType} == 'between')
+                .between(StrUtil.isNotBlank(${className}.getBeginTime()) && StrUtil.isNotBlank(${className}.getEndTime()), "create_time", ${className}.getBeginTime(), ${className}.getEndTime())
+            #end
+        #end
+        .orderByDesc("id");
+    }
+
+    #if($table.tplCategory == 'crud' || $table.tplCategory == 'msub')
+        #if($table.genApi == '0')
+        @ApiOperation("${functionName}列表")
+        #end
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_view')")
+        @GetMapping("/list")
+        public R list(Page page, ${ClassName} ${className}) {
+            IPage<${ClassName}> ${className}Page = ${className}Service.page(page, getQueryWrapper(${className}));
+            return R.ok(${className}Page.getRecords(), ${className}Page.getTotal());
+        }
+    #elseif($table.tplCategory == 'tree')
+        #if($table.genApi == '0')
+        @ApiOperation("${functionName}列表")
+        #end
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_view')")
+        @GetMapping("/list")
+        public R list(${ClassName} ${className}) {
+            List<${ClassName}> ${className}List = ${className}Service.list(getQueryWrapper(${className}));
+            return R.ok(${className}List);
+        }
+    #end
+
+    #if($table.genApi == '0')
+    @ApiOperation("${functionName}查询")
+    #end
+    @GetMapping("/{id}")
+    public R getById(@PathVariable("id") Integer id) {
+        ${ClassName} ${className} = ${className}Service.getById(id);
+    #if($table.tplCategory == 'msub')
+        if(${className} != null){
+            List<${subClassName}> ${subclassName}List = ${subclassName}Service.list(new QueryWrapper<${subClassName}>().eq("${subTableField}", id));
+            ${className}.set${subClassName}List(${subclassName}List);
+        }
+    #end
+        return R.ok(${className});
+    }
+
+    @OperLog("${functionName}新增")
+    #if($table.genApi == '0')
+    @ApiOperation("${functionName}新增")
+    #end
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_add')")
+    @PostMapping("/save")
+#if($table.tplCategory == 'msub')
+    @Transactional
+#end
+    public R save(@Validated @RequestBody ${ClassName} ${className}) {
+        ${className}Service.save(${className});
+        #if($table.tplCategory == 'msub')
+        for(${subClassName} ${subclassName} : ${className}.get${subClassName}List()){
+            ${subclassName}.set${ClassName}Id(${className}.getId());
+            ${subclassName}Service.save(${subclassName});
+        }
+        #end
+        return R.ok();
+    }
+
+    @OperLog("${functionName}修改")
+    #if($table.genApi == '0')
+    @ApiOperation("${functionName}修改")
+    #end
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_edit')")
+    @PutMapping("/update")
+    #if($table.tplCategory == 'msub')
+    @Transactional
+    #end
+    public R update(@Validated @RequestBody ${ClassName} ${className}) {
+            ${className}Service.updateById(${className});
+        #if($table.tplCategory == 'msub')
+            for(${subClassName} ${subclassName} : ${className}.get${subClassName}List()){
+            ${subclassName}.set${ClassName}Id(${className}.getId());
+            ${subclassName}Service.saveOrUpdate(${subclassName});
+        }
+        #end
+        return R.ok();
+    }
+
+
+    @OperLog("${functionName}删除")
+    #if($table.genApi == '0')
+    @ApiOperation("${functionName}删除")
+    #end
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
+    @DeleteMapping("/remove/{${pkColumn.javaField}}")
+    public R remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType}[] ${pkColumn.javaField}) {
+        return R.ok(${className}Service.removeByIds(Arrays.asList(${pkColumn.javaField})));
+    }
+
+
+    #if($table.tplCategory == 'tree')
+        @GetMapping("/${className}Tree")
+        public R ${className}Tree() {
+            List<${ClassName}> ${className}List = ${className}Service.list(new QueryWrapper<${ClassName}>().orderByAsc("sort"));
+            return R.ok(${className}Service.buildTree(${className}List, 0));
+        }
+    #end
+
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_export')")
+    @GetMapping("/export")
+    public R export(${ClassName} ${className}) {
+        List<${ClassName}> list = ${className}Service.list(getQueryWrapper(${className}));
+        ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}. class);
+        return util.exportExcel(list, "${functionName}数据");
+    }
+}

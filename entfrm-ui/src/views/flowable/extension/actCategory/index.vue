@@ -109,7 +109,7 @@
                :model="form"
                ref="form"
                label-width="120px"
-               :disabled="method==='view'"
+               :disabled="method=='view'"
                @keyup.enter.native="handleSubmitForm"
                @submit.native.prevent
       >
@@ -214,40 +214,40 @@ export default {
     }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     /** 多选框选中数据 */
-    handleSelectionChange(evt) {
+    handleSelectionChange (evt) {
       const { records } = evt
       this.ids = records.map(item => item.id)
       this.single = records.length != 1
       this.multiple = !records.length
     },
     /** 处理重置按钮操作 */
-    handleResetQuery() {
-      this.resetForm("queryForm");
+    handleResetQuery () {
+      this.resetForm("queryForm")
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
-    reset() {
+    reset () {
       this.form = {
         id: undefined,
         parentId: 0,
         name: undefined,
         sort: undefined,
         remarks: undefined
-      };
+      }
     },
     /** 获取数据列表 */
-    getList() {
-      this.loading = true;
+    getList () {
+      this.loading = true
       listActCategory().then(response => {
         this.dataList = XEUtils.toArrayTree(response.data,{
           parentKey: 'parentId', key: 'id', children: 'children'
-        });
-        this.handleSearch();
-        this.loading = false;
-      });
+        })
+        this.handleSearch()
+        this.loading = false
+      })
     },
     /** 获取流程分类列表 */
     getActCategoryList () {
@@ -256,7 +256,7 @@ export default {
       })
     },
     /** 处理搜索树形结构数据 */
-    handleSearch() {
+    handleSearch () {
       let filterName = XEUtils.toValueString(this.queryParams.name).trim()
       if (filterName) {
         let options = { children: 'children' }
@@ -268,7 +268,7 @@ export default {
       })
     },
     /** 处理新增按钮操作 */
-    handleAdd() {
+    handleAdd () {
       this.reset()
       this.getActCategoryList()
       this.title = '添加流程分类'
@@ -276,7 +276,7 @@ export default {
       this.open = true
     },
     /** 处理新增下级按钮操作 */
-    handleAddChild(row) {
+    handleAddChild (row) {
       const { id } = row
       this.reset()
       this.getActCategoryList()
@@ -286,7 +286,7 @@ export default {
       this.open = true
     },
     /** 处理修改按钮操作 */
-    handleEdit(row) {
+    handleEdit (row) {
       const { id } = row
       this.getActCategoryList()
       getActCategory(id).then(response => {
@@ -297,7 +297,7 @@ export default {
       })
     },
     /** 处理查看按钮操作 */
-    handleView(row) {
+    handleView (row) {
       const { id } = row
       this.getActCategoryList()
       getActCategory(id).then(response => {
@@ -308,7 +308,7 @@ export default {
       })
     },
     /** 处理删除按钮操作 */
-    handleDel(row) {
+    handleDel (row) {
       const { id } = row
       let ids = id || this.ids
       this.$confirm(`确定删除所选项吗?`, '提示', {
@@ -324,9 +324,9 @@ export default {
         }
         delActCategory(ids).then(()=>{
           this.loading = false
-          this.msgSuccess("删除成功");
-          this.getList();
-        });
+          this.msgSuccess("删除成功")
+          this.getList()
+        })
       })
     },
     /** 表单提交 */
@@ -336,23 +336,23 @@ export default {
           if (this.method == 'edit') {
             editActCategory(this.form).then(response => {
               if (response.code === 0) {
-                this.msgSuccess("修改成功");
+                this.msgSuccess("修改成功")
                 this.open = false
                 this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           } else {
             addActCategory(this.form).then(response => {
               if (response.code === 0) {
-                this.msgSuccess("新增成功");
+                this.msgSuccess("新增成功")
                 this.open = false
                 this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           }
         }
       })

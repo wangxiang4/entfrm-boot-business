@@ -45,9 +45,9 @@
  * @create: 2021-06-22
  */
 import request from '@/utils/request'
-export default{
-  name:'el-tree-select',
-  props:{
+export default {
+  name: 'ElTreeSelect',
+  props: {
     // 配置项
     props: {
       type: Object,
@@ -72,7 +72,7 @@ export default{
     },
     // 初始值
     value: {
-      type: [Number,String],
+      type: [Number, String],
       default: null
     },
     // 禁用
@@ -116,7 +116,7 @@ export default{
       default: false
     }
   },
-  data() {
+  data () {
     return {
       // tree下拉框值
       valueId: this.value,
@@ -132,10 +132,70 @@ export default{
       valueData: this.data
     }
   },
-  created() {
+  computed: {
+    // 树形下拉数据
+    optionData () {
+      let TreeData = []
+      if (this.list) {
+        // 集合结构转树形结构
+        const id = this.config.id
+        const parentId = this.config.parentId
+        const children = this.config.children
+        const rootId = this.config.rootId || Math.min.apply(Math, this.list.map(item => { return item[parentId] })) || 0
+        // 对源数据深度克隆
+        const cloneData = JSON.parse(JSON.stringify(this.list))
+        // 循环所有项，并添加children属性
+        TreeData = cloneData.filter(father => {
+          // 返回每一项的子级数组
+          const branchArr = cloneData.filter(child => father[id] === child[parentId])
+          // 给父级添加一个children属性，并赋值
+          branchArr.length > 0 ? father[children] = branchArr : ''
+          // 返回第一层
+          return father.parentId === rootId
+        })
+      } else {
+        TreeData = this.valueData
+      }
+      this.$nextTick(() => {
+        this.valueId = this.value
+        this.setTreeList(TreeData)
+        this.initHandle()
+      })
+      return TreeData
+    },
+    // 树形下拉配置
+    config () {
+      return Object.assign({
+        // ID字段名
+        id: 'id',
+        // 显示名称
+        label: 'label',
+        // 子级字段名
+        children: 'children',
+        // 父节点字段
+        parentId: 'parentId',
+        // 根Id 默认 undefined
+        rootId: undefined
+      }, this.props)
+    }
+  },
+  watch: {
+    value () {
+      if (!this.value) {
+        this.clearHandle()
+      } else {
+        this.valueId = this.value
+        this.initHandle()
+      }
+    },
+    data () {
+      this.valueData = this.data
+    }
+  },
+  created () {
     if (this.url) {
       this.placeholderText = '加载数据中...'
-      let interval = setInterval(() => {
+      const interval = setInterval(() => {
         this.placeholderText = this.placeholderText + '.'
       }, 500)
       request({
@@ -152,23 +212,23 @@ export default{
       this.valueData = this.data
     }
   },
-  methods:{
+  methods: {
     /** 设置树形list集合数据 */
-    setTreeList(data){
-      for (let i in data) {
+    setTreeList (data) {
+      for (const i in data) {
         this.treeList.push(data[i])
-        if (data[i].children) {
-          this.setTreeList(data[i].children)
+        if (data[i][this.config.children]) {
+          this.setTreeList(data[i][this.config.children])
         }
       }
     },
     /** 初始化值处理 */
-    initHandle(){
+    initHandle () {
       if (this.value) {
         if (this.showCheckbox) {
-          let ids = this.valueId.split(',')
+          const ids = this.valueId.split(',')
           this.$refs.selectTree.setCheckedKeys(ids)
-          let titles = []
+          const titles = []
           ids.forEach((id) => {
             this.treeList.forEach((d) => {
               if (id === d[this.config.id]) {
@@ -189,18 +249,18 @@ export default{
       this.initScroll()
     },
     /** 提供api-获取节点 */
-    getNode(id){
+    getNode (id) {
       return this.$refs.selectTree.getNode(id)
     },
     /** 隐藏下拉滚动条 */
-    initScroll(){
+    initScroll () {
       this.$nextTick(() => {
-        let scrollWrap = document.querySelectorAll('.el-scrollbar .el-select-dropdown__wrap')[0]
+        const scrollWrap = document.querySelectorAll('.el-scrollbar .el-select-dropdown__wrap')[0]
         if (scrollWrap) { scrollWrap.style.cssText = 'margin: 0px; max-height: none; overflow: hidden;' }
       })
     },
     /** 处理节点点击动作 */
-    handleNodeClick(node){
+    handleNodeClick (node) {
       if (this.showCheckbox) {
         return
       }
@@ -208,18 +268,18 @@ export default{
         this.$message.warning('节点（' + node[this.config.label] + '）被禁止选择，请重新选择。')
         return
       }
-      if (this.isOnlySelectLeaf && node.children.length > 0) {
+      if (this.isOnlySelectLeaf && node[this.config.children].length > 0) {
         this.$message.warning('不能选择根节点（' + node[this.config.label] + '）请重新选择。')
         return
       }
       this.valueTitle = node[this.config.label]
       this.valueId = node[this.config.id]
       this.$emit('getValue', this.valueId, this.valueTitle, node)
-      this.$refs.elSelect.visible=false
+      this.$refs.elSelect.visible = false
     },
     /** 处理节点复选框点击动作 */
-    handleCheckChange(data, checked, indeterminate) {
-      let nodes = this.$refs.selectTree.getCheckedNodes()
+    handleCheckChange (data, checked, indeterminate) {
+      const nodes = this.$refs.selectTree.getCheckedNodes()
       this.valueTitle = nodes.map((node) => {
         return node[this.config.label]
       }).join(',')
@@ -229,7 +289,7 @@ export default{
       this.$emit('getValue', this.valueId, this.valueTitle)
     },
     /** 清除选中 */
-    clearHandle() {
+    clearHandle () {
       this.valueTitle = ''
       this.valueId = null
       this.defaultExpandedKey = []
@@ -237,101 +297,47 @@ export default{
       this.$emit('getValue', null, null, null)
     },
     /** 清空选中样式 */
-    clearSelected() {
-      let allNode = document.querySelectorAll('#tree-option .el-tree-node')
+    clearSelected () {
+      const allNode = document.querySelectorAll('#tree-option .el-tree-node')
       allNode.forEach((element) => element.classList.remove('is-current'))
-    }
-  },
-  watch: {
-    value() {
-      if (!this.value) {
-        this.clearHandle()
-      } else {
-        this.valueId = this.value
-        this.initHandle()
-      }
-    },
-    data() {
-      this.valueData = this.data
-    }
-  },
-  computed: {
-    /** 树形下拉数据 */
-    optionData() {
-      let TreeData=[];
-      if (this.list) {
-        // 集合结构转树形结构
-        let id = this.config.id
-        let parentId = this.config.parentId
-        let children = this.config.children
-        let rootId = this.config.rootId || Math.min.apply(Math, this.list.map(item => { return item[parentId] })) || 0
-        // 对源数据深度克隆
-        let cloneData = JSON.parse(JSON.stringify(this.list))
-        // 循环所有项，并添加children属性
-        TreeData = cloneData.filter(father => {
-          // 返回每一项的子级数组
-          let branchArr = cloneData.filter(child => father[id] === child[parentId])
-          // 给父级添加一个children属性，并赋值
-          branchArr.length > 0 ? father[children] = branchArr : ''
-          // 返回第一层
-          return father.parentId === rootId
-        })
-      } else {
-        TreeData = this.valueData
-      }
-      this.$nextTick(()=>{
-        this.valueId = this.value
-        this.setTreeList(TreeData)
-        this.initHandle()
-      })
-      return TreeData;
-    },
-    /** 树形下拉配置 */
-    config () {
-      return Object.assign({
-        // ID字段名
-        id: 'id',
-        // 显示名称
-        label: 'label',
-        // 子级字段名
-        children: 'children',
-        // 父节点字段
-        parentId : 'parentId',
-        // 根Id 默认 undefined
-        rootId : undefined
-      }, this.props)
     }
   }
 }
 </script>
 
-<style scoped>
-  .el-select{
-    width: 100%;
-  }
-  .el-scrollbar .el-scrollbar__view .el-select-dropdown__item{
-    height: auto;
-    max-height: 274px;
-    padding: 0;
-    overflow: hidden;
-    overflow-y: auto;
-  }
-  .el-select-dropdown__item.selected{
-    font-weight: normal;
-  }
-  ul li >>>.el-tree .el-tree-node__content{
-    height:auto;
-    padding: 0 20px;
-  }
-  .el-tree-node__label{
-    font-weight: normal;
-  }
-  .el-tree >>>.is-current .el-tree-node__label{
-    color: #409EFF;
-    font-weight: 700;
-  }
-  .el-tree >>>.is-current .el-tree-node__children .el-tree-node__label{
-    color:#606266;
-    font-weight: normal;
-  }
+<style scoped lang="scss">
+.el-select{
+  width: 100%;
+}
+
+.el-scrollbar .el-scrollbar__view .el-select-dropdown__item{
+  height: auto;
+  max-height: 274px;
+  padding: 0;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.el-select-dropdown__item.selected{
+  font-weight: normal;
+}
+
+ul li >>>.el-tree .el-tree-node__content{
+  height:auto;
+  padding: 0 20px;
+}
+
+.el-tree-node__label{
+  font-weight: normal;
+}
+
+.el-tree >>>.is-current .el-tree-node__label{
+  color: #409EFF;
+  font-weight: 700;
+}
+
+.el-tree >>>.is-current .el-tree-node__children .el-tree-node__label{
+  color:#606266;
+  font-weight: normal;
+}
 </style>

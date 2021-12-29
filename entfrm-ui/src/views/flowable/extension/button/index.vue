@@ -115,7 +115,7 @@
                :rules="formValidateRule"
                ref="form"
                label-width="120px"
-               :disabled="method==='view'"
+               :disabled="method=='view'"
                @keyup.enter.native="handleSubmitForm"
                @submit.native.prevent
       >
@@ -215,71 +215,71 @@ export default {
     }
   },
   created(){
-    this.getList();
+    this.getList()
   },
   methods: {
     /** 获取查询列表 */
-    getList() {
-      this.loading = true;
+    getList () {
+      this.loading = true
       listButton(this.queryParams).then(response => {
-        this.dataList = response.data;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.dataList = response.data
+        this.total = response.total
+        this.loading = false
+      })
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
-    reset() {
+    reset () {
       this.form = {
         id: undefined,
         name: undefined,
         code: undefined,
         sort: 0
-      };
+      }
     },
     /** 处理搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.current = 1;
-      this.getList();
+    handleQuery () {
+      this.queryParams.current = 1
+      this.getList()
     },
     /** 处理重置按钮操作 */
-    handleResetQuery() {
-      this.resetForm("queryForm");
+    handleResetQuery () {
+      this.resetForm("queryForm")
     },
     /** 处理多选框选中数据 */
-    handleSelectionChange(selection) {
+    handleSelectionChange (selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 处理新增按钮操作 */
-    handleAdd() {
+    handleAdd () {
       this.reset()
       this.title = '添加常用按钮'
       this.method = 'add'
       this.open = true
     },
     /** 处理修改按钮操作 */
-    handleEdit(row) {
+    handleEdit (row) {
       const id = row.id || this.ids
       getButton(id).then(response => {
         this.form = response.data
         this.title = '修改常用按钮'
         this.method = 'edit'
         this.open = true
-      });
+      })
     },
     /** 处理查看按钮操作 */
-    handleView(row) {
+    handleView (row) {
       const id = row.id || this.ids
       getButton(id).then(response => {
         this.form = response.data
-        this.title = "查看常用按钮";
+        this.title = "查看常用按钮"
         this.method = 'view'
-        this.open = true;
-      });
+        this.open = true
+      })
     },
     /** 处理验证内置默认按钮 */
-    handleValidateDefaultButton(code) {
+    handleValidateDefaultButton (code) {
       let defaultButtons = [
         '_flow_save',
         '_flow_agree',
@@ -297,7 +297,7 @@ export default {
       }).length > 0
     },
     /** 处理删除按钮操作 */
-    handleDel(row) {
+    handleDel (row) {
       if (this.handleValidateDefaultButton(row.code)) {
         this.$message.error(`不能删除预设按钮【${row.name}】`)
         return
@@ -311,8 +311,8 @@ export default {
         this.loading = true
         delButton(ids).then(response => {
           this.loading = false
-          this.msgSuccess("删除成功");
-          this.getList();
+          this.msgSuccess("删除成功")
+          this.getList()
         })
       })
     },

@@ -5,19 +5,12 @@
              :inline="true"
              ref="queryForm"
              size="small"
-             @keyup.enter.native="handleQuery"
+             @keyup.enter.native="handleQuery()"
              @submit.native.prevent
     >
       <el-form-item prop="name">
         <el-input v-model="queryParams.name"
                   placeholder="名称"
-                  clearable
-        />
-      </el-form-item>
-      <el-form-item prop="code">
-        <el-input size="small"
-                  v-model="queryParams.code"
-                  placeholder="编码"
                   clearable
         />
       </el-form-item>
@@ -29,7 +22,7 @@
         >搜索</el-button>
         <el-button icon="el-icon-refresh-right"
                    size="mini"
-                   @click="handleResetQuery"
+                   @click="resetQuery"
         >重置</el-button>
       </el-form-item>
     </el-form>
@@ -45,9 +38,17 @@
         <el-button type="warning"
                    size="mini"
                    icon="el-icon-edit-outline"
-                   @click="handleEdit"
                    :disabled="single"
+                   @click="handleEdit"
         >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger"
+                   size="mini"
+                   icon="el-icon-delete"
+                   :disabled="multiple"
+                   @click="handleDel"
+        >删除</el-button>
       </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item"
@@ -67,8 +68,7 @@
                     placement="top"
         >
           <el-button size="mini"
-                     circle
-                     icon="el-icon-search"
+                     circle icon="el-icon-search"
                      @click="showSearch=!showSearch"
           />
         </el-tooltip>
@@ -77,8 +77,8 @@
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="50"/>
       <el-table-column prop="name" label="名称"/>
-      <el-table-column prop="code" label="编码"/>
-      <el-table-column prop="sort" label="排序"/>
+      <el-table-column prop="expression" label="表达式"/>
+      <el-table-column prop="remarks" label="备注"/>
       <el-table-column align="center" width="200" label="操作">
         <template slot-scope="scope">
           <el-button type="text"
@@ -112,7 +112,6 @@
     >
       <el-form size="small"
                :model="form"
-               :rules="formValidateRule"
                ref="form"
                label-width="120px"
                :disabled="method=='view'"
@@ -121,30 +120,24 @@
       >
         <el-row :gutter="15">
           <el-col :span="24">
-            <el-form-item label="名称" prop="name">
+            <el-form-item label="名称"
+                          prop="name"
+                          :rules="[{required: true, message:'名称不能为空', trigger:'blur'}]"
+            >
               <el-input v-model="form.name" placeholder="请填写名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="编码" prop="code">
-              <el-input v-model="form.code"
-                        :readonly="handleValidateDefaultButton(form.code)"
-                        placeholder="请输入按钮编码"
-              />
-            </el-form-item>
-            <el-form-item>
-              <div class="tip">
-                <p>
-                  注意：按钮编码不能重复，系统按钮以_flow_开头，自定义按钮不能以_flow_开头。
-                  系统按钮和自定义按钮的区别是，系统按钮是绑定具体的action进行提交，如果你定义了系统按钮，必须在代码中实现对应的action方法。
-                  自定义按钮无需在代码中添加action方法，触发自定义按钮时调用的是【同意】按钮对应的action，并把该按钮对应的code设置为true、其他自定义按钮对应的code设置为false作为流程变量进行提交。
-                </p>
-              </div>
+            <el-form-item label="表达式"
+                          prop="expression"
+                          :rules="[{required: true, message:'表达式不能为空', trigger:'blur'}]"
+            >
+              <el-input v-model="form.expression" placeholder="请填写表达式"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="排序" prop="sort">
-              <el-input-number v-model="form.sort" placeholder="请填写排序"/>
+            <el-form-item label="备注" prop="remarks" :rules="[]">
+              <el-input v-model="form.remarks" type="textarea" placeholder="请填写备注"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -168,15 +161,14 @@
  * Copyright © 2020-2021 <a href="http://www.entfrm.com/">entfrm</a> All rights reserved.
  * author entfrm开发团队-王翔
  */
-import { listButton, delButton, getButton, editButton, addButton } from '@/api/flowable/extension/button'
+import { listCondition, delCondition, editCondition, addCondition, getCondition } from '@/api/flowable/extension/condition'
 export default {
   data () {
     return {
       queryParams: {
         current: 1,
         size: 10,
-        name: undefined,
-        code: undefined
+        name: undefined
       },
       showSearch: true,
       ids: [],
@@ -191,37 +183,14 @@ export default {
       method: ''
     }
   },
-  computed: {
-    formValidateRule () {
-      const validatePass = (rule, value, callback) => {
-        if (this.method == 'add' && this.handleValidateDefaultButton(value)) {
-          callback(new Error('请勿使用系统预设编码!'))
-        } else {
-          callback()
-        }
-      }
-      return {
-        name: [
-          {required: true, message: '名称不能为空', trigger: 'blur'}
-        ],
-        code: [
-          {required: true, message: '编码不能为空', trigger: 'blur'},
-          {validator: validatePass, trigger: 'blur'}
-        ],
-        sort: [
-          {required: true, message: '排序不能为空', trigger: 'blur'}
-        ]
-      }
-    }
-  },
   created(){
     this.getList()
   },
   methods: {
-    /** 获取查询列表 */
-    getList () {
+    /** 查询列表 */
+    getList() {
       this.loading = true
-      listButton(this.queryParams).then(response => {
+      listCondition(this.queryParams).then(response => {
         this.dataList = response.data
         this.total = response.total
         this.loading = false
@@ -232,17 +201,17 @@ export default {
       this.form = {
         id: undefined,
         name: undefined,
-        code: undefined,
-        sort: 0
+        expression: undefined,
+        remarks: undefined
       }
     },
     /** 处理搜索按钮操作 */
-    handleQuery () {
+    handleQuery() {
       this.queryParams.current = 1
       this.getList()
     },
-    /** 处理重置按钮操作 */
-    handleResetQuery () {
+    /** 重置按钮操作 */
+    resetQuery () {
       this.resetForm("queryForm")
     },
     /** 处理多选框选中数据 */
@@ -254,16 +223,16 @@ export default {
     /** 处理新增按钮操作 */
     handleAdd () {
       this.reset()
-      this.title = '添加常用按钮'
+      this.title = '添加流程表达式'
       this.method = 'add'
       this.open = true
     },
     /** 处理修改按钮操作 */
     handleEdit (row) {
       const id = row.id || this.ids
-      getButton(id).then(response => {
+      getCondition(id).then(response => {
         this.form = response.data
-        this.title = '修改常用按钮'
+        this.title = '修改流程表达式'
         this.method = 'edit'
         this.open = true
       })
@@ -271,37 +240,15 @@ export default {
     /** 处理查看按钮操作 */
     handleView (row) {
       const id = row.id || this.ids
-      getButton(id).then(response => {
+      getCondition(id).then(response => {
         this.form = response.data
-        this.title = "查看常用按钮"
+        this.title = "查看流程表达式"
         this.method = 'view'
         this.open = true
       })
     },
-    /** 处理验证内置默认按钮 */
-    handleValidateDefaultButton (code) {
-      let defaultButtons = [
-        '_flow_save',
-        '_flow_agree',
-        '_flow_reject',
-        '_flow_back',
-        '_flow_add_multi_instance',
-        '_flow_del_multi_instance',
-        '_flow_transfer',
-        '_flow_delegate',
-        '_flow_stop',
-        '_flow_print'
-      ]
-      return defaultButtons.filter((val) => {
-        return code === val
-      }).length > 0
-    },
     /** 处理删除按钮操作 */
     handleDel (row) {
-      if (this.handleValidateDefaultButton(row.code)) {
-        this.$message.error(`不能删除预设按钮【${row.name}】`)
-        return
-      }
       const ids = row.id || this.ids
       this.$confirm('是否确认删除所选项编号为"' + ids + '"的数据项?', "警告", {
         confirmButtonText: '确定',
@@ -309,7 +256,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        delButton(ids).then(response => {
+        delCondition(ids).then(response => {
           this.loading = false
           this.msgSuccess("删除成功")
           this.getList()
@@ -321,7 +268,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.method == 'edit') {
-            editButton(this.form).then(response => {
+            editCondition(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("修改成功")
                 this.open = false
@@ -331,7 +278,7 @@ export default {
               }
             })
           } else {
-            addButton(this.form).then(response => {
+            addCondition(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("新增成功")
                 this.open = false

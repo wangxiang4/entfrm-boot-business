@@ -327,7 +327,7 @@ export default {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      })
+      }).catch(() => {})
     },
     /** 表单提交 */
     handleSubmitForm () {

@@ -1,6 +1,7 @@
 package com.entfrm.biz.extension.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,23 +30,21 @@ public class ConditionController {
 
     private final ConditionService conditionService;
 
-    private QueryWrapper<Condition> getQueryWrapper(Condition condition) {
-        return new QueryWrapper<Condition>().like(StrUtil.isNotBlank(condition.getName()), "name", condition.getName());
+    private LambdaQueryWrapper<Condition> getLambdaQueryWrapper(Condition condition) {
+        return new LambdaQueryWrapper<Condition>()
+                .like(StrUtil.isNotBlank(condition.getName()), Condition::getName, condition.getName());
     }
-
 
     @GetMapping("/list")
     public R list(Page page, Condition condition) {
-        IPage<Button> buttonIPage = conditionService.page(page, getQueryWrapper(condition));
+        IPage<Button> buttonIPage = conditionService.page(page, getLambdaQueryWrapper(condition));
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
-
 
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
         return R.ok(conditionService.getById(id));
     }
-
 
     @PostMapping("/save")
     public R save(@RequestBody Condition condition) {
@@ -53,19 +52,16 @@ public class ConditionController {
         return R.ok();
     }
 
-
     @PutMapping("/update")
     public R update(@RequestBody Condition condition) {
         conditionService.updateById(condition);
         return R.ok();
     }
 
-
     @DeleteMapping("/remove/{id}")
     public R remove(@PathVariable Integer[] id) {
         conditionService.removeByIds(Arrays.asList(id));
         return R.ok();
     }
-
 
 }

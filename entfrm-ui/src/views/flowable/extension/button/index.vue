@@ -194,7 +194,6 @@ export default {
   computed: {
     formValidateRule () {
       const validatePass = (rule, value, callback) => {
-        // form.id则空代表着新增
         if (this.method == 'add' && this.handleValidateDefaultButton(value)) {
           callback(new Error('请勿使用系统预设编码!'))
         } else {
@@ -236,7 +235,6 @@ export default {
         code: undefined,
         sort: 0
       };
-      this.resetForm("form");
     },
     /** 处理搜索按钮操作 */
     handleQuery() {
@@ -262,7 +260,6 @@ export default {
     },
     /** 处理修改按钮操作 */
     handleEdit(row) {
-      this.reset()
       const id = row.id || this.ids
       getButton(id).then(response => {
         this.form = response.data
@@ -273,7 +270,6 @@ export default {
     },
     /** 处理查看按钮操作 */
     handleView(row) {
-      this.reset();
       const id = row.id || this.ids
       getButton(id).then(response => {
         this.form = response.data

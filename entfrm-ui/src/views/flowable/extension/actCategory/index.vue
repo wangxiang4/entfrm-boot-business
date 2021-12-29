@@ -237,7 +237,6 @@ export default {
         sort: undefined,
         remarks: undefined
       };
-      this.resetForm("form");
     },
     /** 获取数据列表 */
     getList() {
@@ -289,7 +288,6 @@ export default {
     /** 处理修改按钮操作 */
     handleEdit(row) {
       const { id } = row
-      this.reset()
       this.getActCategoryList()
       getActCategory(id).then(response => {
         this.form = response.data
@@ -301,7 +299,6 @@ export default {
     /** 处理查看按钮操作 */
     handleView(row) {
       const { id } = row
-      this.reset()
       this.getActCategoryList()
       getActCategory(id).then(response => {
         this.form = response.data

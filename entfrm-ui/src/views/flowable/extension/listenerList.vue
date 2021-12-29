@@ -117,7 +117,7 @@
 
 <script>
 import listenerForm from './listenerForm'
-import {listListener,delListener} from "@/api/flowable/listener";
+import {listListener,delListener} from "@/api/flowable/extension/listener";
 export default {
   data () {
     return {

@@ -1,5 +1,6 @@
 package com.entfrm.data.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class TreeEntity<T> extends CommonEntity {
     /** 排序 **/
     private Integer sort;
 
+    @TableField(exist = false)
     protected List<T> children = new ArrayList();
 
 }

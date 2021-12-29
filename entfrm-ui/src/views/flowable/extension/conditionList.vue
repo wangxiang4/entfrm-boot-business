@@ -107,7 +107,7 @@
 
 <script>
   import conditionForm from './conditionForm'
-  import {listCondition,delCondition} from "@/api/flowable/condition";
+  import {listCondition,delCondition} from "@/api/flowable/extension/condition";
   export default {
     data () {
       return {

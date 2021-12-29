@@ -1,7 +1,9 @@
 package com.entfrm.biz.extension.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.extension.entity.ActCategory;
+import com.entfrm.biz.extension.entity.Button;
 import com.entfrm.biz.extension.service.ActCategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,20 +27,21 @@ public class ActCategoryController {
 
     private final ActCategoryService actCategoryService;
 
+    private LambdaQueryWrapper<ActCategory> getLambdaQueryWrapper() {
+        return new LambdaQueryWrapper<ActCategory>().orderByAsc(ActCategory::getSort);
+    }
 
     @GetMapping("/list")
     public R list() {
-        List<ActCategory> actCategories = actCategoryService.list();
+        List<ActCategory> actCategories = actCategoryService.list(getLambdaQueryWrapper());
         return R.ok(actCategories);
     }
-
 
 
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
         return R.ok(actCategoryService.getById(id));
     }
-
 
 
     @PostMapping("/save")
@@ -53,7 +56,6 @@ public class ActCategoryController {
         actCategoryService.updateById(actCategory);
         return R.ok();
     }
-
 
 
     @DeleteMapping("/remove/{id}")

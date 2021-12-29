@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import { listFormDefinition } from '@/api/flowable/formDefinition'
+import { listFormDefinition } from '@/api/flowable/extension/formDefinition'
 export default {
   data () {
     return {

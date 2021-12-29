@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import {getListener,addListener,editListener} from "@/api/flowable/listener";
+import {getListener,addListener,editListener} from "@/api/flowable/extension/listener";
 export default {
   data () {
     return {

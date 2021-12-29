@@ -46,7 +46,7 @@
 </template>
 
 <script>
-  import {getCondition,addCondition,editCondition} from "@/api/flowable/condition";
+  import {getCondition,addCondition,editCondition} from "@/api/flowable/extension/condition";
   export default {
     data () {
       return {

@@ -1,10 +1,12 @@
 package com.entfrm.biz.extension.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.api.R;
+import com.entfrm.biz.extension.entity.ActCategory;
 import com.entfrm.biz.extension.entity.Button;
 import com.entfrm.biz.extension.service.ButtonService;
 import lombok.AllArgsConstructor;
@@ -28,16 +30,16 @@ public class ButtonController {
 
     private final ButtonService buttonService;
 
-    private QueryWrapper<Button> getQueryWrapper(Button button) {
-        return new QueryWrapper<Button>()
-                .eq(StrUtil.isNotBlank(button.getName()), "name", button.getName())
-                .eq(StrUtil.isNotBlank(button.getCode()), "code", button.getCode());
+    private LambdaQueryWrapper<Button> getLambdaQueryWrapper(Button button) {
+        return new LambdaQueryWrapper<Button>()
+                .eq(StrUtil.isNotBlank(button.getName()), Button::getName, button.getName())
+                .eq(StrUtil.isNotBlank(button.getCode()), Button::getCode, button.getCode())
+                .orderByAsc(Button::getSort);
     }
-
 
     @GetMapping("/list")
     public R list(Page page, Button button) {
-        IPage<Button> buttonIPage = buttonService.page(page, getQueryWrapper(button));
+        IPage<Button> buttonIPage = buttonService.page(page, getLambdaQueryWrapper(button));
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
 

@@ -25,6 +25,7 @@ public class BaseEntity implements Serializable {
     protected static final long serialVersionUID = 1L;
 
     /** 当前用户 */
+    @TableField(exist = false)
     protected EntfrmUser currentUser;
 
     /** 自定义sql过滤 */

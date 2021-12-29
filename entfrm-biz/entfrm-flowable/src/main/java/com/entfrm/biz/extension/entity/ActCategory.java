@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_category")
+@TableName(value = "act_extension_category", excludeProperty = { "delFlag" })
 public class ActCategory extends TreeEntity<ActCategory> {
 
 	/** 反序列化密钥 */

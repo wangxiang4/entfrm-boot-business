@@ -1,26 +1,32 @@
 <template>
-  <el-select ref="elSelect" :value="valueTitle" :size="size" :disabled="disabled" :clearable="clearable" :placeholder="placeholderText" @clear="clearHandle">
+  <el-select ref="elSelect"
+             :value="valueTitle"
+             :size="size"
+             :disabled="disabled"
+             :clearable="clearable"
+             :placeholder="placeholderText"
+             @clear="clearHandle"
+  >
     <el-option :value="valueTitle" :label="valueTitle">
-      <el-tree
-        id="tree-option"
-        ref="selectTree"
-        :accordion="accordion"
-        :data="optionData"
-        :show-checkbox="showCheckbox"
-        :props="props"
-        highlight-current
-        :node-key="props.value"
-        :default-expanded-keys="defaultExpandedKey"
-        @check-change="handleCheckChange"
-        @node-click="handleNodeClick">
-      </el-tree>
+      <el-tree id="tree-option"
+               ref="selectTree"
+               :accordion="accordion"
+               :data="optionData"
+               :show-checkbox="showCheckbox"
+               :props="config"
+               highlight-current
+               :node-key="config.id"
+               :default-expanded-keys="defaultExpandedKey"
+               @check-change="handleCheckChange"
+               @node-click="handleNodeClick"
+      />
     </el-option>
   </el-select>
 </template>
 
 <script>
 /**
- * @program: entfrm-boot
+ * @program: entfrm-ui
  *
  * @description: 树形下拉框
  *
@@ -37,7 +43,7 @@
  * @author: entfrm开发团队-王翔
  *
  * @create: 2021-06-22
- **/
+ */
 import request from '@/utils/request'
 export default{
   name:'el-tree-select',
@@ -46,93 +52,68 @@ export default{
     props: {
       type: Object,
       default: () => {
-        return {
-          // ID字段名
-          value: 'id',
-          // 显示名称
-          label: 'label',
-          // 子级字段名
-          children: 'children'
-        }
+        return {}
       }
     },
     // 选项列表数据(树形结构的对象数组)
     data: {
       type: Array,
-      default: () => { return [] }
+      default: () => []
     },
     // 选项列表数据(List结构的对象数组)
     list: {
       type: Array,
-      default: () => { return null }
-    },
-    // list转换tree配置
-    normalizer: {
-      type: Object,
-      default: () => {
-        return {
-          // id字段 默认 'id'
-          id:'id',
-          // parentId 父节点字段 默认 'parentId'
-          parentId : 'parentId',
-          // children 孩子节点字段 默认 'children'
-          children : 'children',
-          // rootId 根Id 默认 undefined
-          rootId : undefined
-        }
-      }
+      default: null
     },
     // url请求地址
     url: {
       type: String,
-      default: () => { return null }
+      default: ''
     },
     // 初始值
     value: {
       type: [Number,String],
-      default: () => { return null }
+      default: null
     },
     // 禁用
     disabled: {
       type: Boolean,
-      default: () => { return false }
+      default: false
     },
     // 显示复选框
     showCheckbox: {
       type: Boolean,
-      default: () => { return false }
+      default: false
     },
     // 初始标题
     label: {
       type: String,
-      default: () => { return null }
+      default: ''
     },
     // 显示可清空选项
     clearable: {
       type: Boolean,
-      default: () => { return true }
+      default: true
     },
     // 手风琴模式
     accordion: {
       type: Boolean,
-      default: () => { return false }
+      default: false
     },
     // 布局大小
     size: {
       type: String,
-      default: () => { return 'small' }
+      default: 'small'
     },
     // 下拉框提示
     placeholder: {
       type: String,
-      default: () => { return '请选择' }
+      default: '请选择'
     },
     // 只能选择子节点
     isOnlySelectLeaf: {
       type: Boolean,
-      default: () => {
-        return false
-      }
+      default: false
     }
   },
   data() {
@@ -152,7 +133,7 @@ export default{
     }
   },
   created() {
-    if (this.url !== null) {
+    if (this.url) {
       this.placeholderText = '加载数据中...'
       let interval = setInterval(() => {
         this.placeholderText = this.placeholderText + '.'
@@ -172,7 +153,7 @@ export default{
     }
   },
   methods:{
-    // 设置树形list集合数据
+    /** 设置树形list集合数据 */
     setTreeList(data){
       for (let i in data) {
         this.treeList.push(data[i])
@@ -181,7 +162,7 @@ export default{
         }
       }
     },
-    // 初始化值处理
+    /** 初始化值处理 */
     initHandle(){
       if (this.value) {
         if (this.showCheckbox) {
@@ -190,15 +171,15 @@ export default{
           let titles = []
           ids.forEach((id) => {
             this.treeList.forEach((d) => {
-              if (id === d[this.props.value]) {
-                titles.push(d[this.props.label])
+              if (id === d[this.config.id]) {
+                titles.push(d[this.config.label])
               }
             })
           })
           this.valueTitle = titles.join(',')
         } else if (this.$refs.selectTree.getNode(this.valueId)) {
           // 初始化显示
-          this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.props.label]
+          this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.config.label]
           // 设置默认选中
           this.$refs.selectTree.setCurrentKey(this.valueId)
           // 设置默认展开
@@ -207,47 +188,47 @@ export default{
       }
       this.initScroll()
     },
-    // 提供api-获取节点
+    /** 提供api-获取节点 */
     getNode(id){
       return this.$refs.selectTree.getNode(id)
     },
-    // 隐藏下拉滚动条
+    /** 隐藏下拉滚动条 */
     initScroll(){
       this.$nextTick(() => {
         let scrollWrap = document.querySelectorAll('.el-scrollbar .el-select-dropdown__wrap')[0]
         if (scrollWrap) { scrollWrap.style.cssText = 'margin: 0px; max-height: none; overflow: hidden;' }
       })
     },
-    // 处理节点点击动作
+    /** 处理节点点击动作 */
     handleNodeClick(node){
       if (this.showCheckbox) {
         return
       }
       if (node['disabled']) {
-        this.$message.warning('节点（' + node[this.props.label] + '）被禁止选择，请重新选择。')
+        this.$message.warning('节点（' + node[this.config.label] + '）被禁止选择，请重新选择。')
         return
       }
       if (this.isOnlySelectLeaf && node.children.length > 0) {
-        this.$message.warning('不能选择根节点（' + node[this.props.label] + '）请重新选择。')
+        this.$message.warning('不能选择根节点（' + node[this.config.label] + '）请重新选择。')
         return
       }
-      this.valueTitle = node[this.props.label]
-      this.valueId = node[this.props.value]
+      this.valueTitle = node[this.config.label]
+      this.valueId = node[this.config.id]
       this.$emit('getValue', this.valueId, this.valueTitle, node)
       this.$refs.elSelect.visible=false
     },
-    // 处理节点复选框点击动作
+    /** 处理节点复选框点击动作 */
     handleCheckChange(data, checked, indeterminate) {
       let nodes = this.$refs.selectTree.getCheckedNodes()
       this.valueTitle = nodes.map((node) => {
-        return node[this.props.label]
+        return node[this.config.label]
       }).join(',')
       this.valueId = nodes.map((node) => {
-        return node[this.props.value]
+        return node[this.config.id]
       }).join(',')
       this.$emit('getValue', this.valueId, this.valueTitle)
     },
-    // 清除选中
+    /** 清除选中 */
     clearHandle() {
       this.valueTitle = ''
       this.valueId = null
@@ -255,7 +236,7 @@ export default{
       this.clearSelected()
       this.$emit('getValue', null, null, null)
     },
-    // 清空选中样式
+    /** 清空选中样式 */
     clearSelected() {
       let allNode = document.querySelectorAll('#tree-option .el-tree-node')
       allNode.forEach((element) => element.classList.remove('is-current'))
@@ -275,14 +256,15 @@ export default{
     }
   },
   computed: {
-    // 计算处理树形下拉数据
+    /** 树形下拉数据 */
     optionData() {
       let TreeData=[];
       if (this.list) {
-        let id = this.normalizer.id
-        let parentId = this.normalizer.parentId
-        let children = this.normalizer.children
-        let rootId = this.normalizer.rootId || Math.min.apply(Math, this.list.map(item => { return item[parentId] })) || 0
+        // 集合结构转树形结构
+        let id = this.config.id
+        let parentId = this.config.parentId
+        let children = this.config.children
+        let rootId = this.config.rootId || Math.min.apply(Math, this.list.map(item => { return item[parentId] })) || 0
         // 对源数据深度克隆
         let cloneData = JSON.parse(JSON.stringify(this.list))
         // 循环所有项，并添加children属性
@@ -298,11 +280,26 @@ export default{
         TreeData = this.valueData
       }
       this.$nextTick(()=>{
-        this.valueId=this.value
+        this.valueId = this.value
         this.setTreeList(TreeData)
         this.initHandle()
       })
       return TreeData;
+    },
+    /** 树形下拉配置 */
+    config () {
+      return Object.assign({
+        // ID字段名
+        id: 'id',
+        // 显示名称
+        label: 'label',
+        // 子级字段名
+        children: 'children',
+        // 父节点字段
+        parentId : 'parentId',
+        // 根Id 默认 undefined
+        rootId : undefined
+      }, this.props)
     }
   }
 }

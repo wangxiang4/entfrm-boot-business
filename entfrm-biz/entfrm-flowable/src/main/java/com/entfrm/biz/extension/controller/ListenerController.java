@@ -2,11 +2,13 @@ package com.entfrm.biz.extension.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.extension.entity.Button;
+import com.entfrm.biz.extension.entity.Condition;
 import com.entfrm.biz.extension.entity.Listener;
 import com.entfrm.biz.extension.service.ListenerService;
 import lombok.AllArgsConstructor;
@@ -30,16 +32,16 @@ public class ListenerController {
 
     private final ListenerService listenerService;
 
-    private QueryWrapper<Listener> getQueryWrapper(Listener listener) {
-        return new QueryWrapper<Listener>()
-                .eq(StrUtil.isNotBlank(listener.getName()), "name", listener.getName())
-                .eq(ObjectUtil.isNotNull(listener.getListenerType()), "listener_type", listener.getListenerType());
+    private LambdaQueryWrapper<Listener> getLambdaQueryWrapper(Listener listener) {
+        return new LambdaQueryWrapper<Listener>()
+                .eq(StrUtil.isNotBlank(listener.getName()), Listener::getName, listener.getName())
+                .eq(ObjectUtil.isNotNull(listener.getListenerType()), Listener::getListenerType, listener.getListenerType());
     }
 
 
     @GetMapping("/list")
     public R list(Page page, Listener listener) {
-        IPage<Button> buttonIPage = listenerService.page(page, getQueryWrapper(listener));
+        IPage<Button> buttonIPage = listenerService.page(page, getLambdaQueryWrapper(listener));
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
 

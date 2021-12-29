@@ -125,18 +125,18 @@
 
         <el-table v-loading="loading" :data="formDefinitionList" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" size="small" header-align="center" align="center" width="50"/>
-          <el-table-column label="表单名称"  prop="formDefinition.name" show-overflow-tooltip/>
+          <el-table-column label="表单名称"  prop="name" show-overflow-tooltip/>
           <el-table-column label="分类"  prop="formCategory.name" show-overflow-tooltip/>
-          <el-table-column label="版本号" prop="formDefinitionDesignData.version" show-overflow-tooltip/>
-          <el-table-column label="状态" prop="formDefinitionDesignData.status" show-overflow-tooltip>
+          <el-table-column label="版本号" prop="formDefinitionJson.version" show-overflow-tooltip/>
+          <el-table-column label="状态" prop="formDefinitionJson.status" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.formDefinitionDesignData && scope.row.formDefinitionDesignData.status === '1'" size="small" type="success">已发布</el-tag>
+              <el-tag v-if="scope.row.formDefinitionJson && scope.row.formDefinitionJson.status === '1'" size="small" type="success">已发布</el-tag>
               <el-tag v-else size="small" type="danger">未发布</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="是否主版本" prop="formDefinitionDesignData.isPrimary" show-overflow-tooltip>
+          <el-table-column label="是否主版本" prop="formDefinitionJson.isPrimary" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.formDefinitionDesignData && scope.row.formDefinitionDesignData.isPrimary === '1'" size="small" type="success">主版本</el-tag>
+              <el-tag v-if="scope.row.formDefinitionJson && scope.row.formDefinitionJson.isPrimary === '1'" size="small" type="success">主版本</el-tag>
               <el-tag v-else size="small" type="danger">非主版本</el-tag>
             </template>
           </el-table-column>

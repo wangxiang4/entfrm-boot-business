@@ -1,4 +1,5 @@
 package com.entfrm.biz.extension.entity;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@TableName(value = "act_extension_form_def", excludeProperty = { "formCategory", "formDefinitionJson" })
 public class FormDefinition extends CommonEntity {
 
 	/** 反序列化密钥 */

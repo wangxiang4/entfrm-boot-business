@@ -5,15 +5,15 @@
 
 	<select id="findList" resultType="com.entfrm.biz.extension.entity.FormDefinition" >
 		SELECT
-		a.id AS "formDefinition.id",
-		a.create_by AS "formDefinition.createBy",
-		a.create_time AS "formDefinition.createTime",
-		a.update_by AS "formDefinition.updateBy",
-		a.update_time AS "formDefinition.updateTime",
-		a.remarks AS "formDefinition.remarks",
-		a.del_flag AS "formDefinition.delFlag",
-		a.category_id AS "formDefinition.categoryId",
-		a.name AS "formDefinition.name",
+		a.id AS "id",
+		a.create_by AS "createBy",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy",
+		a.update_time AS "updateTime",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.category_id AS "categoryId",
+		a.name AS "name",
 		b.id AS "formCategory.id",
 		b.create_by AS "formCategory.createBy",
 		b.create_time AS "formCategory.createTime",
@@ -24,28 +24,28 @@
 		b.parent_id AS "formCategory.parentId",
 		b.name AS "formCategory.name",
 		b.sort AS "formCategory.sort",
-		c.id AS "formDefinitionDesignData.id",
-		c.create_by AS "formDefinitionDesignData.createBy",
-		c.create_time AS "formDefinitionDesignData.createTime",
-		c.update_by AS "formDefinitionDesignData.updateBy",
-		c.update_time AS "formDefinitionDesignData.updateTime",
-		c.form_definition_id AS "formDefinitionDesignData.formDefinitionId",
-		c.json AS "formDefinitionDesignData.json",
-		c.version AS "formDefinitionDesignData.version",
-		c.status AS "formDefinitionDesignData.status",
-		c.is_primary AS "formDefinitionDesignData.isPrimary"
+		c.id AS "formDefinitionJson.id",
+		c.create_by AS "formDefinitionJson.createBy",
+		c.create_time AS "formDefinitionJson.createTime",
+		c.update_by AS "formDefinitionJson.updateBy",
+		c.update_time AS "formDefinitionJson.updateTime",
+		c.form_definition_id AS "formDefinitionJson.formDefinitionId",
+		c.json AS "formDefinitionJson.json",
+		c.version AS "formDefinitionJson.version",
+		c.status AS "formDefinitionJson.status",
+		c.is_primary AS "formDefinitionJson.isPrimary"
 		FROM
 		act_extension_form_def a
 		LEFT JOIN act_extension_form_category b ON b.id = a.category_id
-		LEFT JOIN act_extension_form_def_design_data c ON c.form_definition_id = a.id
+		LEFT JOIN act_extension_form_def_json c ON c.form_definition_id = a.id
 		<where>
 			a.del_flag = '0'
 			AND ( c.is_primary = '1' or c.is_primary is null)
-			<if test="formDefinition.formDefinition != null and formDefinition.formDefinition.name != null and formDefinition.formDefinition.name != ''">
-				AND a.name = #{formDefinition.formDefinition.name}
+			<if test="formDefinition.name != null and formDefinition.name != ''">
+				AND a.name = #{name}
 			</if>
-			<if test="formDefinition.formDefinitionDesignData != null and formDefinition.formDefinitionDesignData.status != null and formDefinition.formDefinitionDesignData.status != ''">
-				AND c.status = #{formDefinition.formDefinitionDesignData.status}
+			<if test="formDefinition.formDefinitionJson != null and formDefinition.formDefinitionJson.status != null and formDefinition.formDefinitionJson.status != ''">
+				AND c.status = #{formDefinitionJson.status}
 			</if>
 		</where>
 	</select>

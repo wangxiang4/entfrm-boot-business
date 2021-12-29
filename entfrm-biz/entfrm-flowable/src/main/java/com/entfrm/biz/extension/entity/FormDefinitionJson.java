@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_form_def_json")
+@TableName(value = "act_extension_form_def_json", excludeProperty = { "remarks" })
 public class FormDefinitionJson extends CommonEntity {
 
 	/** 反序列化密钥 */

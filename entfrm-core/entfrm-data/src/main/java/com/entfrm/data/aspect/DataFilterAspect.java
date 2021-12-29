@@ -4,7 +4,7 @@ import com.entfrm.base.constant.SqlConstants;
 import com.entfrm.base.exception.BaseException;
 import com.entfrm.base.util.StrUtil;
 import com.entfrm.data.annotation.DataFilter;
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import com.entfrm.security.entity.EntfrmUser;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -69,11 +69,11 @@ public class DataFilterAspect {
         } else {
             params = point.getArgs()[0];
         }
-        if (params != null && params instanceof BaseEntity) {
+        if (params != null && params instanceof CommonEntity) {
 
-            BaseEntity baseEntity = (BaseEntity) params;
+            CommonEntity commonEntity = (CommonEntity) params;
 
-            baseEntity.setSqlFilter(getSQLFilter(point));
+            commonEntity.setSqlFilter(getSQLFilter(point));
 
             return;
         }

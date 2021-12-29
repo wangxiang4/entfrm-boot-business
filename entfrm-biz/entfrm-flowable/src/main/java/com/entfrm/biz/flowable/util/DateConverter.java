@@ -49,7 +49,7 @@ public class DateConverter  implements Converter<Object> {
 		return result;
 	}
 
-	/** Convert String to Date **/
+	/** Convert String to Date */
 	private Date doConvertToDate(Object value) throws ParseException {
 		Date result = null;
 		if (value instanceof String) {
@@ -77,7 +77,7 @@ public class DateConverter  implements Converter<Object> {
 		return result;
 	}
 
-	/** Convert Date to String **/
+	/** Convert Date to String */
 	private String doConvertToString(Object value) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATETIME_PATTERN);
 		String result = null;

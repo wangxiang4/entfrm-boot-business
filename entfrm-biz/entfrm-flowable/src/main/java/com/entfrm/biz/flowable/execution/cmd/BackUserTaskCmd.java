@@ -153,7 +153,7 @@ public class BackUserTaskCmd implements Command<String>, Serializable {
 
 
 
-    /** 检测当前节点是否在特殊网关中存储则当前筛选出的特殊网关ID **/
+    /** 检测当前节点是否在特殊网关中存储则当前筛选出的特殊网关ID */
     private void setSpecialGatewayList(String sourceActivityId, String targetActivityId,
                                        Map<String, Set<String>> specialGatewayNodes,
                                        List<String> sourceInSpecialGatewayList,
@@ -170,7 +170,7 @@ public class BackUserTaskCmd implements Command<String>, Serializable {
 
 
 
-    /** 获取当前节点前面已经执行完的执行分支路线实体 **/
+    /** 获取当前节点前面已经执行完的执行分支路线实体 */
     private List<ExecutionEntity> getRealExecutions(CommandContext commandContext, String processInstanceId,
                                                     String taskExecutionId, String sourceRealActivityId,
                                                     Set<String> activityIds) {
@@ -191,7 +191,7 @@ public class BackUserTaskCmd implements Command<String>, Serializable {
     }
 
 
-    /** 跳转节点前进如果是前进节点处于特殊网关中需要手动创建除主支流(跳转节点已经处理完毕的)其余的手动创建执行分支路线实体 **/
+    /** 跳转节点前进如果是前进节点处于特殊网关中需要手动创建除主支流(跳转节点已经处理完毕的)其余的手动创建执行分支路线实体 */
     private void createTargetInSpecialGatewayEndExecutions(CommandContext commandContext,
                                               List<ExecutionEntity> excutionEntitys, Process process,
                                               List<String> targetInSpecialGatewayList,

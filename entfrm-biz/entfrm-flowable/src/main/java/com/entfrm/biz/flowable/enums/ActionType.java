@@ -25,11 +25,13 @@ public enum ActionType {
     REVOKE("撤销流程", "_flow_revoke", "warning");
 
 
-    /** 评论描述 **/
+    /** 评论描述 */
     private String status;
-    /** 编码 **/
+
+    /** 编码 */
     private String type;
-    /** 描述级别 **/
+
+    /** 描述级别 */
     private String level;
 
 

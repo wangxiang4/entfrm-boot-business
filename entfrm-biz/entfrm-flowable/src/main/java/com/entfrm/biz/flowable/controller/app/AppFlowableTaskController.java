@@ -3,8 +3,8 @@ package com.entfrm.biz.flowable.controller.app;
 import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.model.Flow;
-import com.entfrm.biz.flowable.model.TaskComment;
+import com.entfrm.biz.flowable.entity.Flow;
+import com.entfrm.biz.flowable.entity.TaskComment;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import io.swagger.annotations.Api;
@@ -76,7 +76,7 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 外置表单:启动流程 **/
+    /** 外置表单:启动流程 */
     @ApiOperation("外置表单:启动流程 ")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -96,7 +96,7 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 外置表单:审批 **/
+    /** 外置表单:审批 */
     @ApiOperation("外置表单:审批")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -116,7 +116,7 @@ public class AppFlowableTaskController {
 
 
 
-    /** 获取可退回任务节点 **/
+    /** 获取可退回任务节点 */
     @ApiOperation("获取可退回任务节点")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "taskId", value = "任务ID", required=true)
@@ -128,7 +128,7 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 驳回任务到指定节点 **/
+    /** 驳回任务到指定节点 */
     @ApiOperation("驳回任务到指定节点")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "backTaskDefKey", value = "驳回任务的定义KEy", required=true),

@@ -17,19 +17,19 @@ import java.util.Map;
 public interface FlowableModelService {
 
 
-    /** 流程分页查询 **/
+    /** 流程分页查询 */
     IPage<Model> list(Map<String, Object> params);
 
 
-    /** 创建流程 **/
+    /** 创建流程 */
     Model save(String name, String key, String desc, String category);
 
 
-    /** 删除流程 **/
+    /** 删除流程 */
     void removeById(String id);
 
 
-    /** 部署流程 **/
+    /** 部署流程 */
     String deploy(String id);
 
 }

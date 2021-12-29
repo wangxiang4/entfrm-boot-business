@@ -62,7 +62,7 @@ public class Variable {
 		this.types = types;
 	}
 
-	/** 解析逗号分割符流程变量 **/
+	/** 解析逗号分割符流程变量 */
 	@JsonIgnore
 	public Map<String, Object> getVariableMap() {
 

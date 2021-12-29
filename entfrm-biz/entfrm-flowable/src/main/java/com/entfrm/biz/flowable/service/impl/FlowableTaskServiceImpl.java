@@ -9,8 +9,8 @@ import com.entfrm.biz.flowable.constant.FlowableConstant;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
 import com.entfrm.biz.flowable.execution.cmd.BackUserTaskCmd;
 import com.entfrm.biz.flowable.mapper.FlowMapper;
-import com.entfrm.biz.flowable.model.Flow;
-import com.entfrm.biz.flowable.model.TaskComment;
+import com.entfrm.biz.flowable.entity.Flow;
+import com.entfrm.biz.flowable.entity.TaskComment;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.util.FlowableUtil;
@@ -68,7 +68,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     private final ManagementService managementService;
     private final IdentityService identityService;
 
-    /** 代办任务列表 **/
+    /** 代办任务列表 */
     @Override
     public IPage list(Map<String, Object> params) {
         TaskQuery taskQuery = taskService.createTaskQuery()
@@ -103,7 +103,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     }
 
 
-    /** 获取任务定义数据 **/
+    /** 获取任务定义数据 */
     @Override
     public Flow getTaskDef(Flow flow) {
 
@@ -135,7 +135,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /**  获取流程表单数据(首先获取任务节点表单KEY,如果没有则取流程开始节点表单KEY）**/
+    /**  获取流程表单数据(首先获取任务节点表单KEY,如果没有则取流程开始节点表单KEY）*/
     public String getFormKey(String procDefId, String taskDefKey) {
         String formKey = "";
         if (StrUtil.isNotBlank(procDefId)) {
@@ -160,7 +160,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 获取当前任务图片 **/
+    /** 获取当前任务图片 */
     @Override
     public InputStream getTackImage(String taskId) {
         //使用当前任务ID，获取当前任务对象
@@ -205,7 +205,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 提交任务,并保存意见 **/
+    /** 提交任务,并保存意见 */
     @Override
     public void complete(Flow flow){
 
@@ -257,7 +257,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 外置表单审核专用 **/
+    /** 外置表单审核专用 */
     @Override
     public void auditTask(Flow flow) {
         complete(flow);
@@ -265,7 +265,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 启动流程专用 **/
+    /** 启动流程专用 */
     @Override
     public String startProcess(String procDefKey, String businessTable,
                                String businessId, String title,Map<String,Object> vars){
@@ -305,7 +305,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 外置表单启动流程专用 **/
+    /** 外置表单启动流程专用 */
     @Override
     public String startProcess(String procDefKey, String businessTable,
                                String businessId, String title) {
@@ -315,7 +315,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 获取可驳回节点 **/
+    /** 获取可驳回节点 */
     @Override
     public List<Flow> getBackNodes(String taskId) {
         Task taskEntity = taskService.createTaskQuery().taskId(taskId).singleResult();
@@ -349,7 +349,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
 
-    /** 驳回任务,驳回到指定节点 **/
+    /** 驳回任务,驳回到指定节点 */
     @Override
     public void backTask(String backTaskDefKey, String taskId, TaskComment comment) {
         Task task = taskService.createTaskQuery ().taskId (taskId).singleResult ();

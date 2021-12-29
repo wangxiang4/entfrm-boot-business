@@ -31,7 +31,7 @@ public class FlowableUtil {
 
     /**
      * 当前节点是否可以到达目标节点,可以到达的目标节点均为已经完成的节点
-     **/
+     */
     public boolean isReachable(Process process, FlowNode sourceElement, FlowNode targetElement,
                                Set<String> visitedElements) {
         // Special case: start events in an event subprocess might exist as an execution and are most likely be able to
@@ -90,7 +90,7 @@ public class FlowableUtil {
 
     /**
      * 当前元素是否是事件子流程
-     **/
+     */
     protected boolean isInEventSubprocess(FlowNode flowNode) {
         FlowElementsContainer flowElementsContainer = flowNode.getParentContainer();
         while (flowElementsContainer != null) {
@@ -109,7 +109,7 @@ public class FlowableUtil {
 
     /**
      * 获取当前节点跟目标节点世界的活动ID:包括子流程层级关系
-     **/
+     */
     public String[] getSourceAndTargetRealActivityId(FlowNode sourceFlowElement, FlowNode targetFlowElement) {
         // 实际应操作的当前节点ID
         String sourceRealActivityId = sourceFlowElement.getId();
@@ -131,7 +131,7 @@ public class FlowableUtil {
 
     /**
      * 获取当前元素的父流程ID
-     **/
+     */
     public List<String> getParentProcessIds(FlowNode flowNode) {
         List<String> result = new ArrayList<>();
         FlowElementsContainer flowElementsContainer = flowNode.getParentContainer();
@@ -154,7 +154,7 @@ public class FlowableUtil {
 
     /**
      * 查询不同层级,为后面层级之间节点跳转做准备,正常情况下都是返回最小的层级索引,如果碰到层级ID比较不一致的就返回不一致的这一层的索引
-     **/
+     */
     public Integer getDiffLevel(List<String> sourceList, List<String> targetList) {
         if (sourceList == null || sourceList.isEmpty() || targetList == null || targetList.isEmpty()) {
             throw new FlowableException("sourceList and targetList cannot be empty");
@@ -190,7 +190,7 @@ public class FlowableUtil {
 
     /**
      * 获取当前流程容器中的所有特殊网关:包括网关中定义的活动节点
-     **/
+     */
     public Map<String, Set<String>> getSpecialGatewayElements(FlowElementsContainer container,
                                                                      Map<String, Set<String>> specialGatewayElements) {
         if (specialGatewayElements == null) {
@@ -224,7 +224,7 @@ public class FlowableUtil {
     }
 
 
-    /** 查找特殊网关之间的关联关系,并且跟网关有关系的节点收集记录 **/
+    /** 查找特殊网关之间的关联关系,并且跟网关有关系的节点收集记录 */
     public void findElementsBetweenSpecialGateway(FlowElement specialGatewayBegin, String specialGatewayEndId,
                                                          Set<String> elements) {
         //收集节点ID
@@ -250,7 +250,7 @@ public class FlowableUtil {
     }
 
 
-    /** 获取当前跟活动节点有关联的流程实例已经产生出来的分支路线的父级ID:处理了多实例情况,多实例情况下父级ID是关联多实例活动节点执行ID的 **/
+    /** 获取当前跟活动节点有关联的流程实例已经产生出来的分支路线的父级ID:处理了多实例情况,多实例情况下父级ID是关联多实例活动节点执行ID的 */
     public  Set<String> getParentExecutionIdsByActivityId(List<ExecutionEntity> executions, String activityId) {
         List<ExecutionEntity> activityIdExecutions =
                 executions.stream().filter(e -> activityId.equals(e.getActivityId())).collect(Collectors.toList());
@@ -287,12 +287,12 @@ public class FlowableUtil {
     }
 
 
-    /** 父流程是否是以多实例执行的(一至找到根流程) **/
+    /** 父流程是否是以多实例执行的(一至找到根流程) */
     public  boolean isExecutionInsideMultiInstance(ExecutionEntity execution) {
         return getFlowElementMultiInstanceParentId(execution.getCurrentFlowElement()).isPresent();
     }
 
-    /** 查找当前元素父流程是多实例执行的ID **/
+    /** 查找当前元素父流程是多实例执行的ID */
     public  Optional<String> getFlowElementMultiInstanceParentId(FlowElement flowElement) {
         FlowElementsContainer parentContainer = flowElement.getParentContainer();
         while (parentContainer instanceof Activity) {
@@ -305,7 +305,7 @@ public class FlowableUtil {
     }
 
 
-    /** 检测当前父流程是否为多实例 **/
+    /** 检测当前父流程是否为多实例 */
     public boolean isFlowElementMultiInstance(FlowElement flowElement) {
         if (flowElement instanceof Activity) {
             return ((Activity) flowElement).getLoopCharacteristics() != null;
@@ -317,7 +317,7 @@ public class FlowableUtil {
 
     /**
      * 获取流程执行根ID
-     * 根据当前已经筛选出来的流程父级ID(也就是流程执行根ID)去当前任务中查找(一至找到根流程执行)直到匹配流程执行根ID成功返回 **/
+     * 根据当前已经筛选出来的流程父级ID(也就是流程执行根ID)去当前任务中查找(一至找到根流程执行)直到匹配流程执行根ID成功返回 */
     public String getParentExecutionIdFromParentIds(ExecutionEntity execution, Set<String> parentExecutionIds) {
         ExecutionEntity taskParentExecution = execution.getParent();
         String realParentExecutionId = null;

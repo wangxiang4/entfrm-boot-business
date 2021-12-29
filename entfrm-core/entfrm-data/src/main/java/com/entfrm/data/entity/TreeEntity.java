@@ -6,20 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author yong
- * @date 2020/2/1
- * 树
+ *<p>
+ * 树结构模型
+ *</p>
+ *
+ * @Author: entfrm开发团队-王翔
+ * @Date: 2021/12/28
  */
 @Data
-public class TreeEntity {
+public class TreeEntity<T> extends CommonEntity {
 
-    protected int id;
+    private static final long serialVersionUID = 1L;
 
-    protected int parentId;
+    /** 父级编号 **/
+    private Integer parentId;
 
-    protected List<TreeEntity> children = new ArrayList<TreeEntity>();
+    /** 名称 */
+    protected String name;
 
-    public void add(TreeEntity node) {
-        children.add(node);
-    }
+    /** 排序 **/
+    private Integer sort;
+
+    protected List<T> children = new ArrayList();
+
 }

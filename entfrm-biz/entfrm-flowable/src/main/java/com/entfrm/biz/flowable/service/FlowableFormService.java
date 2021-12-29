@@ -1,6 +1,6 @@
 package com.entfrm.biz.flowable.service;
 
-import com.entfrm.biz.flowable.model.Flow;
+import com.entfrm.biz.flowable.entity.Flow;
 import com.entfrm.biz.flowable.dto.FormDataDto;
 
 /**

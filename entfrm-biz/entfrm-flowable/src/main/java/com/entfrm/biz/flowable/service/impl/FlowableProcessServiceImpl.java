@@ -9,7 +9,7 @@ import com.entfrm.biz.flowable.constant.FlowableConstant;
 import com.entfrm.biz.flowable.dto.ProcessDefDto;
 import com.entfrm.biz.flowable.enums.ActionType;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
-import com.entfrm.biz.flowable.model.TaskComment;
+import com.entfrm.biz.flowable.entity.TaskComment;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import com.entfrm.biz.flowable.vo.TaskVo;
@@ -61,7 +61,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     private final TaskService taskService;
     private final FlowableBpmnModelServiceImpl flowableBpmnModelService;
 
-    /** 流程定义列表 **/
+    /** 流程定义列表 */
     @Override
     public IPage<ProcessDefDto> list(Map<String, Object> params) {
         ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery().latestVersion();
@@ -101,7 +101,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     }
 
 
-    /** 读取xml/image资源 **/
+    /** 读取xml/image资源 */
     @Override
     public InputStream readResource(String procInsId, String procDefId, String resType) {
 
@@ -126,7 +126,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
 
 
 
-    /** 挂起/激活 **/
+    /** 挂起/激活 */
     @Override
     public Boolean changeStatus(String procDefId, String status) {
         if ("active".equals(status)) {
@@ -138,7 +138,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     }
 
 
-    /** 删除流程实例 **/
+    /** 删除流程实例 */
     @Override
     public Boolean removeProcIns(String deployId) {
         repositoryService.deleteDeployment(deployId, true);
@@ -146,20 +146,20 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     }
 
 
-    /** 获取正在运行的流程实例对象专用 **/
+    /** 获取正在运行的流程实例对象专用 */
     @Override
     public ProcessInstance getProcIns(String procInsId) {
         return runtimeService.createProcessInstanceQuery().processInstanceId(procInsId).singleResult();
     }
 
-    /** 获取已经结束流程实例对象专用 **/
+    /** 获取已经结束流程实例对象专用 */
     @Override
     public HistoricProcessInstance getFinishedProcIns(String procInsId) {
         return historyService.createHistoricProcessInstanceQuery().processInstanceId(procInsId).singleResult();
     }
 
 
-    /** 查询流程实例状态专用 **/
+    /** 查询流程实例状态专用 */
     @Override
     public ProcessInsVo queryProcessState(String processInstanceId) {
         try {
@@ -229,7 +229,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     }
 
 
-    /** 根据key获取流程定义 **/
+    /** 根据key获取流程定义 */
     @Override
     public ProcessDefinition getProcessDefinitionByKey(String key) {
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery()
@@ -243,7 +243,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
         }
     }
 
-    /** 终止流程实例 **/
+    /** 终止流程实例 */
     @Override
     public void stopProcessInstanceById(String procInsId, ProcessStatus processStatus, String comment) {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(procInsId).singleResult();
@@ -288,7 +288,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
     }
 
 
-    /** 节点跳转 **/
+    /** 节点跳转 */
     @Override
     public void moveExecutionsToSingleActivityId(List<String> executionIds, String activityId) {
         runtimeService.createChangeActivityStateBuilder()

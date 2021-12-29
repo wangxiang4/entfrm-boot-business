@@ -3,7 +3,7 @@ package com.entfrm.biz.system.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -23,7 +23,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("sys_menu")
-public class Menu extends BaseEntity {
+public class Menu extends CommonEntity {
 
     private static final long serialVersionUID = 1L;
 

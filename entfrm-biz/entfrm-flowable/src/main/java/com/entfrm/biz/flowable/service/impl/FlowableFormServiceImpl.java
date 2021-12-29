@@ -8,7 +8,7 @@ import cn.hutool.json.JSONUtil;
 import com.entfrm.biz.flowable.constant.FlowableConstant;
 import com.entfrm.biz.flowable.dto.FormDataDto;
 import com.entfrm.biz.flowable.mapper.FlowMapper;
-import com.entfrm.biz.flowable.model.Flow;
+import com.entfrm.biz.flowable.entity.Flow;
 import com.entfrm.biz.flowable.service.FlowableFormService;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
@@ -41,7 +41,7 @@ public class FlowableFormServiceImpl implements FlowableFormService {
     private final IdentityService identityService;
 
 
-    /** 动态表单启动流程专用 **/
+    /** 动态表单启动流程专用 */
     @Override
     public String submitStartFormData(String processDefinitionId, String title, String data) {
 
@@ -71,7 +71,7 @@ public class FlowableFormServiceImpl implements FlowableFormService {
 
 
 
-    /** 动态表单审核专用 **/
+    /** 动态表单审核专用 */
     @Override
     public void submitTaskFormData(Flow flow, String data) {
 
@@ -89,7 +89,7 @@ public class FlowableFormServiceImpl implements FlowableFormService {
     }
 
 
-    /** 获取表单数据专用 **/
+    /** 获取表单数据专用 */
     @Override
     public FormDataDto getFormData(String code, String procInsId) {
         String data=flowMapper.getFormRenderData(code);

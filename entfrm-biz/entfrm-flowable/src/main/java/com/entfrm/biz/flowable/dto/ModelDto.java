@@ -1,6 +1,6 @@
 package com.entfrm.biz.flowable.dto;
 
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.Date;
  * @Date: 2021-05-17
  */
 @Data
-public class ModelDto extends BaseEntity {
+public class ModelDto extends CommonEntity {
 
     private String id;
     private String name;
@@ -31,7 +31,8 @@ public class ModelDto extends BaseEntity {
     private Integer modelType;
     private String tenantId;
     private byte[] thumbnail;
-    //流程定义对象
+
+    /** 流程定义对象 */
     private ProcessDefDto procDef;
 
 }

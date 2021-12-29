@@ -2,7 +2,7 @@ package ${packageName}.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import com.entfrm.base.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -25,7 +25,7 @@ import ${import};
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("${tableName}")
-public class ${ClassName} extends BaseEntity{
+public class ${ClassName} extends CommonEntity{
     private static final long serialVersionUID = 1L;
 
 #foreach ($column in $columns)

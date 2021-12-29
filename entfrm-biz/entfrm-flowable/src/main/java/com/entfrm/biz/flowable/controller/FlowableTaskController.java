@@ -3,8 +3,8 @@ package com.entfrm.biz.flowable.controller;
 import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.model.Flow;
-import com.entfrm.biz.flowable.model.TaskComment;
+import com.entfrm.biz.flowable.entity.Flow;
+import com.entfrm.biz.flowable.entity.TaskComment;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import lombok.AllArgsConstructor;
@@ -59,7 +59,7 @@ public class FlowableTaskController {
     }
 
 
-    /** 外置表单:启动流程 **/
+    /** 外置表单:启动流程 */
     @PutMapping("/start")
     public R start(@RequestBody Flow flow){
         String procInsId = flowableTaskService
@@ -75,7 +75,7 @@ public class FlowableTaskController {
     }
 
 
-    /** 外置表单:审批 **/
+    /** 外置表单:审批 */
     @PutMapping("audit")
     public  R auditTask(@RequestBody Flow flow) {
         flowableTaskService.auditTask(flow);
@@ -91,7 +91,7 @@ public class FlowableTaskController {
 
 
 
-    /** 获取可退回任务节点 **/
+    /** 获取可退回任务节点 */
     @PostMapping(value = "/backNodes")
     public R backNodes(@RequestParam String taskId) {
         List<Flow> nodes = flowableTaskService.getBackNodes(taskId);
@@ -99,7 +99,7 @@ public class FlowableTaskController {
     }
 
 
-    /** 驳回任务到指定节点 **/
+    /** 驳回任务到指定节点 */
     @PostMapping(value = "/back")
     public R back(String backTaskDefKey, String taskId, TaskComment comment) {
         flowableTaskService.backTask(backTaskDefKey, taskId, comment);

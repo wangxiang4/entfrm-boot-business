@@ -16,9 +16,10 @@ import java.util.Map;
 @Data
 public class FormDataDto {
 
-    /** 表单设计器渲染数据 **/
+    /** 表单设计器渲染数据 */
     private JSONObject formRenderData;
-    /** 表单设计器双向绑定数据 **/
+
+    /** 表单设计器双向绑定数据 */
     private Map<String,Object> formData;
 
 }

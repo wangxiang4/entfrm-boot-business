@@ -1,9 +1,8 @@
 package com.entfrm.biz.quartz.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.*;
 
 import java.util.Date;
@@ -20,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_job")
-public class Job extends BaseEntity {
+public class Job extends CommonEntity {
 	private static final long serialVersionUID = 1L;
 
 	/**

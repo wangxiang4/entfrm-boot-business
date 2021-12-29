@@ -1,7 +1,7 @@
 package com.entfrm.biz.flowable.controller;
 
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.model.Flow;
+import com.entfrm.biz.flowable.entity.Flow;
 import com.entfrm.biz.flowable.service.FlowableFormService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ public class FlowableFormController {
     private final TaskService taskService;
 
 
-    /** 动态表单:获取表单数据 **/
+    /** 动态表单:获取表单数据 */
     @GetMapping(value = "/getTaskFormData")
     public R getTaskFormData(String code, String procInsId) {
         return R.ok(flowableFormService.getFormData(code,procInsId),"获取表单数据成功");
@@ -35,7 +35,7 @@ public class FlowableFormController {
 
 
 
-    /** 动态表单:启动流程 **/
+    /** 动态表单:启动流程 */
     @PutMapping("submitStartFormData")
     public R submitStartFormData(@RequestBody Flow flow){
         String procInsId = flowableFormService.submitStartFormData(flow.getProcDefId(),flow.getTitle(),flow.getFormData());
@@ -52,7 +52,7 @@ public class FlowableFormController {
 
 
 
-    /** 动态表单:审批 **/
+    /** 动态表单:审批 */
     @PutMapping("submitTaskFormData")
     public R submitTaskFormData(@RequestBody Flow flow) {
         flowableFormService.submitTaskFormData(flow, flow.getFormData());

@@ -2,10 +2,10 @@ package com.entfrm.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import com.entfrm.data.entity.BaseEntity;
 
 /**
  * @author entfrm
@@ -17,7 +17,7 @@ import com.entfrm.data.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("sys_backup")
-public class Backup extends BaseEntity{
+public class Backup extends CommonEntity {
     private static final long serialVersionUID = 1L;
 
     /** 编号 */

@@ -1,8 +1,8 @@
 package com.entfrm.biz.flowable.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.entfrm.biz.flowable.model.Flow;
-import com.entfrm.biz.flowable.model.TaskComment;
+import com.entfrm.biz.flowable.entity.Flow;
+import com.entfrm.biz.flowable.entity.TaskComment;
 
 import java.io.InputStream;
 import java.util.List;

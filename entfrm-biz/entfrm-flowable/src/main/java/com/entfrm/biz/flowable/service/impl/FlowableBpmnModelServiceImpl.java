@@ -26,7 +26,7 @@ public class FlowableBpmnModelServiceImpl implements FlowableBpmnModelService {
     private final RepositoryService repositoryService;
 
 
-    /** 获取Bpmn模型 **/
+    /** 获取Bpmn模型 */
     @Override
     public BpmnModel getBpmnModelByProcessDefId(String processDefId) {
         return repositoryService.getBpmnModel(processDefId);
@@ -34,7 +34,7 @@ public class FlowableBpmnModelServiceImpl implements FlowableBpmnModelService {
 
 
 
-    /** 查找结束事件的元素 **/
+    /** 查找结束事件的元素 */
     @Override
     public List<EndEvent> findEndFlowElement(String processDefId) {
         BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);

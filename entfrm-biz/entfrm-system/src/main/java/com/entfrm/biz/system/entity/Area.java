@@ -1,7 +1,7 @@
 package com.entfrm.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.entfrm.data.entity.BaseEntity;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_area")
-public class Area extends BaseEntity {
+public class Area extends CommonEntity {
     private static final long serialVersionUID = 1L;
 
     /** 编号 */

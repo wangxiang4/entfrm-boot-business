@@ -1,7 +1,7 @@
 package com.entfrm.biz.flowable.controller.app;
 
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.model.Flow;
+import com.entfrm.biz.flowable.entity.Flow;
 import com.entfrm.biz.flowable.service.FlowableFormService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -31,7 +31,7 @@ public class AppFlowableFormController {
     private final TaskService taskService;
 
 
-    /** 动态表单:获取表单数据 **/
+    /** 动态表单:获取表单数据 */
     @ApiOperation("动态表单:获取表单数据")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "code", value = "动态表单编码", required=true),
@@ -44,7 +44,7 @@ public class AppFlowableFormController {
 
 
 
-    /** 动态表单:启动流程 **/
+    /** 动态表单:启动流程 */
     @ApiOperation("动态表单:启动流程")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -65,7 +65,7 @@ public class AppFlowableFormController {
 
 
 
-    /** 动态表单:审批 **/
+    /** 动态表单:审批 */
     @ApiOperation("动态表单:审批")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true),

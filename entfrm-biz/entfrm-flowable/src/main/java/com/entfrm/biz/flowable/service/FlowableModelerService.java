@@ -11,13 +11,13 @@ package com.entfrm.biz.flowable.service;
  */
 public interface FlowableModelerService {
 
-    /** 获取设计器页面的json **/
+    /** 获取设计器页面的json */
     Object getStencilset();
 
-    /** 根据modelId获取model **/
+    /** 根据modelId获取model */
     Object getEditorJson(String modelId);
 
-    /** 保存model信息 **/
+    /** 保存model信息 */
     void saveModel(String modelId, String name, String description, String jsonXml, String svgXml);
 
 }

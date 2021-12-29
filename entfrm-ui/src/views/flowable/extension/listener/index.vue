@@ -197,6 +197,10 @@
 </template>
 
 <script>
+/**
+ * Copyright © 2020-2021 <a href="http://www.entfrm.com/">entfrm</a> All rights reserved.
+ * author entfrm开发团队-王翔
+ */
 import { listListener, delListener, editListener, addListener, getListener } from '@/api/flowable/extension/listener'
 export default {
   data () {

@@ -42,7 +42,7 @@
 			a.del_flag = '0'
 			AND (c.is_primary = '1' or c.is_primary is null)
 			<if test="ew.name != null and ew.name != ''">
-				AND a.name LIKE CONCAT('%,', #{ew.name}, ',%')
+				AND a.name LIKE CONCAT('%', #{ew.name}, '%')
 			</if>
 			<if test="ew.categoryId != null and ew.categoryId != ''">
 				AND a.category_id = #{ew.categoryId}

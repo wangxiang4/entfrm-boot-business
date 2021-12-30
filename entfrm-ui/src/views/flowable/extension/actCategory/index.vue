@@ -228,7 +228,7 @@ export default {
     reset () {
       this.form = {
         id: undefined,
-        parentId: 0,
+        parentId: undefined,
         name: undefined,
         sort: undefined,
         remarks: undefined

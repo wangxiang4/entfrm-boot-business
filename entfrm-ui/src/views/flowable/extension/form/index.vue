@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
+    <el-row :gutter="10">
       <!--表单流程分类查询-->
-      <el-col :span="4" :xs="24">
+      <el-col :span="5" :xs="24">
         <div>
           <el-row :gutter="5">
             <el-col :span="20">
@@ -15,12 +15,18 @@
               />
             </el-col>
             <el-col :span="4">
-              <el-button type="primary" @click="addTreeNode" size="small" icon="el-icon-plus" circle/>
+              <el-button type="primary"
+                         circle
+                         size="small"
+                         icon="el-icon-plus"
+                         @click="handleFormCategoryAdd"
+              />
             </el-col>
           </el-row>
         </div>
         <div>
-          <el-tree class="filter-tree"
+          <el-tree ref="formCategoryTree"
+                   node-key="id"
                    :data="formCategoryTreeData"
                    :props="{
                              value: 'id',             // ID字段名
@@ -28,25 +34,24 @@
                              children: 'children'     // 子级字段名
                            }"
                    default-expand-all
+                   highlight-current
                    :filter-node-method="filterNode"
                    :expand-on-click-node="false"
-                   highlight-current
-                   node-key="id"
                    @node-click="handleNodeClick"
-                   ref="formCategoryTree">
-                    <span class="custom-tree-node" slot-scope="{ node, data}">
-                      <span>{{ node.label }}</span>
-                      <span>
-                        <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="addChildTreeNode(data)"/>
-                        <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="editTreeNode(data)"/>
-                        <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="delTreeNode(data)"/>
-                      </span>
-                    </span>
+          >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span>{{ node.label }}</span>
+              <span>
+                <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="addChildTreeNode(data)"/>
+                <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="editTreeNode(data)"/>
+                <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="delTreeNode(data)"/>
+              </span>
+            </span>
           </el-tree>
         </div>
       </el-col>
       <!--流程表单数据-->
-      <el-col :span="20" :xs="24">
+      <el-col :span="19" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="表单名称" prop="formDefinition.name">
             <el-input
@@ -182,12 +187,17 @@
         />
       </el-col>
     </el-row>
+    <form-category-form ref="formCategoryForm" @refresh="getList"/>
   </div>
 </template>
 
 <script>
 import { listFormDefinition } from '@/api/flowable/extension/formDefinition'
+import { listFormCategory } from '@/api/flowable/extension/formCategory'
+import formCategoryForm from './helper/formCategoryForm'
+import XEUtils from 'xe-utils'
 export default {
+  components: { formCategoryForm },
   data () {
     return {
       // 遮罩层
@@ -219,12 +229,13 @@ export default {
     }
   },
   watch: {
-    name(val) {
-      this.$refs.tree.filter(val);
+    name (val) {
+      this.$refs.formCategoryTree.filter(val);
     }
   },
   created() {
-    this.getList();
+    this.getList()
+    this.getFormCategoryTree()
   },
   methods: {
     /** 查询表单定义列表 */
@@ -235,6 +246,14 @@ export default {
           this.total = response.total;
           this.loading = false;
       });
+    },
+    /** 查询表单分类树 */
+    getFormCategoryTree () {
+      listFormCategory().then(response => {
+        this.formCategoryTreeData = XEUtils.toArrayTree(response.data,{
+          parentKey: 'parentId', key: 'id', children: 'children'
+        })
+      })
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -263,6 +282,10 @@ export default {
       this.formDefinitionList = formDefinitionList
       this.total = formDefinitionList.length
     },
+    /** 处理表单分类添加 */
+    handleFormCategoryAdd () {
+      this.$refs.formCategoryForm.setData('add')
+    }
   }
 }
 </script>

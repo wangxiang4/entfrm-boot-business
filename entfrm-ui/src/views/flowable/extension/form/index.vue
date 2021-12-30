@@ -35,9 +35,9 @@
                            }"
                    default-expand-all
                    highlight-current
-                   :filter-node-method="filterNode"
+                   :filter-node-method="formCategoryFilterNode"
                    :expand-on-click-node="false"
-                   @node-click="handleNodeClick"
+                   @node-click="handleFormCategoryNodeClick"
           >
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span>{{ node.label }}</span>
@@ -91,104 +91,114 @@
             >重置</el-button>
           </el-form-item>
         </el-form>
-
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAdd"
-              v-hasPerm="['user_add']"
+            <el-button type="primary"
+                       icon="el-icon-plus"
+                       size="mini"
+                       @click="handleAdd"
             >新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="warning"
-              icon="el-icon-edit-outline"
-              size="mini"
-              :disabled="single"
-              @click="handleEdit"
-              v-hasPerm="['user_edit']"
+            <el-button type="warning"
+                       icon="el-icon-edit-outline"
+                       size="mini"
+                       :disabled="single"
+                       @click="handleEdit"
             >修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              :disabled="multiple"
-              @click="handleDel"
-              v-hasPerm="['user_del']"
+            <el-button type="danger"
+                       icon="el-icon-delete"
+                       size="mini"
+                       :disabled="multiple"
+                       @click="handleDel"
             >删除</el-button>
           </el-col>
-
           <div class="top-right-btn">
-            <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-              <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
+            <el-tooltip class="item"
+                        effect="dark"
+                        content="刷新"
+                        placement="top"
+            >
+              <el-button size="mini"
+                         circle icon="el-icon-refresh"
+                         @click="handleQuery"
+              />
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-              <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
+            <el-tooltip class="item"
+                        effect="dark"
+                        :content="showSearch ? '隐藏搜索' : '显示搜索'"
+                        placement="top"
+            >
+              <el-button size="mini"
+                         circle
+                         icon="el-icon-search"
+                         @click="showSearch=!showSearch"
+              />
             </el-tooltip>
           </div>
         </el-row>
 
-        <el-table v-loading="loading" :data="formDefinitionList" border @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="formDefinitionList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" size="small" header-align="center" align="center" width="50"/>
           <el-table-column label="表单名称"  prop="name" show-overflow-tooltip/>
           <el-table-column label="分类"  prop="formCategory.name" show-overflow-tooltip/>
           <el-table-column label="版本号" prop="formDefinitionJson.version" show-overflow-tooltip/>
           <el-table-column label="状态" prop="formDefinitionJson.status" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.formDefinitionJson && scope.row.formDefinitionJson.status === '1'" size="small" type="success">已发布</el-tag>
-              <el-tag v-else size="small" type="danger">未发布</el-tag>
+              <el-tag v-if="scope.row.formDefinitionJson.status === '1'"
+                      size="small"
+                      type="success"
+              >已发布</el-tag>
+              <el-tag v-else
+                      size="small"
+                      type="danger"
+              >未发布</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="是否主版本" prop="formDefinitionJson.isPrimary" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.formDefinitionJson && scope.row.formDefinitionJson.isPrimary === '1'" size="small" type="success">主版本</el-tag>
-              <el-tag v-else size="small" type="danger">非主版本</el-tag>
+              <el-tag v-if="scope.row.formDefinitionJson.isPrimary === '1'"
+                      size="small"
+                      type="success"
+              >主版本</el-tag>
+              <el-tag v-else
+                      size="small"
+                      type="danger"
+              >非主版本</el-tag>
             </template>
           </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            width="180"
-            class-name="small-padding fixed-width"
-          >
+          <el-table-column label="操作" align="center" width="240" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleEdit(scope.row)"
-                v-hasPerm="['user_edit']"
+              <el-button type="text"
+                         icon="el-icon-view"
+                         size="small"
+                         @click="showDesignForm(scope.row.id, scope.row.formDefinitionJson.id)"
+              >设计</el-button>
+              <el-button type="text"
+                         icon="el-icon-edit"
+                         size="small"
+                         @click="handleEdit(scope.row)"
               >修改</el-button>
-              <el-button
-                v-if="scope.row.id !== 1"
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleDel(scope.row)"
-                v-hasPerm="['user_del']"
+              <el-button type="text"
+                         icon="el-icon-edit"
+                         size="small"
+                         @click="manage(scope.row.id)"
+              >版本管理</el-button>
+              <el-button type="text"
+                         icon="el-icon-delete"
+                         size="small"
+                         @click="handleDel(scope.row)"
               >删除</el-button>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-key"
-                @click="handleResetPwd(scope.row)"
-                v-hasPerm="['user_reset']"
-              >重置</el-button>
             </template>
           </el-table-column>
         </el-table>
-
-        <pagination
-          v-show="total>0"
-          :total="total"
-          :page.sync="queryParams.current"
-          :limit.sync="queryParams.size"
-          @pagination="getList"
+        <pagination v-show="total>0"
+                    :total="total"
+                    :page.sync="queryParams.current"
+                    :limit.sync="queryParams.size"
+                    @pagination="getList"
         />
       </el-col>
     </el-row>
@@ -346,17 +356,15 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
-    // 树形结构筛选节点
-    filterNode (value, data) {
+    /** 设置表单分类树形结构筛选节点逻辑 */
+    formCategoryFilterNode (value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    // 处理节点点击操作
-    handleNodeClick (data) {
-      // 本地处理表单定义数据过滤
-      const formDefinitionList = this.formDefinitionList.filter(item => item.formCategory.id === data.id)
-      this.formDefinitionList = formDefinitionList
-      this.total = formDefinitionList.length
+    /** 处理表单分类节点点击操作 */
+    handleFormCategoryNodeClick (node) {
+      this.queryParams.categoryId = node.id
+      this.handleQuery()
     },
     /** 处理添加表单分类 */
     handleAddFormCategory () {

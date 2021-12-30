@@ -1,4 +1,5 @@
 package com.entfrm.biz.extension.entity;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class FormDefinition extends CommonEntity {
 	/** 反序列化密钥 */
 	private static final long serialVersionUID = 1L;
 
+	@TableId
 	private Integer id;
 
 	/** 表单定义分类管理id */
@@ -31,9 +33,9 @@ public class FormDefinition extends CommonEntity {
 	private String name;
 
 	/** 表单定义分类 */
-	private FormCategory formCategory;
+	private FormCategory formCategory = new FormCategory();
 
 	/** 表单定义json */
-	private FormDefinitionJson formDefinitionJson;
+	private FormDefinitionJson formDefinitionJson = new FormDefinitionJson();
 
 }

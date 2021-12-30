@@ -302,11 +302,16 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        delFormCategory(node.id).then(response => {
-          this.loading = false
-          this.msgSuccess("删除成功")
-          this.getFormCategoryTree()
-        })
+        if(node.id){
+          // 针对于行删除做处理需要查找子集删除
+          const treeData = XEUtils.findTree(this.formCategoryTreeData, item => item.id === node.id, { children:'children' })
+          const ids = XEUtils.toTreeArray([treeData.item], { children:'children', data:'id' })
+          delFormCategory(ids).then(response => {
+            this.loading = false
+            this.msgSuccess("删除成功")
+            this.getFormCategoryTree()
+          })
+        }
       }).catch(() => {})
     }
   }

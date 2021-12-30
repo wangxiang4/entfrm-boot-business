@@ -108,7 +108,6 @@ export default {
         this.title = '新建表单分类'
       } else if (method == 'addChild') {
         this.title = '添加下级表单分类'
-        this.form.parentId = data.parentId
       } else if (method == 'edit') {
         this.title = '修改表单分类'
       } else if (method == 'view') {
@@ -119,6 +118,7 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs.form.resetFields()
+        this.form.parentId = data.parentId
         // 查询关联数据
         const chain = [
           listFormCategory().then(response => {

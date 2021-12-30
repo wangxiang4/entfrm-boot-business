@@ -21,8 +21,9 @@ public interface FormDefinitionMapper extends BaseMapper<FormDefinition> {
      * com.baomidou.mybatisplus.core.injector.AbstractMethod.sqlWhereEntityWrapper(boolean newLine, TableInfo table)
      * 发现EntityWrapper(简称ew)如果在xml中使用是不会做任何处理的,只有类似于这种@select()增删改查的注解与使用mybatis-plus内部的crud方法做了处理
      * 所以就导致无法使用ew,只能采用实体类往内部传值了
-     *@Param
-     *@return
+     *
+     * @Param
+     * @return
      */
     IPage<FormDefinition> findList(Page page, @Param("ew") FormDefinition formDefinition);
 

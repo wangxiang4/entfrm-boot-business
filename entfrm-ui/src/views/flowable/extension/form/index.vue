@@ -297,7 +297,7 @@ export default {
   },
   watch: {
     name (val) {
-      this.$refs.formCategoryTree.filter(val);
+      this.$refs.formCategoryTree.filter(val)
     }
   },
   created() {
@@ -307,12 +307,12 @@ export default {
   methods: {
     /** 查询表单定义列表 */
     getList() {
-      this.loading = true;
+      this.loading = true
       listFormDefinition(this.queryParams).then(response => {
-          this.formDefinitionList = response.data;
-          this.total = response.total;
-          this.loading = false;
-      });
+          this.formDefinitionList = response.data
+          this.total = response.total
+          this.loading = false
+      })
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
     reset () {
@@ -333,14 +333,14 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.current = 1;
-      this.getList();
+      this.queryParams.current = 1
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.resetForm("queryForm")
     },
-    // 多选框选中数据
+    /** 处理多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1

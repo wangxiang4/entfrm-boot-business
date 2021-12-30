@@ -47,7 +47,7 @@ export function editFormCategory(data) {
 // 删除表单分类管理
 export function delFormCategory(id) {
   return request({
-    url: '/flowable/extension/actCategory/remove/' + id,
+    url: '/flowable/extension/formCategory/remove/' + id,
     method: 'delete'
   })
 }

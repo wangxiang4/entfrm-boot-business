@@ -27,22 +27,16 @@ public class ActCategoryController {
 
     private final ActCategoryService actCategoryService;
 
-    private LambdaQueryWrapper<ActCategory> getLambdaQueryWrapper() {
-        return new LambdaQueryWrapper<ActCategory>().orderByAsc(ActCategory::getSort);
-    }
-
     @GetMapping("/list")
     public R list() {
-        List<ActCategory> actCategories = actCategoryService.list(getLambdaQueryWrapper());
+        List<ActCategory> actCategories = actCategoryService.list();
         return R.ok(actCategories);
     }
-
 
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
         return R.ok(actCategoryService.getById(id));
     }
-
 
     @PostMapping("/save")
     public R save(@RequestBody ActCategory actCategory) {
@@ -50,19 +44,16 @@ public class ActCategoryController {
         return R.ok();
     }
 
-
     @PutMapping("/update")
     public R update(@RequestBody ActCategory actCategory) {
         actCategoryService.updateById(actCategory);
         return R.ok();
     }
 
-
     @DeleteMapping("/remove/{id}")
     public R remove(@PathVariable Integer[] id) {
         actCategoryService.removeByIds(Arrays.asList(id));
         return R.ok();
     }
-
 
 }

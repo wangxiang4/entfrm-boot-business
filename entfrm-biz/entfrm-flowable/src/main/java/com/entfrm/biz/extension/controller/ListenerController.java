@@ -38,19 +38,16 @@ public class ListenerController {
                 .eq(ObjectUtil.isNotNull(listener.getListenerType()), Listener::getListenerType, listener.getListenerType());
     }
 
-
     @GetMapping("/list")
     public R list(Page page, Listener listener) {
         IPage<Button> buttonIPage = listenerService.page(page, getLambdaQueryWrapper(listener));
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
 
-
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
         return R.ok(listenerService.getById(id));
     }
-
 
     @PostMapping("/save")
     public R save(@RequestBody Listener listener) {
@@ -58,13 +55,11 @@ public class ListenerController {
         return R.ok();
     }
 
-
     @PutMapping("/update")
     public R update(@RequestBody Listener listener) {
         listenerService.updateById(listener);
         return R.ok();
     }
-
 
     @DeleteMapping("/remove/{id}")
     public R remove(@PathVariable Integer[] id) {

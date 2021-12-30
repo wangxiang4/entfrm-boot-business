@@ -239,7 +239,7 @@ export default {
       this.loading = true
       listActCategory().then(response => {
         this.dataList = XEUtils.toArrayTree(response.data,{
-          parentKey: 'parentId', key: 'id', children: 'children'
+          parentKey: 'parentId', key: 'id', children: 'children', sortKey: 'sort'
         })
         this.handleSearch()
         this.loading = false

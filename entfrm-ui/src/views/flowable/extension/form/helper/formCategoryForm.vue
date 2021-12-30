@@ -42,9 +42,9 @@
           <el-form-item label="排序"
                         prop="sort"
                         :rules="[
-                      {required: true, message:'排序不能为空', trigger:'blur'},
-                      {validator: validator.isNumber, trigger:'blur'}
-                    ]"
+                          {required: true, message:'排序不能为空', trigger:'blur'},
+                          {validator: validator.isNumberValidator, trigger:'blur'}
+                        ]"
           >
             <el-input v-model="form.sort" placeholder="请填写排序"/>
           </el-form-item>

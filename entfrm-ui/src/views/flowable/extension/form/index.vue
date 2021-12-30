@@ -19,7 +19,7 @@
                          circle
                          size="small"
                          icon="el-icon-plus"
-                         @click="handleFormCategoryAdd"
+                         @click="handleAddFormCategory"
               />
             </el-col>
           </el-row>
@@ -42,9 +42,9 @@
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span>{{ node.label }}</span>
               <span>
-                <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="addChildTreeNode(data)"/>
-                <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="editTreeNode(data)"/>
-                <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="delTreeNode(data)"/>
+                <el-button type="text" class="tree-item-button" icon="el-icon-plus" @click="handleAddChildFormCategory(data)"/>
+                <el-button type="text" class="tree-item-button" icon="el-icon-edit-outline" @click="handleEditFormCategory(data)"/>
+                <el-button type="text" class="tree-item-button" icon="el-icon-delete" @click="handleDelFormCategory(data)"/>
               </span>
             </span>
           </el-tree>
@@ -187,13 +187,13 @@
         />
       </el-col>
     </el-row>
-    <form-category-form ref="formCategoryForm" @refresh="getList"/>
+    <form-category-form ref="formCategoryForm" @refresh="getFormCategoryTree"/>
   </div>
 </template>
 
 <script>
 import { listFormDefinition } from '@/api/flowable/extension/formDefinition'
-import { listFormCategory } from '@/api/flowable/extension/formCategory'
+import { listFormCategory, delFormCategory } from '@/api/flowable/extension/formCategory'
 import formCategoryForm from './helper/formCategoryForm'
 import XEUtils from 'xe-utils'
 export default {
@@ -251,7 +251,7 @@ export default {
     getFormCategoryTree () {
       listFormCategory().then(response => {
         this.formCategoryTreeData = XEUtils.toArrayTree(response.data,{
-          parentKey: 'parentId', key: 'id', children: 'children'
+          parentKey: 'parentId', key: 'id', children: 'children', sortKey: 'sort'
         })
       })
     },
@@ -282,9 +282,32 @@ export default {
       this.formDefinitionList = formDefinitionList
       this.total = formDefinitionList.length
     },
-    /** 处理表单分类添加 */
-    handleFormCategoryAdd () {
+    /** 处理添加表单分类 */
+    handleAddFormCategory () {
       this.$refs.formCategoryForm.setData('add')
+    },
+    /** 处理添加子项表单分类 */
+    handleAddChildFormCategory (node) {
+      this.$refs.formCategoryForm.setData('addChild', { parentId: node.id })
+    },
+    /** 处理修改表单分类 */
+    handleEditFormCategory (node) {
+      this.$refs.formCategoryForm.setData('edit', { id: node.id })
+    },
+    /** 处理删除表单分类 */
+    handleDelFormCategory (node) {
+      this.$confirm(`确定删除所选项吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        delFormCategory(node.id).then(response => {
+          this.loading = false
+          this.msgSuccess("删除成功")
+          this.getFormCategoryTree()
+        })
+      }).catch(() => {})
     }
   }
 }

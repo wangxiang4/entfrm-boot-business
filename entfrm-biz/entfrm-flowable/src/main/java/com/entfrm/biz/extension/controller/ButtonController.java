@@ -43,12 +43,10 @@ public class ButtonController {
         return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
     }
 
-
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
         return R.ok(buttonService.getById(id));
     }
-
 
     @PostMapping("/save")
     public R save(@RequestBody Button button) {
@@ -56,19 +54,16 @@ public class ButtonController {
         return R.ok();
     }
 
-
     @PutMapping("/update")
     public R update(@RequestBody Button button) {
         buttonService.updateById(button);
         return R.ok();
     }
 
-
     @DeleteMapping("/remove/{id}")
     public R remove(@PathVariable Integer[] id) {
         buttonService.removeByIds(Arrays.asList(id));
         return R.ok();
     }
-
 
 }

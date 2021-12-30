@@ -1,16 +1,19 @@
 package com.entfrm.data.config;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author yong
- * @date 2020/2/1
+ *<p>
+ * mybatis-plus配置
+ *</p>
  *
- * @description mybatisplus配置
+ * @Author: entfrm开发团队-王翔
+ * @Date: 2021/12/30
  */
 @Configuration
 @MapperScan("com.entfrm.biz.*.mapper")
@@ -24,8 +27,10 @@ public class MybatisPlusConfig {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public PaginationInterceptor paginationInterceptor() {
-		return new PaginationInterceptor();
+	public MybatisPlusInterceptor paginationInterceptor() {
+		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+		interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+		return interceptor;
 	}
 
 	/**

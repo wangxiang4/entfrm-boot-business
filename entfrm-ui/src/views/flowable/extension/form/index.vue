@@ -52,20 +52,43 @@
       </el-col>
       <!--流程表单数据-->
       <el-col :span="19" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="表单名称" prop="formDefinition.name">
-            <el-input
-              v-model="queryParams.formDefinition.name"
-              placeholder="请输入表单名称"
-              clearable
-              size="small"
-              style="width: 240px"
-              @keyup.enter.native="handleQuery"
+        <el-form v-show="showSearch"
+                 ref="queryForm"
+                 :model="queryParams"
+                 :inline="true"
+                 label-width="68px"
+        >
+          <el-form-item label="表单分类" prop="categoryId">
+            <tree-select :value="queryParams.categoryId"
+                         :list="formCategoryTreeData"
+                         :props="{
+                           value: 'id',             // ID字段名
+                           label: 'name',           // 显示名称
+                           children: 'children'     // 子级字段名
+                         }"
+                         :clearable="true"
+                         :accordion="true"
+                         @getValue="(value) => { queryParams.categoryId = value }"
+            />
+          </el-form-item>
+          <el-form-item label="表单名称" prop="name">
+            <el-input v-model="queryParams.name"
+                      placeholder="请输入表单名称"
+                      clearable
+                      size="small"
+                      @keyup.enter.native="handleQuery"
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh-right" size="mini" @click="resetQuery">重置</el-button>
+            <el-button type="primary"
+                       icon="el-icon-search"
+                       size="mini"
+                       @click="handleQuery"
+            >搜索</el-button>
+            <el-button icon="el-icon-refresh-right"
+                       size="mini"
+                       @click="resetQuery"
+            >重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -81,8 +104,8 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              type="success"
-              icon="el-icon-edit"
+              type="warning"
+              icon="el-icon-edit-outline"
               size="mini"
               :disabled="single"
               @click="handleEdit"
@@ -98,24 +121,6 @@
               @click="handleDel"
               v-hasPerm="['user_del']"
             >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="info"
-              icon="el-icon-upload2"
-              size="mini"
-              @click="handleImport"
-              v-hasPerm="['user_import']"
-            >导入</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="warning"
-              icon="el-icon-download"
-              size="mini"
-              @click="handleExport"
-              v-hasPerm="['user_export']"
-            >导出</el-button>
           </el-col>
 
           <div class="top-right-btn">
@@ -188,29 +193,83 @@
       </el-col>
     </el-row>
     <form-category-form ref="formCategoryForm" @refresh="getFormCategoryTree"/>
+    <!-- 添加或修改参数配置对话框 -->
+    <el-dialog :title="title"
+               :visible.sync="open"
+               :close-on-click-modal="false"
+    >
+      <el-form ref="form"
+               size="small"
+               :model="form"
+               :disabled="method=='view'"
+               label-width="120px"
+               @keyup.enter.native="handleSubmitForm"
+               @submit.native.prevent
+      >
+        <el-row :gutter="15">
+          <el-col :span="24">
+            <el-form-item label="分类"
+                          prop="categoryId"
+                          :rules="[{ required: true, message: '分类不能为空', trigger: 'blur' }]"
+            >
+              <tree-select ref="category"
+                           :value="form.categoryId"
+                           :list="formCategoryTreeData"
+                           :props="{
+                             value: 'id',             // ID字段名
+                             label: 'name',           // 显示名称
+                             children: 'children'     // 子级字段名
+                           }"
+                          :clearable="true"
+                          :accordion="true"
+                          @getValue="(value) => { form.categoryId = value }"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="表单名称"
+                          prop="name"
+                          :rules="[{ required: true, message: '表单名称不能为空', trigger: 'blur' }]"
+            >
+              <el-input v-model="form.name" placeholder="请填写表单名称"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small"
+                   @click="open = false"
+        >关闭</el-button>
+        <el-button v-if="method != 'view'"
+                   size="small"
+                   type="primary"
+                   @click="handleSubmitForm"
+        >确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listFormDefinition } from '@/api/flowable/extension/formDefinition'
+import { listFormDefinition, getFormDefinition, addFormDefinition, editFormDefinition, delFormDefinition } from '@/api/flowable/extension/formDefinition'
 import { listFormCategory, delFormCategory } from '@/api/flowable/extension/formCategory'
 import formCategoryForm from './helper/formCategoryForm'
+import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
 export default {
-  components: { formCategoryForm },
+  components: { formCategoryForm, treeSelect },
   data () {
     return {
       // 遮罩层
       loading: true,
-      // 表单分类名称
+      // 表单分类搜索名称
       name: undefined,
       // 查询表单定义条件
       queryParams: {
         current: 1,
         size: 10,
-        formDefinition: {
-          name : undefined
-        }
+        name: undefined,
+        categoryId: undefined
       },
       // 表单定义数据
       formDefinitionList: [],
@@ -225,7 +284,15 @@ export default {
       // 非单个禁用
       single: true,
       // 非多个禁用
-      multiple: true
+      multiple: true,
+      // 参数配置对话框标题
+      title: '',
+      // 参数配置对话框显示
+      open: false,
+      // 参数配置对话框表单
+      form: {},
+      // 参数配置对话框操作
+      method: ''
     }
   },
   watch: {
@@ -246,6 +313,15 @@ export default {
           this.total = response.total;
           this.loading = false;
       });
+    },
+    /** 表单重置,主要清除参数配置对话框缓存 */
+    reset () {
+      this.form = {
+        id: undefined,
+        categoryId: undefined,
+        name: undefined,
+        remarks: undefined
+      }
     },
     /** 查询表单分类树 */
     getFormCategoryTree () {
@@ -313,6 +389,80 @@ export default {
           })
         }
       }).catch(() => {})
+    },
+    /** 处理新增按钮操作 */
+    handleAdd () {
+      this.reset()
+      this.getFormCategoryTree()
+      this.title = '添加流程表单'
+      this.method = 'add'
+      this.open = true
+    },
+    /** 处理修改按钮操作 */
+    handleEdit (row) {
+      const id = row.id || this.ids
+      this.getFormCategoryTree()
+      getFormDefinition(id).then(response => {
+        this.form = response.data
+        this.title = '修改流程表单'
+        this.method = 'edit'
+        this.open = true
+      })
+    },
+    /** 处理查看按钮操作 */
+    handleView (row) {
+      const id = row.id || this.ids
+      this.getFormCategoryTree()
+      getFormDefinition(id).then(response => {
+        this.form = response.data
+        this.title = "查看流程表单"
+        this.method = 'view'
+        this.open = true
+      })
+    },
+    /** 处理删除按钮操作 */
+    handleDel (row) {
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除所选项编号为"' + ids + '"的数据项?', "警告", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        delFormDefinition(ids).then(response => {
+          this.loading = false
+          this.msgSuccess("删除成功")
+          this.getList()
+        })
+      }).catch(() => {})
+    },
+    /** 处理表单提交 */
+    handleSubmitForm () {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.method == 'edit') {
+            editFormDefinition(this.form).then(response => {
+              if (response.code === 0) {
+                this.msgSuccess("修改成功")
+                this.open = false
+                this.getList()
+              } else {
+                this.msgError(response.msg)
+              }
+            })
+          } else {
+            addFormDefinition(this.form).then(response => {
+              if (response.code === 0) {
+                this.msgSuccess("新增成功")
+                this.open = false
+                this.getList()
+              } else {
+                this.msgError(response.msg)
+              }
+            })
+          }
+        }
+      })
     }
   }
 }

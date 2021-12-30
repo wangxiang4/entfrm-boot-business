@@ -5,47 +5,44 @@
 
 	<select id="findList" resultType="com.entfrm.biz.extension.entity.FormDefinition" >
 		SELECT
-		a.id AS "id",
-		a.create_by AS "createBy",
-		a.create_time AS "createTime",
-		a.update_by AS "updateBy",
-		a.update_time AS "updateTime",
-		a.remarks AS "remarks",
-		a.del_flag AS "delFlag",
-		a.category_id AS "categoryId",
-		a.name AS "name",
-		b.id AS "formCategory.id",
-		b.create_by AS "formCategory.createBy",
-		b.create_time AS "formCategory.createTime",
-		b.update_by AS "formCategory.updateBy",
-		b.update_time AS "formCategory.updateTime",
-		b.remarks AS "formCategory.remarks",
-		b.del_flag AS "formCategory.delFlag",
-		b.parent_id AS "formCategory.parentId",
-		b.name AS "formCategory.name",
-		b.sort AS "formCategory.sort",
-		c.id AS "formDefinitionJson.id",
-		c.create_by AS "formDefinitionJson.createBy",
-		c.create_time AS "formDefinitionJson.createTime",
-		c.update_by AS "formDefinitionJson.updateBy",
-		c.update_time AS "formDefinitionJson.updateTime",
-		c.form_definition_id AS "formDefinitionJson.formDefinitionId",
-		c.json AS "formDefinitionJson.json",
-		c.version AS "formDefinitionJson.version",
-		c.status AS "formDefinitionJson.status",
-		c.is_primary AS "formDefinitionJson.isPrimary"
+			a.id AS "id",
+			a.create_by AS "createBy",
+			a.create_time AS "createTime",
+			a.update_by AS "updateBy",
+			a.update_time AS "updateTime",
+			a.remarks AS "remarks",
+			a.del_flag AS "delFlag",
+			a.category_id AS "categoryId",
+			a.name AS "name",
+			b.id AS "formCategory.id",
+			b.create_by AS "formCategory.createBy",
+			b.create_time AS "formCategory.createTime",
+			b.update_by AS "formCategory.updateBy",
+			b.update_time AS "formCategory.updateTime",
+			b.remarks AS "formCategory.remarks",
+			b.del_flag AS "formCategory.delFlag",
+			b.parent_id AS "formCategory.parentId",
+			b.name AS "formCategory.name",
+			b.sort AS "formCategory.sort",
+			c.id AS "formDefinitionJson.id",
+			c.create_by AS "formDefinitionJson.createBy",
+			c.create_time AS "formDefinitionJson.createTime",
+			c.update_by AS "formDefinitionJson.updateBy",
+			c.update_time AS "formDefinitionJson.updateTime",
+			c.form_definition_id AS "formDefinitionJson.formDefinitionId",
+			c.json AS "formDefinitionJson.json",
+			c.version AS "formDefinitionJson.version",
+			c.status AS "formDefinitionJson.status",
+			c.is_primary AS "formDefinitionJson.isPrimary"
 		FROM
-		act_extension_form_def a
-		LEFT JOIN act_extension_form_category b ON b.id = a.category_id
-		LEFT JOIN act_extension_form_def_json c ON c.form_definition_id = a.id
+			act_extension_form_def a
+			LEFT JOIN act_extension_form_category b ON b.id = a.category_id
+			LEFT JOIN act_extension_form_def_json c ON c.form_definition_id = a.id
 		<where>
 			a.del_flag = '0'
-			AND ( c.is_primary = '1' or c.is_primary is null)
-			<if test="formDefinition.name != null and formDefinition.name != ''">
-				AND a.name = #{name}
-			</if>
-			<if test="formDefinition.formDefinitionJson != null and formDefinition.formDefinitionJson.status != null and formDefinition.formDefinitionJson.status != ''">
-				AND c.status = #{formDefinitionJson.status}
+			AND (c.is_primary = '1' or c.is_primary is null)
+			<if test="ew.name != null and ew.name != ''">
+				AND a.name = #{ew.name}
 			</if>
 		</where>
 	</select>

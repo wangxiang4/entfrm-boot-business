@@ -122,7 +122,11 @@
               <tree-select ref="parent"
                            :value="form.parentId"
                            :list="treeSelectList"
-                           :props="treeSelectProps"
+                           :props="{
+                             value: 'id',           // ID字段名
+                             label: 'name',         // 显示名称
+                             children: 'children'   // 子级字段名
+                           }"
                            :clearable="true"
                            :accordion="true"
                            @getValue="(value) => { form.parentId = value }"
@@ -198,14 +202,6 @@ export default {
       title: '',
       open: false,
       form: {},
-      treeSelectProps:{
-        // ID字段名
-        id: 'id',
-        // 显示名称
-        label: 'name',
-        // 子级字段名
-        children: 'children'
-      },
       treeSelectList:[],
       method: '',
       ids: [],

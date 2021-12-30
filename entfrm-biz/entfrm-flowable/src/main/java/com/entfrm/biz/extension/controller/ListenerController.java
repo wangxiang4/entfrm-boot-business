@@ -40,8 +40,8 @@ public class ListenerController {
 
     @GetMapping("/list")
     public R list(Page page, Listener listener) {
-        IPage<Button> buttonIPage = listenerService.page(page, getLambdaQueryWrapper(listener));
-        return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
+        IPage<Button> result = listenerService.page(page, getLambdaQueryWrapper(listener));
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/{id}")

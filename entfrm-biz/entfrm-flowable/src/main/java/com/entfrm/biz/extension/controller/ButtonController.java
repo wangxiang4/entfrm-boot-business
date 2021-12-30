@@ -39,8 +39,8 @@ public class ButtonController {
 
     @GetMapping("/list")
     public R list(Page page, Button button) {
-        IPage<Button> buttonIPage = buttonService.page(page, getLambdaQueryWrapper(button));
-        return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
+        IPage<Button> result = buttonService.page(page, getLambdaQueryWrapper(button));
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/{id}")

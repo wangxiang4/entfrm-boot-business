@@ -137,6 +137,19 @@ export const constantRoutes = [
     component: (resolve) => require(['@/views/toolkit/form/online'], resolve),
     hidden: true
   },
+  {
+    path: '/form',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/formDefinitionJson/:id',
+        component: (resolve) => require(['@/views/flowable/extension/form/helper/formDefinitionJson'], resolve),
+        name: 'FormDefinitionJson',
+        meta: { title: '版本管理' }
+      }
+    ]
+  }
 ]
 
 export default new Router({

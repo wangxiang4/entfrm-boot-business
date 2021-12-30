@@ -29,8 +29,8 @@ public class ActCategoryController {
 
     @GetMapping("/list")
     public R list() {
-        List<ActCategory> actCategories = actCategoryService.list();
-        return R.ok(actCategories);
+        List<ActCategory> result = actCategoryService.list();
+        return R.ok(result);
     }
 
     @GetMapping("/{id}")

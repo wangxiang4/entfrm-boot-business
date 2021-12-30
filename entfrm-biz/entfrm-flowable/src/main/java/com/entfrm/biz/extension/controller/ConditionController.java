@@ -37,8 +37,8 @@ public class ConditionController {
 
     @GetMapping("/list")
     public R list(Page page, Condition condition) {
-        IPage<Button> buttonIPage = conditionService.page(page, getLambdaQueryWrapper(condition));
-        return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
+        IPage<Button> result = conditionService.page(page, getLambdaQueryWrapper(condition));
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/{id}")

@@ -1,0 +1,195 @@
+<template>
+  <div class="app-container">
+    <el-form v-show="showSearch"
+             :model="queryParams"
+             :inline="true"
+             ref="queryForm"
+             size="small"
+             @keyup.enter.native="handleQuery"
+             @submit.native.prevent
+    >
+      <el-form-item prop="version">
+        <el-input v-model="queryParams.version"
+                  placeholder="版本号"
+                  clearable
+        />
+      </el-form-item>
+      <el-form-item prop="status">
+        <el-input v-model="queryParams.status"
+                  placeholder="状态"
+                  clearable
+        />
+      </el-form-item>
+      <el-form-item prop="isPrimary">
+        <el-input v-model="queryParams.isPrimary"
+                  placeholder="是否主版本"
+                  clearable
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary"
+                   icon="el-icon-search"
+                   size="mini"
+                   @click="handleQuery"
+        >搜索</el-button>
+        <el-button icon="el-icon-refresh-right"
+                   size="mini"
+                   @click="resetQuery"
+        >重置</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row :gutter="10" class="mb8">
+      <div class="top-right-btn">
+        <el-tooltip class="item"
+                    effect="dark"
+                    content="刷新"
+                    placement="top"
+        >
+          <el-button size="mini"
+                     circle
+                     icon="el-icon-refresh"
+                     @click="handleQuery"
+          />
+        </el-tooltip>
+        <el-tooltip class="item"
+                    effect="dark"
+                    :content="showSearch ? '隐藏搜索' : '显示搜索'"
+                    placement="top"
+        >
+          <el-button size="mini"
+                     circle icon="el-icon-search"
+                     @click="showSearch = !showSearch"
+          />
+        </el-tooltip>
+      </div>
+    </el-row>
+    <el-table v-loading="loading" border :data="dataList">
+      <el-table-column type="selection" align="center" width="50"/>
+      <el-table-column prop="formDefinitionId" label="流程定义ID" show-overflow-tooltip/>
+      <el-table-column prop="json" label="流程表单结构体" show-overflow-tooltip/>
+      <el-table-column prop="version" label="版本号"/>
+      <el-table-column prop="status" label="状态" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === '1'" size="small" type="success">已发布</el-tag>
+          <el-tag v-else size="small" type="danger">未发布</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="isPrimary" label="是否主版本" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isPrimary === '1'" size="small" type="success">主版本</el-tag>
+          <el-tag v-else size="small" type="danger">非主版本</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" width="240" label="操作">
+        <template slot-scope="scope">
+          <el-button type="text"
+                     icon="el-icon-view"
+                     size="mini"
+                     @click="handlePreview(scope.row)"
+          >预览</el-button>
+          <el-button v-if="scope.row.isPrimary === '0'"
+                     type="text"
+                     icon="el-icon-edit"
+                     size="mini"
+                     @click="handleSetPrimaryVersion(scope.row)"
+          >设置为主版本</el-button>
+          <el-button v-if="scope.row.isPrimary === '0'"
+                     type="text"
+                     size="mini"
+                     icon="el-icon-delete"
+                     @click="handleDel(scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination v-show="total>0"
+                :total="total"
+                :page.sync="queryParams.current"
+                :limit.sync="queryParams.size"
+                @pagination="getList"
+    />
+  </div>
+</template>
+
+<script>
+/**
+ * Copyright © 2020-2021 <a href="http://www.entfrm.com/">entfrm</a> All rights reserved.
+ * author entfrm开发团队-王翔
+ */
+import { listFormDefinitionJson, delFormDefinitionJson, updatePrimaryVersion } from '@/api/flowable/extension/formDefinitionJson'
+export default {
+  data () {
+    return {
+      queryParams: {
+        current: 1,
+        size: 10,
+        formDefinitionId: this.$route.params.id,
+        version: undefined,
+        status: undefined,
+        isPrimary: undefined
+      },
+      showSearch: true,
+      dataList: [],
+      total: 0,
+      loading: false
+    }
+  },
+  created(){
+    this.getList()
+  },
+  methods: {
+    /** 查询列表 */
+    getList() {
+      this.loading = true
+      listFormDefinitionJson(this.queryParams).then(response => {
+        this.dataList = response.data
+        this.total = response.total
+        this.loading = false
+      })
+    },
+    /** 处理搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.current = 1
+      this.getList()
+    },
+    /** 重置按钮操作 */
+    resetQuery () {
+      this.resetForm("queryForm")
+    },
+    /** 处理删除按钮操作 */
+    handleDel (row) {
+      this.$confirm(`确定删除该版本吗? 删除之后，已发起的流程如果使用了该版本，将无法查看表单内容!`, '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        delFormDefinitionJson(row.id).then(response => {
+          this.loading = false
+          this.msgSuccess("删除成功")
+          this.getList()
+        })
+      }).catch(() => {})
+    },
+    /** 处理设置主版本 */
+    handleSetPrimaryVersion (row) {
+      this.$confirm(`确定设置该版本为主版本吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        updatePrimaryVersion(row.id).then(response => {
+          this.loading = false
+          this.msgSuccess("设置成功")
+          this.getList()
+        })
+      }).catch(() => {})
+    },
+    /** 处理预览 */
+    handlePreview (row) {
+
+    }
+  }
+}
+</script>

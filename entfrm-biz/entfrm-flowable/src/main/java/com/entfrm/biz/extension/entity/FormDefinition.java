@@ -27,7 +27,7 @@ public class FormDefinition extends CommonEntity {
 	private Integer id;
 
 	/** 表单定义分类管理id */
-	private String categoryId;
+	private Integer categoryId;
 
 	/** 表单定义名称 */
 	private String name;

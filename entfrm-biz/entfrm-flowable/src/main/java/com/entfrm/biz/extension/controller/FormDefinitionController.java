@@ -31,8 +31,8 @@ public class FormDefinitionController {
 
     @GetMapping("/list")
     public R list(Page page, FormDefinition formDefinition) {
-        IPage<FormDefinition> buttonIPage = FormDefinitionService.findList(page, formDefinition);
-        return R.ok(buttonIPage.getRecords(), buttonIPage.getTotal());
+        IPage<FormDefinition> result = FormDefinitionService.findList(page, formDefinition);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/{id}")

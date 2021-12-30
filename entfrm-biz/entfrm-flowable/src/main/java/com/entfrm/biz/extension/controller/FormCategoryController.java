@@ -26,8 +26,8 @@ public class FormCategoryController {
 
 	@GetMapping("/list")
 	public R list() {
-		List<FormCategory> actCategories = formCategoryService.list();
-		return R.ok(actCategories);
+		List<FormCategory> result = formCategoryService.list();
+		return R.ok(result);
 	}
 
 	@GetMapping("/{id}")

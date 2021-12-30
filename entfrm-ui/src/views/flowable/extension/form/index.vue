@@ -139,7 +139,6 @@
             </el-tooltip>
           </div>
         </el-row>
-
         <el-table v-loading="loading" :data="formDefinitionList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" size="small" header-align="center" align="center" width="50"/>
           <el-table-column label="表单名称"  prop="name" show-overflow-tooltip/>
@@ -184,7 +183,7 @@
               <el-button type="text"
                          icon="el-icon-edit"
                          size="small"
-                         @click="manage(scope.row.id)"
+                         @click="handleVersionManage(scope.row)"
               >版本管理</el-button>
               <el-button type="text"
                          icon="el-icon-delete"
@@ -471,6 +470,10 @@ export default {
           }
         }
       })
+    },
+    /** 处理版本管理 */
+    handleVersionManage (row) {
+      this.$router.push({ name: 'FormDefinitionJson', params: { id: row.id } })
     }
   }
 }

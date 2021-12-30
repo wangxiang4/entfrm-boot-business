@@ -118,6 +118,7 @@
  */
 import { listFormDefinitionJson, delFormDefinitionJson, updatePrimaryVersion } from '@/api/flowable/extension/formDefinitionJson'
 export default {
+  name: 'FormDefinitionJson',
   data () {
     return {
       queryParams: {

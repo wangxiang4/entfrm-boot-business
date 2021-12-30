@@ -266,6 +266,7 @@ import formCategoryForm from './helper/formCategoryForm'
 import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
 export default {
+  name: 'Form',
   components: { formCategoryForm, treeSelect },
   data () {
     return {

@@ -188,6 +188,7 @@ import { listActCategory, delActCategory, getActCategory, editActCategory, addAc
 import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
 export default {
+  name: 'ActCategory',
   components: {
     treeSelect
   },

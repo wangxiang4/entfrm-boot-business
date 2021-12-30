@@ -170,6 +170,7 @@
  */
 import { listButton, delButton, getButton, editButton, addButton } from '@/api/flowable/extension/button'
 export default {
+  name: 'Button',
   data () {
     return {
       queryParams: {

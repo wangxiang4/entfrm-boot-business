@@ -80,6 +80,7 @@
 import treeSelect from '@/components/TreeSelect'
 import { listFormCategory, getFormCategory, addFormCategory, editFormCategory } from '@/api/flowable/extension/formCategory'
 export default {
+  name: 'FormCategoryForm',
   components: {
     treeSelect
   },

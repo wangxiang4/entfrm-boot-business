@@ -163,6 +163,7 @@
  */
 import { listCondition, delCondition, editCondition, addCondition, getCondition } from '@/api/flowable/extension/condition'
 export default {
+  name: 'Condition',
   data () {
     return {
       queryParams: {

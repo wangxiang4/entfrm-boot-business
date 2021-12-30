@@ -203,6 +203,7 @@
  */
 import { listListener, delListener, editListener, addListener, getListener } from '@/api/flowable/extension/listener'
 export default {
+  name: 'Listener',
   data () {
     return {
       queryParams: {

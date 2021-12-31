@@ -17,4 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class FormDefinitionJsonServiceImpl extends ServiceImpl<FormDefinitionJsonMapper, FormDefinitionJson> implements FormDefinitionJsonService {
 
+    @Override
+    public int getMaxVersion(FormDefinitionJson formDefinitionJson) {
+        return baseMapper.getMaxVersion(formDefinitionJson);
+    }
+
 }

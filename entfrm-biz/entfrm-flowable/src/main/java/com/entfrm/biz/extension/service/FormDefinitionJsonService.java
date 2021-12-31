@@ -13,4 +13,6 @@ import com.entfrm.biz.extension.entity.FormDefinitionJson;
  */
 public interface FormDefinitionJsonService extends IService<FormDefinitionJson> {
 
+    int getMaxVersion(FormDefinitionJson formDefinitionJson);
+
 }

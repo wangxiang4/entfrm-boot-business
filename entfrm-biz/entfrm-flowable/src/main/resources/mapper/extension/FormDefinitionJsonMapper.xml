@@ -3,4 +3,8 @@
 
 <mapper namespace="com.entfrm.biz.extension.mapper.FormDefinitionJsonMapper">
 
+    <select id="getMaxVersion" resultType="Integer" >
+        SELECT IFNULL(MAX(a.version),0) as maxVersion FROM act_extension_form_def_json a where  a.form_definition_id = #{formDefinitionId}
+    </select>
+
 </mapper>

@@ -54,6 +54,33 @@ public class FormDefinitionJsonController {
         return R.ok(formDefinitionJsonService.getById(id));
     }
 
+    @PostMapping("/save")
+    public R save(@RequestBody FormDefinitionJson formDefinitionJson) {
+        formDefinitionJson.setVersion(0).setIsPrimary("1");
+        formDefinitionJsonService.save(formDefinitionJson);
+        return R.ok();
+    }
+
+    @PutMapping("/update")
+    public R update(@RequestBody FormDefinitionJson formDefinitionJson) {
+        formDefinitionJson.setIsPrimary("1");
+        FormDefinitionJson old =formDefinitionJsonService.getById(formDefinitionJson.getId());
+        // 如果表单已经发布,不可修改,只能发布为新版本
+        if("1".equals(old.getStatus())) {
+            formDefinitionJson.setId(null).setVersion(formDefinitionJsonService.getMaxVersion(formDefinitionJson)+1);
+            formDefinitionJsonService.save(formDefinitionJson);
+        } else {
+            formDefinitionJsonService.updateById(formDefinitionJson);
+        }
+        // 其余版本更新为非主版本
+        formDefinitionJsonService.update(
+                new FormDefinitionJson()
+                        .setIsPrimary("0"),
+                new LambdaUpdateWrapper<FormDefinitionJson>()
+                        .eq(FormDefinitionJson::getFormDefinitionId, formDefinitionJson.getFormDefinitionId())
+        );
+        return R.ok();
+    }
 
     @DeleteMapping("/remove/{id}")
     public R remove(@PathVariable Integer[] id) {
@@ -64,14 +91,14 @@ public class FormDefinitionJsonController {
     @PutMapping("/updatePrimaryVersion/{id}")
     public R updatePrimaryVersion(@PathVariable Integer id) {
         FormDefinitionJson formDefinitionJson =formDefinitionJsonService.getById(id);
-        //其余版本更新为非主版本
+        // 其余版本更新为非主版本
         formDefinitionJsonService.update(
                 new FormDefinitionJson()
                         .setIsPrimary("0"),
                 new LambdaUpdateWrapper<FormDefinitionJson>()
                         .eq(FormDefinitionJson::getFormDefinitionId, formDefinitionJson.getFormDefinitionId())
         );
-        //更新当前版本为主版本
+        // 更新当前版本为主版本
         formDefinitionJson.setIsPrimary("1");
         formDefinitionJsonService.updateById(formDefinitionJson);
         return R.ok();

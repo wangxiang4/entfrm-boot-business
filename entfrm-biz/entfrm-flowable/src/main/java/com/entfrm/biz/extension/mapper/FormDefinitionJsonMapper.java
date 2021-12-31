@@ -13,4 +13,6 @@ import com.entfrm.biz.extension.entity.FormDefinitionJson;
  */
 public interface FormDefinitionJsonMapper extends BaseMapper<FormDefinitionJson> {
 
+    int getMaxVersion(FormDefinitionJson formDefinitionJson);
+
 }

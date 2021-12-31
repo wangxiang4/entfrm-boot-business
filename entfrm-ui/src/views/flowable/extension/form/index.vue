@@ -173,7 +173,7 @@
               <el-button type="text"
                          icon="el-icon-view"
                          size="small"
-                         @click="showDesignForm(scope.row.id, scope.row.formDefinitionJson.id)"
+                         @click="handleFlowFormDesign(scope.row.id, scope.row.formDefinitionJson.id)"
               >设计</el-button>
               <el-button type="text"
                          icon="el-icon-edit"
@@ -201,6 +201,7 @@
         />
       </el-col>
     </el-row>
+    <flow-form-design ref="flowFormDesign" @refresh="getList"/>
     <form-category-form ref="formCategoryForm" @refresh="getFormCategoryTree"/>
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title"
@@ -264,10 +265,11 @@ import { listFormDefinition, getFormDefinition, addFormDefinition, editFormDefin
 import { listFormCategory, delFormCategory } from '@/api/flowable/extension/formCategory'
 import formCategoryForm from './helper/formCategoryForm'
 import treeSelect from '@/components/TreeSelect'
+import flowFormDesign from './helper/flowFormDesign'
 import XEUtils from 'xe-utils'
 export default {
   name: 'Form',
-  components: { formCategoryForm, treeSelect },
+  components: { formCategoryForm, treeSelect, flowFormDesign },
   data () {
     return {
       // 遮罩层
@@ -475,6 +477,11 @@ export default {
     /** 处理版本管理 */
     handleVersionManage (row) {
       this.$router.push({ name: 'FormDefinitionJson', params: { id: row.id } })
+    },
+    /** 处理工作流表单设计 */
+    handleFlowFormDesign (row) {
+      const formDefinitionJson = row.formDefinitionJson || {}
+      this.$refs.flowFormDesign.setData({ id: formDefinitionJson.id, formDefinitionId: row.id })
     }
   }
 }

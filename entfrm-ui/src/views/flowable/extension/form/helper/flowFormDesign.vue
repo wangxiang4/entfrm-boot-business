@@ -1,99 +1,140 @@
 <template>
   <div>
-    <el-dialog
-      fullscreen
-      title="设计流程表单"
-      center
-      :close-on-click-modal="false"
-      v-dialogDrag
-      :visible.sync="visible">
-      <el-form size="small" :model="inputForm" ref="inputForm" v-loading="loading" :class="method==='view'?'readonly':''"  :disabled="method==='view'"
+    <el-dialog v-loading="loading"
+               title="设计流程表单"
+               fullscreen
+               center
+               :visible.sync="visible"
+               :close-on-click-modal="false"
+    >
+      <el-form size="small" ref="inputForm" v-loading="loading"
                label-width="120px">
-        <fm-making-form ref="formDesign" style="height:700px" :data="options"  v-if="visible"
-                        :uploadPath ="`${this.$http.BASE_URL}/sys/file/webupload/upload?uploadPath=/formbuilder`"
-                        preview clearable>
-          <template slot="action">
-          </template>
-        </fm-making-form>
+      <loquat-form-design ref="loquat-form-design"
+                          style="height:700px"
+                          :options="options"
+                          :custom-fields="customFields"
+      />
       </el-form>
       <span slot="footer" class="dialog-footer">
-      <el-button type="primary" v-if="method != 'view'" @click="doSubmit(0)" v-noMoreClick>保存草稿</el-button>
-      <el-button type="primary" v-if="method != 'view'" @click="doSubmit(1)" v-noMoreClick>保存并发布</el-button>
-      <el-button @click="visible = false">放弃</el-button>
-    </span>
+        <el-button type="primary" @click="handleSubmitForm(0)">保存草稿</el-button>
+        <el-button type="primary" @click="handleSubmitForm(1)">保存并发布</el-button>
+        <el-button @click="visible = false">放弃</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getFormDefinitionJson, editFormDefinitionJson, addFormDefinitionJson } from '@/api/flowable/extension/formDefinitionJson'
 export default {
   name: 'FlowFormDesign',
   data () {
     return {
-      title: '',
-      method: '',
       visible: false,
       loading: false,
       options: {},
-      inputForm: {
-        id: '',
-        version: '',
-        formDefinitionId: '',
-        status: '',
-        isPrimary: '',
-        json: ''
-      }
+      customFields: [{
+        title: '自定义字段',
+        list: [
+          {
+            title: '分割线',
+            type: 'custom',
+            component: 'el-divider',
+            icon: 'iconfont icon-divider',
+            label: '',
+            propExclude: true,
+            labelWidth: 0,
+            params: {
+              html: '<h3 style="color:red">分割线标题</h3>',
+              contentPosition: 'left'
+            }
+          },
+          {
+            title: '警告',
+            type: 'custom',
+            component: 'el-alert',
+            icon: 'el-icon-warning',
+            label: '',
+            propExclude: true,
+            labelWidth: 0,
+            params: {
+              title: '警告警告警告警告',
+              type: 'success'
+            },
+            events: {
+              close () {
+                console.log('alert关闭事件')
+              }
+            }
+          }
+        ]
+      }],
+      form: {}
     }
   },
-  components: {
-  },
   methods: {
-    init (formDefinitionId, jsonId) {
+    /** 表单重置,主要清除参数配置对话框缓存 */
+    reset () {
+      this.form = {
+        id: undefined,
+        formDefinitionId: undefined,
+        json: undefined,
+        version: undefined,
+        status: undefined,
+        isPrimary: undefined
+      }
+    },
+    /** 窗口传递数据 */
+    setData (data = {}) {
+      // 打开窗口
+      this.loading = true
       this.visible = true
-      this.loading = false
       this.$nextTick(() => {
-        this.inputForm.json = ''
-        this.inputForm.version = ''
-        this.inputForm.id = jsonId
-        this.inputForm.formDefinitionId = formDefinitionId
-        if (jsonId) { // 修改或者查看
-          this.loading = true
-          this.$http({
-            url: `/extension/formDefinitionJson/queryById?id=${jsonId}`,
-            method: 'get'
-          }).then(({data}) => {
-            this.inputForm = this.recover(this.inputForm, data.formDefinitionJson)
-            if (this.inputForm.json) {
-              this.options = JSON.parse(this.inputForm.json)
-              this.$refs.formDesign.setJSON(this.options)
-            }
-            this.loading = false
+        this.reset()
+        this.form.id = data.id
+        this.form.formDefinitionId = data.formDefinitionId
+        // 查询关联数据
+        const chain = []
+        if (this.form.id) {
+          // 查看表单定义json详细
+          getFormDefinitionJson(this.form.id).then(response => {
+            this.form = response.data
+            this.form.json && (this.options = this.form.json)
           })
-        } else {
-          this.$refs.formDesign.setJSON({'list': [], 'config': {'labelWidth': 100, 'labelPosition': 'right', 'size': 'small', 'customClass': ''}})
         }
+        // 加载完毕
+        Promise.all(chain).then(() => { this.loading = false })
       })
     },
-    // 表单提交
-    doSubmit (status) {
-      this.inputForm.json = JSON.stringify(this.$refs.formDesign.getJSON())
-      this.inputForm.status = status
-      this.inputForm.isPrimary = '1'
-      this.$refs['inputForm'].validate((valid) => {
-        if (valid) {
-          this.$http({
-            url: `/extension/formDefinitionJson/save`,
-            method: 'post',
-            data: this.inputForm
-          }).then(({data}) => {
-            if (data && data.success) {
-              this.visible = false
-              this.$message.success(data.msg)
-              this.$emit('refreshDataList')
-            }
-          })
-        }
-      })
+    /** 处理表单提交 */
+    handleSubmitForm (status) {
+      this.form.json = this.$refs['loquat-form-design'].getWidgetFormJson()
+      this.form.status = status
+      this.form.isPrimary = '1'
+      this.loading = true
+      if (this.form.id != undefined) {
+        editFormDefinitionJson(this.form).then(response => {
+          if (response.code === 0) {
+            this.msgSuccess("保存流程表单成功")
+            this.visible = false
+            this.loading = false
+            this.$emit('refresh')
+          } else {
+            this.msgError(response.msg)
+          }
+        })
+      } else {
+        addFormDefinitionJson(this.form).then(response => {
+          if (response.code === 0) {
+            this.msgSuccess("保存流程表单成功")
+            this.visible = false
+            this.loading = false
+            this.$emit('refresh')
+          } else {
+            this.msgError(response.msg)
+          }
+        })
+      }
     }
   }
 }

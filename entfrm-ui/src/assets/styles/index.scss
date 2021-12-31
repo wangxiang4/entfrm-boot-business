@@ -216,8 +216,10 @@ div:focus {
   padding-right: 8px;
 }
 
-.el-dialog {;
-  > .el-dialog__body {
+.el-dialog {
+  display: flex;
+  flex-direction: column;
+  >.el-dialog__body {
     overflow: auto;
     color: #666666;
   }

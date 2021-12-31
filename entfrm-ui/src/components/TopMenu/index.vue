@@ -52,7 +52,7 @@
   }
 
   .el-menu--horizontal > .el-menu-item.is-active {
-    border-bottom: 3px solid #64D9D6;
+    border-bottom: 3px solid #409EFF;
     color: #303133;
   }
 </style>

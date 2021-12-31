@@ -54,7 +54,7 @@ export default {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #64D9D6;
+  background: #409EFF;
   text-align: center;
   overflow: hidden;
 

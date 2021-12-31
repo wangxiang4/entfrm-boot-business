@@ -2,19 +2,17 @@
   <div>
     <el-dialog v-loading="loading"
                title="设计流程表单"
-               fullscreen
                center
+               fullscreen
                :visible.sync="visible"
                :close-on-click-modal="false"
     >
-      <el-form size="small" ref="inputForm" v-loading="loading"
-               label-width="120px">
       <loquat-form-design ref="loquat-form-design"
-                          style="height:700px"
+                          style="height:500px"
+                          :toolbar="['clear', 'preview']"
                           :options="options"
                           :custom-fields="customFields"
       />
-      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handleSubmitForm(0)">保存草稿</el-button>
         <el-button type="primary" @click="handleSubmitForm(1)">保存并发布</el-button>

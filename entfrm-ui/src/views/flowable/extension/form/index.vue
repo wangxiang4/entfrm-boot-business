@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container flex-main">
     <el-row :gutter="10">
       <!--表单流程分类查询-->
       <el-col :span="5" :xs="24">

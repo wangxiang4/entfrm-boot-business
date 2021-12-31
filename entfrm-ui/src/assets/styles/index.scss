@@ -96,9 +96,9 @@ div:focus {
   }
 }
 
-aside {
+/*aside {
   background: #eef1f6;
-  padding: 8px 24px;
+  // padding: 8px 24px;
   margin-bottom: 20px;
   border-radius: 2px;
   display: block;
@@ -117,7 +117,7 @@ aside {
       color: rgb(32, 160, 255);
     }
   }
-}
+}*/
 
 //main-container全局样式
 .app-container {
@@ -214,4 +214,21 @@ aside {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+}
+
+.el-dialog {;
+  > .el-dialog__body {
+    overflow: auto;
+    color: #666666;
+  }
+}
+
+.el-dialog__header {
+  border-bottom: 1px solid #e8e8e8;
+  border-radius: 4px 4px 0 0;
+}
+
+.el-dialog__footer {
+  border-top: 1px solid #e8e8e8;
+  border-radius: 0 0 4px 4px;
 }

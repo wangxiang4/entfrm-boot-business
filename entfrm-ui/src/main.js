@@ -92,7 +92,6 @@ VXETable.setup({
 // 插件可拔插式枇杷表单设计器
 import request from './utils/request'
 import LoquatFormDesign from 'loquat-form-design'
-import 'loquat-form-design/lib/loquat-form-design.css'
 Vue.use(LoquatFormDesign, { axiosInstance: request })
 
 // 全局方法挂载
@@ -107,10 +106,6 @@ Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 Vue.prototype.validator = validator
 Vue.prototype.vGet = vGet
-// 目前琵琶设计器没有引入按需加载,因为需要改整体的架构,2.0版本将会调整架构
-import { LoquatCore } from 'loquat-form-design'
-Vue.prototype.formDesignRemoteFunc = LoquatCore.remoteFunc
-Vue.prototype.formDesignRemoteOption = LoquatCore.remoteOption
 
 Vue.prototype.msgSuccess = function (msg) {
   this.$message({ showClose: true, message: msg, type: "success" });

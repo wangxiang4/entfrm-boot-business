@@ -108,6 +108,24 @@
                 :limit.sync="queryParams.size"
                 @pagination="getList"
     />
+    <!--预览表单-->
+    <el-dialog title="流程表单预览"
+               center
+               fullscreen
+               :visible.sync="open"
+               :close-on-click-modal="false"
+    >
+      <loquat-form style="height:calc(100vh - 190px)" :option="options"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small"
+                   @click="open = false"
+        >关闭</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="open = false"
+        >确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -132,8 +150,13 @@ export default {
       showSearch: true,
       dataList: [],
       total: 0,
-      loading: false
+      loading: false,
+      open: false,
+      options: {}
     }
+  },
+  activated () {
+    this.getList()
   },
   created(){
     this.getList()
@@ -189,7 +212,13 @@ export default {
     },
     /** 处理预览 */
     handlePreview (row) {
-
+      try {
+        if (!row.json) throw new Error('当前数据没有json结构体')
+        this.options = eval('(' + row.json + ')')
+        this.open = true
+      } catch (e) {
+        this.msgError(e)
+      }
     }
   }
 }

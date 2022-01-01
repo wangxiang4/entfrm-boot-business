@@ -92,6 +92,7 @@ VXETable.setup({
 // 插件可拔插式枇杷表单设计器
 import request from './utils/request'
 import LoquatFormDesign from 'loquat-form-design'
+import 'loquat-form-design/lib/loquat-form-design.css'
 Vue.use(LoquatFormDesign, { axiosInstance: request })
 
 // 全局方法挂载

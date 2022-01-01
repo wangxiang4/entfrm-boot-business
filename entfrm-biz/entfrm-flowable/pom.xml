@@ -35,12 +35,33 @@
             <artifactId>flowable-spring-boot-starter-process-rest</artifactId>
             <version>${flowable.version}</version>
         </dependency>
-        <!-- XML转JSON -->
+        <!-- BPMN XML转JSON -->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-json-converter</artifactId>
             <version>${flowable.version}</version>
         </dependency>
-
+        <!--
+             引入建模设计器api请求,具体我也查看了对应具体是实现具体内部依赖了一个flowable-ui-modeler-logic做核心的逻辑操作
+             具体实现: https://github.com/flowable/flowable-engine/tree/main/modules/flowable-ui/flowable-ui-modeler-rest
+             因为Flowable6.5以后开始收费,所以后期打算用camunda,对应的我也去查看了一遍camunda的源代码,发现对应也有此功能,camunda具体实现
+             是采用了一个engine-rest工程做的api请求,但是区别是camunda是把所有的api请求放在一起了,并没有像flowable分模块功能实现的api请求
+             比如我只想要导入建模设计器api请求,如果使用camunda就不行了只能把所有的api请求全部导入,camunda内部建模这块的实现也是引用了一个
+             camunda-bpmn-model工程做核心的逻辑操作,具体引用是在bom.xml引入
+             的https://github.com/camunda/camunda-bpm-platform/blob/master/bom/pom.xml
+             具体实现: https://github.com/camunda/camunda-bpm-platform/blob/master/engine-rest
+             所以此处可以使用rest工程,因为camunda也可以替换
+         -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-ui-modeler-rest</artifactId>
+            <version>${flowable.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-log4j2</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 </project>

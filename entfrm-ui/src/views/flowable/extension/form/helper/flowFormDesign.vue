@@ -7,7 +7,8 @@
                :visible.sync="visible"
                :close-on-click-modal="false"
     >
-      <loquat-form-design ref="loquat-form-design"
+      <loquat-form-design v-if="visible"
+                          ref="loquat-form-design"
                           style="height:calc(100vh - 190px)"
                           :toolbar="['clear', 'preview']"
                           :options="options"
@@ -89,6 +90,7 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.reset()
+        this.options = {}
         this.form.id = data.id
         this.form.formDefinitionId = data.formDefinitionId
         // 查询关联数据

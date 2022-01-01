@@ -40,7 +40,7 @@ public class FormDefinitionJsonController {
                 .eq(ObjectUtil.isNotEmpty(formDefinitionJson.getVersion()), FormDefinitionJson::getVersion, formDefinitionJson.getVersion())
                 .eq(StrUtil.isNotBlank(formDefinitionJson.getStatus()), FormDefinitionJson::getStatus, formDefinitionJson.getStatus())
                 .eq(StrUtil.isNotBlank(formDefinitionJson.getIsPrimary()), FormDefinitionJson::getIsPrimary, formDefinitionJson.getIsPrimary())
-                .orderByDesc(FormDefinitionJson::getCreateTime);
+                .orderByAsc(FormDefinitionJson::getCreateTime);
     }
 
     @GetMapping("/list")
@@ -63,6 +63,12 @@ public class FormDefinitionJsonController {
 
     @PutMapping("/update")
     public R update(@RequestBody FormDefinitionJson formDefinitionJson) {
+        // 其余版本更新为非主版本
+        formDefinitionJsonService.update(
+                new FormDefinitionJson().setIsPrimary("0"),
+                new LambdaUpdateWrapper<FormDefinitionJson>()
+                        .eq(FormDefinitionJson::getFormDefinitionId, formDefinitionJson.getFormDefinitionId())
+        );
         formDefinitionJson.setIsPrimary("1");
         FormDefinitionJson old =formDefinitionJsonService.getById(formDefinitionJson.getId());
         // 如果表单已经发布,不可修改,只能发布为新版本
@@ -72,13 +78,6 @@ public class FormDefinitionJsonController {
         } else {
             formDefinitionJsonService.updateById(formDefinitionJson);
         }
-        // 其余版本更新为非主版本
-        formDefinitionJsonService.update(
-                new FormDefinitionJson()
-                        .setIsPrimary("0"),
-                new LambdaUpdateWrapper<FormDefinitionJson>()
-                        .eq(FormDefinitionJson::getFormDefinitionId, formDefinitionJson.getFormDefinitionId())
-        );
         return R.ok();
     }
 

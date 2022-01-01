@@ -48,6 +48,7 @@
 				AND a.category_id = #{ew.categoryId}
 			</if>
 		</where>
+		ORDER BY a.create_time ASC
 	</select>
 
 </mapper>

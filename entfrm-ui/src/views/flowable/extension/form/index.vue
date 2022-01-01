@@ -173,7 +173,7 @@
               <el-button type="text"
                          icon="el-icon-view"
                          size="small"
-                         @click="handleFlowFormDesign(scope.row.id, scope.row.formDefinitionJson.id)"
+                         @click="handleFlowFormDesign(scope.row)"
               >设计</el-button>
               <el-button type="text"
                          icon="el-icon-edit"

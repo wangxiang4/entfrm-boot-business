@@ -8,7 +8,7 @@
                :close-on-click-modal="false"
     >
       <loquat-form-design ref="loquat-form-design"
-                          style="height:500px"
+                          style="height:100vh"
                           :toolbar="['clear', 'preview']"
                           :options="options"
                           :custom-fields="customFields"

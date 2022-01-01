@@ -35,7 +35,6 @@ import RightToolbar from "@/components/RightToolbar"
 // 表单设计器
 import Avue from '@smallwei/avue'
 import '@smallwei/avue/lib/index.css'
-import EntfrmFormDesign from '@/components/EntfrmForm/packages'
 // 引入表格功能相对比较齐全的组件vxeTable
 import XEUtils from 'xe-utils'
 // 按需导入 vxeTable
@@ -133,8 +132,6 @@ Vue.use(permission)
 
 //表单设计器
 Vue.use(Avue)
-Vue.use(EntfrmFormDesign)
-
 
 // 表格功能
 Vue.use(Header)

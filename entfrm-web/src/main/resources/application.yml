@@ -66,7 +66,7 @@ spring:
     port: 6379
     # 密码
     password:
-    #password: entfrm9300
+    # password: entfrm9300
     # 连接超时时间
     timeout: 10s
     lettuce:

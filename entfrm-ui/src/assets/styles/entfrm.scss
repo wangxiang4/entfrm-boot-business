@@ -1,6 +1,6 @@
  /**
  * 通用css样式布局处理
- * Copyright (c) 2020 entfrm
+ * Copyright (c) 2021 entfrm开发团队-王翔
  */
 
  /** 基础通用 **/
@@ -76,7 +76,7 @@
 
 /** 表单布局 **/
 .form-header {
-    font-size:15px;
+  font-size:15px;
 	color:#6379bb;
 	border-bottom:1px solid #ddd;
 	margin:8px 10px 25px 10px;
@@ -219,14 +219,54 @@
 	overflow: hidden;
 }
 
-/* 拖拽列样式 */
-/*.sortable-ghost{
-	opacity: .8;
-	color: #fff!important;
-	background: #42b983!important;
-}*/
-
-.top-right-btn {
+.app-container .top-right-btn {
 	position: relative;
 	float: right;
+}
+
+// tip style
+.tip {
+ padding: 8px 16px;
+ background-color: #ecf8ff;
+ border-radius: 4px;
+ border-left: 5px solid #50bfff;
+ margin: 20px 0;
+}
+
+// tree-click style
+.el-tree-node__content .tree-item-button{
+ display: none;
+}
+
+.el-tree-node__content:hover .tree-item-button{
+ display: unset;
+}
+
+.custom-tree-node {
+ flex: 1;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ font-size: 14px;
+ padding-right: 8px;
+}
+
+// dialog style
+.el-dialog {
+ display: flex;
+ flex-direction: column;
+ >.el-dialog__body {
+   overflow: auto;
+   color: #666666;
+ }
+}
+
+.el-dialog__header {
+ border-bottom: 1px solid #e8e8e8;
+ border-radius: 4px 4px 0 0;
+}
+
+.el-dialog__footer {
+ border-top: 1px solid #e8e8e8;
+ border-radius: 0 0 4px 4px;
 }

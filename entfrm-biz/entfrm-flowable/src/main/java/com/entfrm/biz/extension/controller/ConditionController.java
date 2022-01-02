@@ -37,7 +37,7 @@ public class ConditionController {
 
     @GetMapping("/list")
     public R list(Page page, Condition condition) {
-        IPage<Button> result = conditionService.page(page, getLambdaQueryWrapper(condition));
+        IPage<Condition> result = conditionService.page(page, getLambdaQueryWrapper(condition));
         return R.ok(result.getRecords(), result.getTotal());
     }
 
@@ -58,9 +58,9 @@ public class ConditionController {
         return R.ok();
     }
 
-    @DeleteMapping("/remove/{id}")
-    public R remove(@PathVariable Integer[] id) {
-        conditionService.removeByIds(Arrays.asList(id));
+    @DeleteMapping("/remove/{ids}")
+    public R remove(@PathVariable Integer[] ids) {
+        conditionService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

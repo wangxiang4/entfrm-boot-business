@@ -201,7 +201,7 @@
         />
       </el-col>
     </el-row>
-    <flow-form-design ref="flowFormDesign" @refresh="getList"/>
+    <workFlow-form-design ref="flowFormDesign" @refresh="getList"/>
     <form-category-form ref="formCategoryForm" @refresh="getFormCategoryTree"/>
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title"

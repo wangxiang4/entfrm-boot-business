@@ -1,7 +1,7 @@
 package com.entfrm.biz.flowable.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.entfrm.biz.flowable.dto.ProcessDefDto;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -22,12 +22,11 @@ import java.util.Map;
  */
 public interface FlowableProcessService {
 
-
     /**
      * 流程定义列表
      * params:查询条件参数
      */
-    IPage<ProcessDefDto> list(Map<String, Object> params);
+    IPage<ProcessInstanceVo> list(Map<String, Object> params);
 
     /**
      * 读取xml/image资源

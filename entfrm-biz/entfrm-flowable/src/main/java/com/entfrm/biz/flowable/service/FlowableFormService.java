@@ -1,7 +1,6 @@
 package com.entfrm.biz.flowable.service;
 
-import com.entfrm.biz.flowable.entity.Flow;
-import com.entfrm.biz.flowable.dto.FormDataDto;
+import com.entfrm.biz.flowable.entity.Workflow;
 
 /**
  * <p>
@@ -32,17 +31,7 @@ public interface FlowableFormService {
      * flow:工作流通用数据传输VO
      * data:需要存入流程变量的表单数据,必须
      * **/
-    void submitTaskFormData(Flow flow, String data);
-
-
-
-    /**
-     * 获取表单数据
-     * code:表单编码
-     * procInsId:流程实例ID
-     */
-    FormDataDto getFormData(String code, String procInsId);
-
+    void submitTaskFormData(Workflow workFlow, String data);
 
 
 }

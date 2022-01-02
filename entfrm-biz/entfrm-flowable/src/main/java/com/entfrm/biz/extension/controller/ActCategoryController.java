@@ -50,9 +50,9 @@ public class ActCategoryController {
         return R.ok();
     }
 
-    @DeleteMapping("/remove/{id}")
-    public R remove(@PathVariable Integer[] id) {
-        actCategoryService.removeByIds(Arrays.asList(id));
+    @DeleteMapping("/remove/{ids}")
+    public R remove(@PathVariable Integer[] ids) {
+        actCategoryService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

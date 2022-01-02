@@ -1,6 +1,7 @@
 package com.entfrm.biz.flowable.entity;
 
 import com.entfrm.biz.flowable.util.Variable;
+import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.flowable.engine.history.HistoricActivityInstance;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @Date: 2021-05-11
  */
 @Data
-public class Flow implements Serializable {
+public class Workflow implements Serializable {
 
     /** 反序列化密钥 */
     private static final long serialVersionUID = 1L;
@@ -69,7 +70,7 @@ public class Flow implements Serializable {
     private String formData;
 
     /** 批注信息 */
-    private TaskComment comment;
+    private TaskCommentVo comment;
 
     /** 流程变量 */
     private Variable vars;

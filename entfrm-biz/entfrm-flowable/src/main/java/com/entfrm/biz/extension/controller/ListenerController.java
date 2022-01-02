@@ -40,7 +40,7 @@ public class ListenerController {
 
     @GetMapping("/list")
     public R list(Page page, Listener listener) {
-        IPage<Button> result = listenerService.page(page, getLambdaQueryWrapper(listener));
+        IPage<Listener> result = listenerService.page(page, getLambdaQueryWrapper(listener));
         return R.ok(result.getRecords(), result.getTotal());
     }
 
@@ -61,9 +61,9 @@ public class ListenerController {
         return R.ok();
     }
 
-    @DeleteMapping("/remove/{id}")
-    public R remove(@PathVariable Integer[] id) {
-        listenerService.removeByIds(Arrays.asList(id));
+    @DeleteMapping("/remove/{ids}")
+    public R remove(@PathVariable Integer[] ids) {
+        listenerService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

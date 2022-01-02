@@ -2,6 +2,7 @@ package com.entfrm.biz.flowable.vo;
 
 import com.entfrm.biz.flowable.enums.ProcessStatus;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Map;
  */
 
 @Data
+@Accessors(chain = true)
 public class ProcessInsVo {
 
     //流程实例ID

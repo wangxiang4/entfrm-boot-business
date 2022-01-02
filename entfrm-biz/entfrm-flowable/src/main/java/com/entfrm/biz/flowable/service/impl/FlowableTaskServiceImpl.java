@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.constant.CommonConstants;
 import com.entfrm.biz.flowable.constant.FlowableConstant;
+import com.entfrm.biz.flowable.entity.Workflow;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
 import com.entfrm.biz.flowable.execution.cmd.BackUserTaskCmd;
 import com.entfrm.biz.flowable.mapper.FlowMapper;
-import com.entfrm.biz.flowable.entity.Flow;
-import com.entfrm.biz.flowable.entity.TaskComment;
+import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.util.FlowableUtil;
@@ -105,32 +105,32 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     /** 获取任务定义数据 */
     @Override
-    public Flow getTaskDef(Flow flow) {
+    public Workflow getTaskDef(Workflow workFlow) {
 
         // 获取流程XML上的表单KEY
-        String formKey = getFormKey(flow.getProcDefId(), flow.getTaskDefKey());
+        String formKey = getFormKey(workFlow.getProcDefId(), workFlow.getTaskDefKey());
         //如果存在404直接跳转外置表单404组件
         if(formKey.indexOf("/")>=0){
-            flow.setFormType("2");
-            flow.setFormUrl(formKey);
+            workFlow.setFormType("2");
+            workFlow.setFormUrl(formKey);
         }else{
             //预定格式(类型,表单地址),类型只能有两种动态表单,跟外置表单
             String[] formSplit=formKey.split(",");
             String formType=formSplit[0],formUrl=formSplit[1];
-            flow.setFormType(formType);
-            flow.setFormUrl(formUrl);
+            workFlow.setFormType(formType);
+            workFlow.setFormUrl(formUrl);
         }
 
         // 获取流程实例对象
-        if (flow.getProcInsId() != null) {
-            if (flowableProcessServices.getProcIns(flow.getProcInsId()) != null) {
-                flow.setProcIns(flowableProcessServices.getProcIns(flow.getProcInsId()));
+        if (workFlow.getProcInsId() != null) {
+            if (flowableProcessServices.getProcIns(workFlow.getProcInsId()) != null) {
+                workFlow.setProcIns(flowableProcessServices.getProcIns(workFlow.getProcInsId()));
             } else {
-                flow.setFinishedProcIns(flowableProcessServices.getFinishedProcIns(flow.getProcInsId()));
+                workFlow.setFinishedProcIns(flowableProcessServices.getFinishedProcIns(workFlow.getProcInsId()));
             }
         }
 
-        return flow;
+        return workFlow;
     }
 
 
@@ -207,29 +207,29 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     /** 提交任务,并保存意见 */
     @Override
-    public void complete(Flow flow){
+    public void complete(Workflow workFlow){
 
         //添加意见
-        if(StrUtil.isNotBlank(flow.getProcInsId())){
-            taskService.addComment (flow.getTaskId(), flow.getProcInsId(), flow.getComment().getCommentType(), flow.getComment().getFullMessage());
+        if(StrUtil.isNotBlank(workFlow.getProcInsId())){
+            taskService.addComment (workFlow.getTaskId(), workFlow.getProcInsId(), workFlow.getComment().getCommentType(), workFlow.getComment().getFullMessage());
         }
 
         // 设置流程变量
-        Map<String,Object> vars = flow.getVars().getMap();
+        Map<String,Object> vars = workFlow.getVars().getMap();
 
         // 设置流程标题
-        if (StrUtil.isNotBlank(flow.getTitle())) {
-            vars.put (FlowableConstant.TITLE, flow.getTitle());
+        if (StrUtil.isNotBlank(workFlow.getTitle())) {
+            vars.put (FlowableConstant.TITLE, workFlow.getTitle());
         }
 
         // todo: owner不为空说明可能存在委托任务,后期添加委托功能
-        Task task = taskService.createTaskQuery().taskId(flow.getTaskId()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(workFlow.getTaskId()).singleResult();
         if (StrUtil.isNotBlank(task.getOwner())){
             DelegationState delegationState = task.getDelegationState ();
             switch (delegationState) {
                 case PENDING:
-                    taskService.resolveTask (flow.getTaskId ());
-                    taskService.complete (flow.getTaskId (), vars);
+                    taskService.resolveTask (workFlow.getTaskId ());
+                    taskService.complete (workFlow.getTaskId (), vars);
                     break;
 
                 case RESOLVED:
@@ -238,18 +238,18 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
                 default:
                     //不是委托任务
-                    taskService.complete (flow.getTaskId(),vars);
+                    taskService.complete (workFlow.getTaskId(),vars);
                     break;
             }
             // 未签收任务
         } else if(StrUtil.isBlank(task.getAssignee())){
             // 签收任务
-            taskService.claim (flow.getTaskId(),SecurityUtil.getUser().getUsername());
+            taskService.claim (workFlow.getTaskId(),SecurityUtil.getUser().getUsername());
             // 提交任务
-            taskService.complete (flow.getTaskId (), vars);
+            taskService.complete (workFlow.getTaskId (), vars);
         } else  {
             // 提交任务
-            taskService.complete (flow.getTaskId (), vars);
+            taskService.complete (workFlow.getTaskId (), vars);
         }
 
     }
@@ -259,8 +259,8 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     /** 外置表单审核专用 */
     @Override
-    public void auditTask(Flow flow) {
-        complete(flow);
+    public void auditTask(Workflow workFlow) {
+        complete(workFlow);
     }
 
 
@@ -294,7 +294,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                 String.join(":",businessTable,businessId),vars).getProcessInstanceId();
 
         //更新业务表流程实例ID,确保业务表字段proc_ins_id存在
-        Flow act = new Flow();
+        Workflow act = new Workflow();
         act.setBusinessTable (businessTable);
         act.setBusinessId (businessId);
         act.setProcInsId (procInsId);
@@ -317,7 +317,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     /** 获取可驳回节点 */
     @Override
-    public List<Flow> getBackNodes(String taskId) {
+    public List<Workflow> getBackNodes(String taskId) {
         Task taskEntity = taskService.createTaskQuery().taskId(taskId).singleResult();
         String processInstanceId = taskEntity.getProcessInstanceId();
         String currActId = taskEntity.getTaskDefinitionKey();
@@ -332,12 +332,12 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                 activitys.stream().filter(activity -> activity.getActivityType().equals(BpmnXMLConstants.ELEMENT_TASK_USER) || activity.getActivityType().equals(BpmnXMLConstants.ELEMENT_EVENT_START))
                         .filter(activity ->!activity.getActivityId().equals (currActId))
                         .map(ActivityInstance::getActivityId).distinct().collect(Collectors.toList());
-        List<Flow> result = new ArrayList<> ();
+        List<Workflow> result = new ArrayList<> ();
         for (String activityId : activityIds) {
             FlowNode toBackFlowElement = (FlowNode) process.getFlowElement (activityId, true);
             //目标节点是否可以到达
             if (FlowableUtil.isReachable(process, toBackFlowElement, currentFlowElement)){
-                Flow vo = new Flow ();
+                Workflow vo = new Workflow();
                 vo.setTaskDefKey (activityId);
                 vo.setTaskName (toBackFlowElement.getName ());
                 vo.setTaskId (activityId);
@@ -351,7 +351,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     /** 驳回任务,驳回到指定节点 */
     @Override
-    public void backTask(String backTaskDefKey, String taskId, TaskComment comment) {
+    public void backTask(String backTaskDefKey, String taskId, TaskCommentVo comment) {
         Task task = taskService.createTaskQuery ().taskId (taskId).singleResult ();
         if(StrUtil.isBlank(task.getAssignee())){
             //代理人为空自己签收任务

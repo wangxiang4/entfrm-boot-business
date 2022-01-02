@@ -3,7 +3,7 @@ package com.entfrm.biz.flowable.controller;
 import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.dto.ProcessDefDto;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +33,7 @@ public class FlowableProcessController {
 
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessDefDto> processIPage = flowableProcessService.list(params);
+        IPage<ProcessInstanceVo> processIPage = flowableProcessService.list(params);
         return R.ok(processIPage.getRecords(), processIPage.getTotal());
     }
 

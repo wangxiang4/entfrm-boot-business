@@ -1,35 +1,52 @@
 package com.entfrm.biz.flowable.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.flowable.engine.repository.Model;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.entfrm.biz.flowable.entity.FlowableModel;
+import org.apache.commons.lang3.StringUtils;
+import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.ProcessDefinition;
 
-import java.util.Map;
-
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
- *<p>
- * 工作流模型相关Service
- *</p>
+ * <p>
+ * 流程模型 service
+ * </p>
  *
  * @Author: entfrm开发团队-王翔
- * @Date: 2021/5/12
+ * @Date: 2021-05-11
  */
-public interface FlowableModelService {
+public interface FlowableModelService extends IService<FlowableModel> {
 
+    /**
+     * 导出bpmn.xml
+     * id: 模型id
+     */
+    String export(String id);
 
-    /** 流程分页查询 */
-    IPage<Model> list(Map<String, Object> params);
+    /**
+     * 移除模型
+     * id: 模型id
+     */
+    void remove (String id);
 
+    /**
+     * 移除部署
+     * key: 流程定义key
+     */
+    void deleteDeployment (String key);
 
-    /** 创建流程 */
-    Model save(String name, String key, String desc, String category);
+    /**
+     * 部署模型
+     * id: 模型id
+     * category: 模型分类
+     */
+    String deploy(String id, String category);
 
-
-    /** 删除流程 */
-    void removeById(String id);
-
-
-    /** 部署流程 */
-    String deploy(String id);
-
+    /**
+     * 将工作流xml转换json
+     * xml: bpmn xml
+     */
+    String changeXmlToJson (String xml);
 }

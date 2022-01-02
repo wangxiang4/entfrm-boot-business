@@ -1,6 +1,7 @@
 package com.entfrm.biz.flowable.vo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.flowable.task.api.TaskInfo;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Date;
  * @Date: 2021/5/12
  */
 @Data
+@Accessors(chain = true)
 public class TaskVo {
 
     private String id;

@@ -2,11 +2,9 @@ package com.entfrm.biz.extension.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.extension.entity.ActCategory;
 import com.entfrm.biz.extension.entity.Button;
 import com.entfrm.biz.extension.service.ButtonService;
 import lombok.AllArgsConstructor;
@@ -60,9 +58,9 @@ public class ButtonController {
         return R.ok();
     }
 
-    @DeleteMapping("/remove/{id}")
-    public R remove(@PathVariable Integer[] id) {
-        buttonService.removeByIds(Arrays.asList(id));
+    @DeleteMapping("/remove/{ids}")
+    public R remove(@PathVariable Integer[] ids) {
+        buttonService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

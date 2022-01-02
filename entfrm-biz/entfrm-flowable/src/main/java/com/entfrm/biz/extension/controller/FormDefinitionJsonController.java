@@ -81,9 +81,9 @@ public class FormDefinitionJsonController {
         return R.ok();
     }
 
-    @DeleteMapping("/remove/{id}")
-    public R remove(@PathVariable Integer[] id) {
-        formDefinitionJsonService.removeByIds(Arrays.asList(id));
+    @DeleteMapping("/remove/{ids}")
+    public R remove(@PathVariable Integer[] ids) {
+        formDefinitionJsonService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

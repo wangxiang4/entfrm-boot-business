@@ -1,9 +1,10 @@
-package com.entfrm.biz.flowable.entity;
+package com.entfrm.biz.flowable.vo;
 
 import cn.hutool.core.util.StrUtil;
 import com.entfrm.biz.flowable.constant.FlowableConstant;
 import com.entfrm.biz.flowable.enums.ActionType;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -16,7 +17,8 @@ import lombok.Data;
  */
 
 @Data
-public class TaskComment {
+@Accessors(chain = true)
+public class TaskCommentVo {
 
     /** 操作按钮编码 */
     private String type;

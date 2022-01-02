@@ -1,13 +1,15 @@
-package com.entfrm.biz.flowable.dto;
+package com.entfrm.biz.flowable.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 
 /**
  *<p>
- * 流程定义 dto
+ * 流程定义
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -15,7 +17,8 @@ import java.util.Date;
  */
 
 @Data
-public class ProcessDefDto {
+@Accessors(chain = true)
+public class ProcessInstanceVo {
 
     private String id;
     private String category;

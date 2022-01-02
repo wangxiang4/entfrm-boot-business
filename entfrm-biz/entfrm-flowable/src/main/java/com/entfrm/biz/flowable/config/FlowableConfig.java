@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  */
 @AllArgsConstructor
 @EnableConfigurationProperties(FlowableConfig.class)
-public class FlowableConfig  implements EngineConfigurationConfigurer<SpringProcessEngineConfiguration> {
+public class FlowableConfig implements EngineConfigurationConfigurer<SpringProcessEngineConfiguration> {
 
     private final DataSource dataSource;
     private final PlatformTransactionManager transactionManager;

@@ -1,6 +1,6 @@
 package com.entfrm.biz.flowable.mapper;
 
-import com.entfrm.biz.flowable.entity.Flow;
+import com.entfrm.biz.flowable.entity.Workflow;
 
 import java.util.List;
 import java.util.Map;
@@ -19,10 +19,10 @@ public interface FlowMapper {
     String getFormRenderData(String code);
 
     /** 修改业务表流程ID */
-    int updateProcInsIdByBusinessId(Flow act);
+    int updateProcInsIdByBusinessId(Workflow act);
 
     /** 查询外置表单数据 */
-    Map selectFormData(Flow act);
+    Map selectFormData(Workflow act);
 
     /** 查询动态表单集合 */
     List<Map> selectDynamicFormList();

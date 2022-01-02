@@ -1,4 +1,4 @@
-{    
+{
     "HEADER.BRAND" : "Activiti Editor",
     "HEADER.BRAND_TAGLINE" : "powered by Alfresco",
     "PAGE.HEADER" : "Orchestration Details",
@@ -13,12 +13,12 @@
     "ACTION.REMOVE" : "Remove",
     "ACTION.MOVE.UP" : "Move entry up",
     "ACTION.MOVE.DOWN" : "Move entry down",
-    
+
     "MAIN_NAVIGATION_ORCHESTRATIONS" : "Orchestrations",
     "MAIN_NAVIGATION_DISPATCH_RULES" : "Dispatch Rules",
     "MAIN_NAVIGATION_ASSET_GROUPS" : "Assert Groups",
     "MAIN_NAVIGATION_SOLUTIONS" : "Solutions",
-    
+
     "TOOLBAR.ACTION.CLOSE" : "Close the editor and go back to the overview page",
     "TOOLBAR.ACTION.SAVE" : "Save the model",
     "TOOLBAR.ACTION.VALIDATE": "Validate the model",
@@ -35,42 +35,42 @@
     "TOOLBAR.ACTION.MOVE" : "Move",
     "TOOLBAR.ACTION.IMPORT" : "Import",
     "TOOLBAR.ACTION.EXPORT" : "Export",
-    "TOOLBAR.ACTION.BENDPOINT.ADD" : "Add bend-point to the selected sequence flow",
-    "TOOLBAR.ACTION.BENDPOINT.REMOVE" : "Remove bend-point from the selected sequence flow",
+    "TOOLBAR.ACTION.BENDPOINT.ADD" : "Add bend-point to the selected sequence workFlow",
+    "TOOLBAR.ACTION.BENDPOINT.REMOVE" : "Remove bend-point from the selected sequence workFlow",
     "TOOLBAR.ACTION.ALIGNHORIZONTAL" : "Align model horizontal",
     "TOOLBAR.ACTION.ALIGNVERTICAL" : "Align model vertical",
     "TOOLBAR.ACTION.SAMESIZE" : "Same size",
     "TOOLBAR.ACTION.HELP": "Start the guided tour",
     "TOOLBAR.ACTION.FEEDBACK": "Provide feedback",
-    
+
     "KICKSTART.PROCESS_TOOLBAR.ACTION.SAVE" : "Save the model",
     "KICKSTART.PROCESS_TOOLBAR.ACTION.VALIDATE": "Validate the model",
     "KICKSTART.PROCESS_TOOLBAR.ACTION.HELP": "Start the guided tour",
     "KICKSTART.PROCESS_TOOLBAR.ACTION.FEEDBACK": "Provide feedback",
-    
+
     "FORM_TOOLBAR.ACTION.SAVE" : "Save the model",
     "FORM_TOOLBAR.ACTION.VALIDATE": "Validate the model",
     "FORM_TOOLBAR.ACTION.HELP": "Start the guided tour",
     "FORM_TOOLBAR.ACTION.FEEDBACK": "Provide feedback",
-    
+
     "APP_DEFINITION_TOOLBAR.ACTION.SAVE" : "Save the app definition",
     "APP_DEFINITION_TOOLBAR.ACTION.VALIDATE" : "Validate the app definition",
     "APP_DEFINITION_TOOLBAR.ACTION.HELP" : "Start the guided tour",
     "APP_DEFINITION_TOOLBAR.ACTION.FEEDBACK" : "Provide feedback",
-    
+
     "BUTTON.ACTION.DELETE.TOOLTIP": "Delete the element from the model",
     "BUTTON.ACTION.MORPH.TOOLTIP": "Change the element type",
-    
+
     "ELEMENT.AUTHOR" : "Author",
     "ELEMENT.DATE_CREATED" : "Date created",
     "ELEMENT.SELECTED_EMPTY_TITLE" : "(No name)",
-    
+
     "PROPERTY.REMOVED" : "removed",
     "PROPERTY.EMPTY" : "No value",
     "PROPERTY.PROPERTY.EDIT.TITLE" : "Change value for \"{{title}}\"",
-    
+
     "PROPERTY.FEEDBACK.TITLE" : "Please fill-in your feedback",
-    
+
     "PROPERTY.ASSIGNMENT.TITLE" : "Assignment",
     "PROPERTY.ASSIGNMENT.TYPE" : "Type",
     "PROPERTY.ASSIGNMENT.TYPE.IDENTITYSTORE" : "Identity store",
@@ -95,7 +95,7 @@
     "PROPERTY.ASSIGNMENT.IDM.DROPDOWN.USERS" : "Candidate users",
     "PROPERTY.ASSIGNMENT.IDM.DROPDOWN.GROUPS" : "Candidate groups",
     "PROPERTY.ASSIGNMENT.EMAIL.HELP" : "Type an email address and press Enter to continue",
-    
+
     "PROPERTY.EXECUTIONLISTENERS.DISPLAY" : "{{length}} execution listeners",
     "PROPERTY.EXECUTIONLISTENERS.EMPTY" : "No execution listeners configured",
     "PROPERTY.EXECUTIONLISTENERS.EVENT" : "Event",
@@ -116,7 +116,7 @@
     "PROPERTY.EXECUTIONLISTENERS.FIELDS.STRING.PLACEHOLDER" : "Enter a string",
     "PROPERTY.EXECUTIONLISTENERS.FIELDS.IMPLEMENTATION" : "Implementation",
     "PROPERTY.EXECUTIONLISTENERS.FIELDS.EMPTY" : "No Field selected",
-    
+
     "PROPERTY.FIELDS" : "{{length}} fields",
     "PROPERTY.FIELDS.EMPTY" : "No fields selected",
     "PROPERTY.FIELDS.NAME" : "Name",
@@ -129,7 +129,7 @@
     "PROPERTY.FIELDS.STRING.PLACEHOLDER" : "Enter a string",
     "PROPERTY.FIELDS.IMPLEMENTATION" : "Implementation",
     "PROPERTY.FIELDS.UNSELECTED" : "No Field selected",
-    
+
     "PROPERTY.FORMPROPERTIES.VALUE" : "{{length}} form properties",
     "PROPERTY.FORMPROPERTIES.EMPTY" : "No form properties selected",
     "PROPERTY.FORMPROPERTIES.ID" : "Id",
@@ -152,13 +152,13 @@
     "PROPERTY.FORMPROPERTIES.REQUIRED" : "Required",
     "PROPERTY.FORMPROPERTIES.READABLE" : "Readable",
     "PROPERTY.FORMPROPERTIES.WRITABLE" : "Writable",
-    
+
     "PROPERTY.INPARAMETERS.VALUE" : "{{length}} in-parameters",
     "PROPERTY.INPARAMETERS.EMPTY" : "No in-parameters configured",
-    
+
     "PROPERTY.OUTPARAMETERS.VALUE" : "{{length}} out-parameters",
     "PROPERTY.OUTPARAMETERS.EMPTY" : "No out-parameters configured",
-    
+
     "PROPERTY.PARAMETER.SOURCE" : "Source",
     "PROPERTY.PARAMETER.SOURCE.PLACEHOLDER" : "Enter a source",
     "PROPERTY.PARAMETER.SOURCEEXPRESSION" : "Source expression",
@@ -166,7 +166,7 @@
     "PROPERTY.PARAMETER.TARGET" : "Target",
     "PROPERTY.PARAMETER.TARGET.PLACEHOLDER" : "Enter a target",
     "PROPERTY.PARAMETER.EMPTY" : "No parameter selected",
-    
+
     "PROPERTY.SUBPROCESSREFERENCE.EMPTY" : "No reference selected",
     "PROPERTY.SUBPROCESSREFERENCE.TITLE" : "Collapsed subprocess reference",
     "PROPERTY.SUBPROCESSREFERENCE.ERROR.SUBPROCESS" : "There was an error loading the subprocesses. Try again later",
@@ -175,7 +175,7 @@
     "PROPERTY.SUBPROCESSREFERENCE.FOLDER.EMPTY" : "This folder contains no sub-folders",
     "PROPERTY.SUBPROCESSREFERENCE.SUBPROCESS.LOADING" : "Loading subprocesses...",
     "PROPERTY.SUBPROCESSREFERENCE.SUBPROCESS.EMPTY" : "This folder contains no subprocesses",
-    
+
     "PROPERTY.FORMREFERENCE.EMPTY" : "No reference selected",
     "PROPERTY.FORMREFERENCE.TITLE" : "Form reference",
     "PROPERTY.FORMREFERENCE.ERROR.FORM" : "There was an error loading the forms. Try again later",
@@ -184,7 +184,7 @@
     "PROPERTY.FORMREFERENCE.FOLDER.EMPTY" : "This folder contains no sub-folders",
     "PROPERTY.FORMREFERENCE.FORM.LOADING" : "Loading forms...",
     "PROPERTY.FORMREFERENCE.FORM.EMPTY" : "This folder contains no forms",
-    
+
     "PROPERTY.TASKLISTENERS.VALUE" : "{{length}} task listeners",
     "PROPERTY.TASKLISTENERS.EMPTY" : "No task listeners configured",
     "PROPERTY.TASKLISTENERS.EVENT" : "Event",
@@ -205,7 +205,7 @@
     "PROPERTY.TASKLISTENERS.FIELDS.STRING.PLACEHOLDER" : "Enter a string",
     "PROPERTY.TASKLISTENERS.FIELDS.IMPLEMENTATION" : "Implementation",
     "PROPERTY.TASKLISTENERS.FIELDS.EMPTY" : "No Field selected",
-    
+
     "PROPERTY.EVENTLISTENERS.DISPLAY" : "{{length}} event listeners",
     "PROPERTY.EVENTLISTENERS.EMPTY" : "No event listeners configured",
     "PROPERTY.EVENTLISTENERS.EVENTS": "Events",
@@ -224,27 +224,27 @@
     "PROPERTY.EVENTLISTENERS.SIGNALNAME" : "Signal name",
     "PROPERTY.EVENTLISTENERS.SIGNALNAME.PLACEHOLDER" : "Enter a signal name",
     "PROPERTY.EVENTLISTENERS.UNSELECTED" : "No event listener selected",
-    
+
     "PROPERTY.SIGNALDEFINITIONS.DISPLAY" : "{{length}} signal definitions",
     "PROPERTY.SIGNALDEFINITIONS.EMPTY" : "No signal definitions configured",
     "PROPERTY.SIGNALDEFINITIONS.SCOPE-GLOBAL": "Global",
     "PROPERTY.SIGNALDEFINITIONS.SCOPE-PROCESSINSTANCE": "Process Instance",
     "PROPERTY.SIGNALDEFINITIONS.ID" : "Id",
     "PROPERTY.SIGNALDEFINITIONS.NAME" : "Name",
-    "PROPERTY.SIGNALDEFINITIONS.SCOPE" : "Scope", 
-  
+    "PROPERTY.SIGNALDEFINITIONS.SCOPE" : "Scope",
+
     "PROPERTY.MESSAGEDEFINITIONS.DISPLAY" : "{{length}} message definitions",
     "PROPERTY.MESSAGEDEFINITIONS.EMPTY" : "No message definitions configured",
     "PROPERTY.MESSAGEDEFINITIONS.ID" : "Id",
     "PROPERTY.MESSAGEDEFINITIONS.NAME" : "Name",
 
-    "PROPERTY.SEQUENCEFLOW.ORDER.EMPTY" : "No sequence flow order determined",
-    "PROPERTY.SEQUENCEFLOW.ORDER.NOT.EMPTY" : "Sequence flow order set",
-    "PROPERTY.SEQUENCEFLOW.ORDER.NO.OUTGOING.SEQUENCEFLOW.FOUND" : "No outgoing sequence flow found.",
-    "PROPERTY.SEQUENCEFLOW.ORDER.DESCRIPTION" : "Set the order in which the sequence flow need to be evaluated:",
-    "PROPERTY.SEQUENCEFLOW.ORDER.SEQUENCEFLOW.VALUE" : "Sequence flow to {{targetType}} {{targetTitle}}",
-    
-    "PROPERTY.SEQUENCEFLOW.CONDITION.TITLE" : "Sequence flow condition",
+    "PROPERTY.SEQUENCEFLOW.ORDER.EMPTY" : "No sequence workFlow order determined",
+    "PROPERTY.SEQUENCEFLOW.ORDER.NOT.EMPTY" : "Sequence workFlow order set",
+    "PROPERTY.SEQUENCEFLOW.ORDER.NO.OUTGOING.SEQUENCEFLOW.FOUND" : "No outgoing sequence workFlow found.",
+    "PROPERTY.SEQUENCEFLOW.ORDER.DESCRIPTION" : "Set the order in which the sequence workFlow need to be evaluated:",
+    "PROPERTY.SEQUENCEFLOW.ORDER.SEQUENCEFLOW.VALUE" : "Sequence workFlow to {{targetType}} {{targetTitle}}",
+
+    "PROPERTY.SEQUENCEFLOW.CONDITION.TITLE" : "Sequence workFlow condition",
     "PROPERTY.SEQUENCEFLOW.CONDITION.TYPE.TITLE" : "Condition type",
     "PROPERTY.SEQUENCEFLOW.CONDITION.TYPE.VARIABLE" : "Select variables",
     "PROPERTY.SEQUENCEFLOW.CONDITION.TYPE.STATIC" : "Static value",
@@ -266,7 +266,7 @@
     "PROPERTY.SEQUENCEFLOW.CONDITION.VARIABLE.SELECT-OUTCOME" : "Select outcome",
     "PROPERTY.SEQUENCEFLOW.CONDITION.VARIABLE.NO-OUTCOMES-AVAILABLE" : "No outcomes available",
     "PROPERTY.SEQUENCEFLOW.CONDITION.NO-CONDITION-DISPLAY" : "No condition",
-    
+
     "MODEL.SAVE.TITLE" : "Save model",
     "MODEL.NAME" : "Name",
     "MODEL.DESCRIPTION" : "Description",
@@ -275,7 +275,7 @@
     "MODEL.SAVE.SAVING" : "Saving model",
     "MODEL.LASTMODIFIEDDATE" : "Last saved",
     "MODEL.SAVE.ERROR": "Unexpected error: could not save model",
-    
+
     "EVENT_TYPE.ACTIVITY.COMPENSATE.TOOLTIP": "An activity is about to be executed as a compensation for another activity. The event targets the activity that is about to be executed for compensation",
     "EVENT_TYPE.ACTIVITY.COMPLETED.TOOLTIP": "An activity has been completed successfully",
     "EVENT_TYPE.ACTIVITY.ERROR.RECEIVED.TOOLTIP": "An activity has received an error event. Dispatched before the actual error has been received by the activity",

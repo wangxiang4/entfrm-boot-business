@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.constant.CommonConstants;
 import com.entfrm.biz.flowable.constant.FlowableConstant;
-import com.entfrm.biz.flowable.dto.ProcessDefDto;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import com.entfrm.biz.flowable.enums.ActionType;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
-import com.entfrm.biz.flowable.entity.TaskComment;
+import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import com.entfrm.biz.flowable.vo.TaskVo;
@@ -63,7 +63,7 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
 
     /** 流程定义列表 */
     @Override
-    public IPage<ProcessDefDto> list(Map<String, Object> params) {
+    public IPage<ProcessInstanceVo> list(Map<String, Object> params) {
         ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery().latestVersion();
         String name = (String) params.get("name");
         if (StrUtil.isNotBlank(name)) {
@@ -80,21 +80,21 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
-        List<ProcessDefDto> deploymentList = query.listPage((current - 1) * size, size)
+        List<ProcessInstanceVo> deploymentList = query.listPage((current - 1) * size, size)
         .stream().map(processDefinition -> {
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(processDefinition.getDeploymentId()).singleResult();
-            ProcessDefDto processDefDto =new ProcessDefDto();
-            processDefDto.setId(processDefinition.getId());
-            processDefDto.setCategory(processDefinition.getCategory());
-            processDefDto.setKey(processDefinition.getKey());
-            processDefDto.setName(processDefinition.getName());
-            processDefDto.setVersion("V:" + processDefinition.getVersion());
-            processDefDto.setResourceName(processDefinition.getResourceName());
-            processDefDto.setDiagramResourceName(processDefinition.getDiagramResourceName());
-            processDefDto.setDeploymentId(processDefinition.getDeploymentId());
-            processDefDto.setSuspend(processDefinition.isSuspended());
-            processDefDto.setDeploymentTime(deployment.getDeploymentTime());
-            return processDefDto;
+            ProcessInstanceVo processInstanceVo =new ProcessInstanceVo();
+            processInstanceVo.setId(processDefinition.getId());
+            processInstanceVo.setCategory(processDefinition.getCategory());
+            processInstanceVo.setKey(processDefinition.getKey());
+            processInstanceVo.setName(processDefinition.getName());
+            processInstanceVo.setVersion("V:" + processDefinition.getVersion());
+            processInstanceVo.setResourceName(processDefinition.getResourceName());
+            processInstanceVo.setDiagramResourceName(processDefinition.getDiagramResourceName());
+            processInstanceVo.setDeploymentId(processDefinition.getDeploymentId());
+            processInstanceVo.setSuspend(processDefinition.isSuspended());
+            processInstanceVo.setDeploymentTime(deployment.getDeploymentTime());
+            return processInstanceVo;
         }).collect(Collectors.toList());
         result.setRecords(deploymentList);
         return result;
@@ -250,27 +250,27 @@ public class FlowableProcessServiceImpl implements FlowableProcessService {
         if (processInstance != null) {
             Task currentTask = taskService.createTaskQuery ().processInstanceId (procInsId).list ().get (0);
             //1、添加审批记录
-            TaskComment taskComment = new TaskComment ();
+            TaskCommentVo taskCommentVo = new TaskCommentVo();
             if(processStatus == ProcessStatus.REVOKE){
-                taskComment.setType (ActionType.REVOKE.getType ());
-                taskComment.setStatus (ActionType.REVOKE.getStatus ());
-                taskComment.setMessage (comment);
+                taskCommentVo.setType (ActionType.REVOKE.getType ());
+                taskCommentVo.setStatus (ActionType.REVOKE.getStatus ());
+                taskCommentVo.setMessage (comment);
             }else if(processStatus == ProcessStatus.STOP){
-                taskComment.setType (ActionType.STOP.getType ());
-                taskComment.setStatus (ActionType.STOP.getStatus ());
-                taskComment.setMessage (comment);
+                taskCommentVo.setType (ActionType.STOP.getType ());
+                taskCommentVo.setStatus (ActionType.STOP.getStatus ());
+                taskCommentVo.setMessage (comment);
             }else if(processStatus == ProcessStatus.REJECT){
-                taskComment.setType (ActionType.REJECT.getType ());
-                taskComment.setStatus (ActionType.REJECT.getStatus ());
-                taskComment.setMessage (comment);
+                taskCommentVo.setType (ActionType.REJECT.getType ());
+                taskCommentVo.setStatus (ActionType.REJECT.getStatus ());
+                taskCommentVo.setMessage (comment);
             }else if(processStatus == ProcessStatus.DELETED){
-                taskComment.setType (ActionType.DELETED.getType ());
-                taskComment.setStatus (ActionType.DELETED.getStatus ());
-                taskComment.setMessage (comment);
+                taskCommentVo.setType (ActionType.DELETED.getType ());
+                taskCommentVo.setStatus (ActionType.DELETED.getStatus ());
+                taskCommentVo.setMessage (comment);
             }
 
 
-            taskService.addComment(currentTask.getId (),procInsId, taskComment.getCommentType(), taskComment.getFullMessage());
+            taskService.addComment(currentTask.getId (),procInsId, taskCommentVo.getCommentType(), taskCommentVo.getFullMessage());
             // 未签收任务
             if(StrUtil.isBlank(currentTask.getAssignee ()))  {
                 taskService.claim (currentTask.getId (), SecurityUtil.getUser().getUsername());

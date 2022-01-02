@@ -3,8 +3,8 @@ package com.entfrm.biz.flowable.controller.app;
 import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.flowable.entity.Flow;
-import com.entfrm.biz.flowable.entity.TaskComment;
+import com.entfrm.biz.flowable.entity.Workflow;
+import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.vo.ProcessInsVo;
 import io.swagger.annotations.Api;
@@ -71,8 +71,8 @@ public class AppFlowableTaskController {
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
     })
     @GetMapping("/getTskDef")
-    public R getById(Flow flow){
-        return R.ok(flowableTaskService.getTaskDef(flow));
+    public R getById(Workflow workFlow){
+        return R.ok(flowableTaskService.getTaskDef(workFlow));
     }
 
 
@@ -82,14 +82,14 @@ public class AppFlowableTaskController {
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
     })
     @PutMapping("/start")
-    public R start(@RequestBody Flow flow){
+    public R start(@RequestBody Workflow workFlow){
         String procInsId = flowableTaskService
-                .startProcess(flow.getProcDefKey(), flow.getBusinessTable(), flow.getBusinessId(), flow.getTitle());
+                .startProcess(workFlow.getProcDefKey(), workFlow.getBusinessTable(), workFlow.getBusinessId(), workFlow.getTitle());
         //指定下一步处理人
-        if(StringUtils.isNotBlank(flow.getAssignee())){
+        if(StringUtils.isNotBlank(workFlow.getAssignee())){
             Task task = taskService.createTaskQuery().processInstanceId(procInsId).active().singleResult();
             if(task != null){
-                taskService.setAssignee(task.getId(), flow.getAssignee());
+                taskService.setAssignee(task.getId(), workFlow.getAssignee());
             }
         }
         return R.ok(procInsId,"启动成功");
@@ -102,13 +102,13 @@ public class AppFlowableTaskController {
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
     })
     @PutMapping("audit")
-    public  R auditTask(@RequestBody Flow flow) {
-        flowableTaskService.auditTask(flow);
+    public  R auditTask(@RequestBody Workflow workFlow) {
+        flowableTaskService.auditTask(workFlow);
         //指定下一步处理人
-        if(StringUtils.isNotBlank(flow.getAssignee())){
-            Task task = taskService.createTaskQuery().processInstanceId(flow.getProcInsId()).active().singleResult();
+        if(StringUtils.isNotBlank(workFlow.getAssignee())){
+            Task task = taskService.createTaskQuery().processInstanceId(workFlow.getProcInsId()).active().singleResult();
             if(task != null){
-                taskService.setAssignee(task.getId(), flow.getAssignee());
+                taskService.setAssignee(task.getId(), workFlow.getAssignee());
             }
         }
         return R.ok("审批成功");
@@ -123,7 +123,7 @@ public class AppFlowableTaskController {
     })
     @PostMapping(value = "/backNodes")
     public R backNodes(@RequestParam String taskId) {
-        List<Flow> nodes = flowableTaskService.getBackNodes(taskId);
+        List<Workflow> nodes = flowableTaskService.getBackNodes(taskId);
         return R.ok(nodes,"获取成功");
     }
 
@@ -136,7 +136,7 @@ public class AppFlowableTaskController {
             @ApiImplicitParam(name = "comment", value = "驳回评论", required=true)
     })
     @PostMapping(value = "/back")
-    public R back(String backTaskDefKey, String taskId, TaskComment comment) {
+    public R back(String backTaskDefKey, String taskId, TaskCommentVo comment) {
         flowableTaskService.backTask(backTaskDefKey, taskId, comment);
         return R.ok("驳回成功!");
     }

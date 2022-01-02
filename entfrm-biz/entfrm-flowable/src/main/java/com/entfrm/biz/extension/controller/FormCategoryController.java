@@ -47,9 +47,9 @@ public class FormCategoryController {
 		return R.ok();
 	}
 
-	@DeleteMapping("/remove/{id}")
-	public R remove(@PathVariable Integer[] id) {
-		formCategoryService.removeByIds(Arrays.asList(id));
+	@DeleteMapping("/remove/{ids}")
+	public R remove(@PathVariable Integer[] ids) {
+		formCategoryService.removeByIds(Arrays.asList(ids));
 		return R.ok();
 	}
 

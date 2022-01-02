@@ -1,156 +1,163 @@
 package com.entfrm.biz.flowable.service.impl;
 
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.entfrm.base.constant.CommonConstants;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.entfrm.biz.extension.entity.TaskExtensionProperty;
+import com.entfrm.biz.extension.service.TaskExtensionDataService;
+import com.entfrm.biz.extension.service.TaskExtensionPropertyService;
+import com.entfrm.biz.flowable.entity.FlowableModel;
+import com.entfrm.biz.flowable.mapper.FlowableModelMapper;
 import com.entfrm.biz.flowable.service.FlowableModelService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.flowable.bpmn.BpmnAutoLayout;
+import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.api.FlowableException;
-import org.flowable.editor.constants.ModelDataJsonConstants;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
+import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
-import org.flowable.engine.repository.Model;
-import org.flowable.engine.repository.ModelQuery;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.ui.common.service.exception.BadRequestException;
+import org.flowable.ui.common.util.XmlUtil;
+import org.flowable.ui.modeler.domain.Model;
+import org.flowable.ui.modeler.serviceapi.ModelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Map;
-
 
 /**
- *<p>
- * 模型相关 Service
- *</p>
+ * <p>
+ * 流程模型 具体实现 service
+ * </p>
  *
  * @Author: entfrm开发团队-王翔
- * @Date: 2021/5/12
+ * @Date: 2021-05-11
  */
-@Slf4j
 @Service
+@Transactional
 @AllArgsConstructor
-public class FlowableModelServiceImpl implements FlowableModelService {
+public class FlowableModelServiceImpl extends ServiceImpl<FlowableModelMapper, FlowableModel> implements FlowableModelService {
+
+    private final ModelService modelService;
+
+    private final FlowableProcessService flowableProcessService;
 
     private final RepositoryService repositoryService;
-    private final ObjectMapper objectMapper;
 
+    private final TaskExtensionDataService taskExtensionDataService;
 
-    @Override
-    public IPage<Model> list(Map<String, Object> params) {
-        ModelQuery modelQuery = repositoryService.createModelQuery()
-                .latestVersion().orderByLastUpdateTime().desc();
+    private final TaskExtensionPropertyService taskExtensionPropertyService;
 
-        String name = (String) params.get("name");
-        if (StrUtil.isNotBlank(name)) {
-            modelQuery.modelNameLike(name);
-        }
+    private BpmnXMLConverter bpmnXmlConverter;
 
-        String category = (String) params.get("category");
-        if (StrUtil.isNotBlank(category)) {
-            modelQuery.modelCategory(category);
-        }
-
-        int current = MapUtil.getInt(params, CommonConstants.CURRENT);
-        int size = MapUtil.getInt(params, CommonConstants.SIZE);
-
-        IPage result = new Page(current, size);
-        result.setTotal(modelQuery.count());
-        result.setRecords(modelQuery.listPage((current - 1) * size, size));
-        return result;
-    }
-
+    private BpmnJsonConverter bpmnJsonConverter;
 
     @Override
-    public Model save(String name, String category, String key, String description) {
+    public String export(String id) {
         try {
-            ObjectNode editorNode = objectMapper.createObjectNode();
-            editorNode.put("id" , "canvas");
-            editorNode.put("resourceId" , "canvas");
-            ObjectNode properties = objectMapper.createObjectNode();
-            properties.put("process_author" , CommonConstants.AUTHOR);
-            properties.put("process_id" , key);
-            properties.put("name" , name);
-            editorNode.set("properties" , properties);
-            ObjectNode stencilset = objectMapper.createObjectNode();
-            stencilset.put("namespace" , "http://b3mn.org/stencilset/bpmn2.0#");
-            editorNode.set("stencilset" , stencilset);
-
-            Model model = repositoryService.newModel();
-            model.setKey(key);
-            model.setName(name);
-            model.setCategory(category);
-            model.setVersion(Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(model.getKey()).count() + 1)));
-
-            ObjectNode modelObjectNode = objectMapper.createObjectNode();
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, name);
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, model.getVersion());
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, description);
-            model.setMetaInfo(modelObjectNode.toString());
-
-            repositoryService.saveModel(model);
-            repositoryService.addModelEditorSource(model.getId(), editorNode.toString().getBytes("utf-8"));
-            return model;
-        } catch (UnsupportedEncodingException e) {
-            log.error("UnsupportedEncodingException" , e);
+            Model model = modelService.getModel(id);
+            byte[] bpmnBytes = modelService.getBpmnXML(model);
+            return new String(bpmnBytes);
+        } catch (Exception e) {
+            throw new FlowableException("导出model的xml文件失败，模型ID=" + id, e);
         }
-        return null;
     }
 
-
     @Override
-    public void removeById(String id) {
-        repositoryService.deleteModel(id);
+    public void remove(String id) {
+        Model model = modelService.getModel(id);
+        try {
+            this.deleteDeployment(model.getKey());
+            this.modelService.deleteModel(model.getId());
+            taskExtensionDataService.deleteByProcessDefId(model.getKey());
+            taskExtensionPropertyService.remove(new LambdaUpdateWrapper<TaskExtensionProperty>()
+                    .eq(TaskExtensionProperty::getProcessDefId, model.getKey()));
+        } catch (Exception e) {
+            throw new BadRequestException("不能删除模型: " + id);
+        }
     }
 
+    @Override
+    public void deleteDeployment(String key) {
+        ProcessDefinition processDefinition = flowableProcessService.getProcessDefinitionByKey(key);
+        if (processDefinition != null) {
+            try {
+                repositoryService.deleteDeployment(processDefinition.getDeploymentId(), true);
+            } catch (Exception e) {
+                throw new BadRequestException("流程不能被删除: " + processDefinition.getDeploymentId());
+            }
+            this.deleteDeployment(key);
+        }
+    }
 
     @Override
-    public String deploy(String id) {
+    public String deploy(String id, String category) {
         String message = "";
         try {
-            // 获取模型
-            Model model = repositoryService.getModel(id);
-            ObjectNode objectNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(model.getId()));
-            BpmnModel bpmnModel = new BpmnJsonConverter().convertToBpmnModel(objectNode);
+            Model model = modelService.getModel(id);
+            byte[] bpmnBytes = modelService.getBpmnXML(model);
 
             String processName = model.getName();
-            if (!StrUtil.endWithIgnoreCase(processName, ".bpmn20.xml")) {
-                processName += ".bpmn20.xml";
-            }
+            if (!StringUtils.endsWith(processName, ".bpmn20.xml")) processName += ".bpmn20.xml";
 
-            // 部署流程
-            Deployment deployment = repositoryService
-                    .createDeployment()
+            Deployment deployment = repositoryService.createDeployment()
+                    .addBytes(processName, bpmnBytes)
                     .name(model.getName())
-                    .addBpmnModel(processName, bpmnModel)
                     .key(model.getKey())
                     .deploy();
-            log.debug("流程部署--------deploy：" + deployment );
+
+            List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
+                    .deploymentId(deployment.getId()).list();
 
             // 设置流程分类
-            List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
-                    .deploymentId(deployment.getId())
-                    .list();
-
-            list.stream().forEach(processDefinition ->
-                    repositoryService.setProcessDefinitionCategory(processDefinition.getId(), model.getCategory()));
-
-            if (list.size() == 0) {
-                message = "部署失败，没有流程。";
+            for (ProcessDefinition processDefinition : list) {
+                if (StringUtils.isNotBlank(category)) {
+                    repositoryService.setProcessDefinitionCategory(processDefinition.getId(), category);
+                }
+                message += "部署成功,流程ID=" + processDefinition.getId() ;
             }
 
+            if (list.size() == 0) {
+                message = "部署失败,没有流程。";
+            }
         } catch (Exception e) {
-            throw new FlowableException("设计模型图不正确，检查模型正确性，模型ID=" + id, e);
+            throw new FlowableException("设计模型图不正确,检查模型正确性,模型ID=" + id, e);
         }
         return message;
     }
 
-
+    @Override
+    public String changeXmlToJson(String xml) {
+        try {
+            XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
+            InputStreamReader xmlIn = new InputStreamReader(new ByteArrayInputStream(xml.getBytes("UTF-8")), "UTF-8");
+            XMLStreamReader xsr = xif.createXMLStreamReader(xmlIn);
+            // bpmn模型转换
+            BpmnModel bpmnModel = this.bpmnXmlConverter.convertToBpmnModel(xsr);
+            if (CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
+                throw new BadRequestException("在定义中没有发现进程" );
+            } else {
+                if (bpmnModel.getLocationMap().size() == 0) {
+                    BpmnAutoLayout bpmnLayout = new BpmnAutoLayout(bpmnModel);
+                    bpmnLayout.execute();
+                }
+                // bpmn模型转换json
+                ObjectNode modelNode = this.bpmnJsonConverter.convertToJson(bpmnModel);
+                return modelNode.toString();
+            }
+        } catch (Exception e) {
+            throw new BadRequestException("导入失败,出错信息:" + e.getMessage());
+        }
+    }
 }

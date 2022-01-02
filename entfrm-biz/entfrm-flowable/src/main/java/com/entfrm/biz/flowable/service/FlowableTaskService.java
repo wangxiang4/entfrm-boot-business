@@ -1,8 +1,8 @@
 package com.entfrm.biz.flowable.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.entfrm.biz.flowable.entity.Flow;
-import com.entfrm.biz.flowable.entity.TaskComment;
+import com.entfrm.biz.flowable.entity.Workflow;
+import com.entfrm.biz.flowable.vo.TaskCommentVo;
 
 import java.io.InputStream;
 import java.util.List;
@@ -42,7 +42,7 @@ public interface FlowableTaskService {
      * procDefId:流程定义ID
      * taskDefKey:任务定义ID
      */
-    Flow getTaskDef(Flow flow);
+    Workflow getTaskDef(Workflow workFlow);
 
 
 
@@ -51,14 +51,14 @@ public interface FlowableTaskService {
      * 审批任务
      * flow:工作流通用数据传输VO
      * **/
-    void complete(Flow flow);
+    void complete(Workflow workFlow);
 
 
     /**
      * 外置表单审批专用
      * 审批任务
      * **/
-    void auditTask(Flow flow);
+    void auditTask(Workflow workFlow);
 
 
 
@@ -103,7 +103,7 @@ public interface FlowableTaskService {
      * taskId:任务ID
      * @return :已经运行过的活动节点信息
      */
-    List<Flow> getBackNodes(String taskId);
+    List<Workflow> getBackNodes(String taskId);
 
 
 
@@ -113,7 +113,7 @@ public interface FlowableTaskService {
      * taskId:当前任务ID
      * TaskComment:设置驳回状态
      */
-    void backTask(String backTaskDefKey, String taskId, TaskComment comment);
+    void backTask(String backTaskDefKey, String taskId, TaskCommentVo comment);
 
 
 

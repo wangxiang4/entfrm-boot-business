@@ -6,7 +6,7 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.flowable.entity.Workflow;
 import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
-import com.entfrm.biz.flowable.vo.ProcessInsVo;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.TaskService;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  *<p>
- * 任务相关 controller
+ * 任务 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -39,7 +39,7 @@ public class FlowableTaskController {
 
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInsVo> taskIPage = flowableTaskService.list(params);
+        IPage<ProcessInstanceVo> taskIPage = flowableTaskService.list(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
     }
 

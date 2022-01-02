@@ -66,7 +66,7 @@ public class EntfrmUserDetailService implements UserDetailsService {
             if ("0".equals(sysUser.getStatus())) {
                 notLocked = true;
             }
-            EntfrmUser authUser = new EntfrmUser(sysUser.getId(), sysUser.getDeptId(), sysUser.getUserName(), sysUser.getPassword(), true, true, true, notLocked,
+            EntfrmUser authUser = new EntfrmUser(sysUser.getId(), sysUser.getDeptId(), sysUser.getUserName(), sysUser.getPassword(), urList, true, true, true, notLocked,
                     AuthorityUtils.createAuthorityList(permissions.toArray(new String[0])));
 
             BeanUtils.copyProperties(sysUser, authUser);

@@ -33,9 +33,9 @@ public interface FlowableModelService extends IService<FlowableModel> {
 
     /**
      * 移除部署
-     * key: 流程定义key
+     * processDefKey: 流程定义key
      */
-    void deleteDeployment (String key);
+    void deleteDeployment (String processDefKey);
 
     /**
      * 部署模型
@@ -46,7 +46,7 @@ public interface FlowableModelService extends IService<FlowableModel> {
 
     /**
      * 将工作流xml转换json
-     * xml: bpmn xml
+     * xml: bpmn.xml
      */
     String changeXmlToJson (String xml);
 }

@@ -1,3 +1,4 @@
+/*
 package com.entfrm.biz.flowable.controller.app;
 
 import com.entfrm.base.api.R;
@@ -15,6 +16,7 @@ import org.flowable.engine.form.TaskFormData;
 import org.flowable.task.api.Task;
 import org.springframework.web.bind.annotation.*;
 
+*/
 /**
  * <p>
  * APP动态表单表单相关 controller
@@ -22,7 +24,8 @@ import org.springframework.web.bind.annotation.*;
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2021-05-12
- */
+ *//*
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/app/flowable/form")
@@ -33,7 +36,9 @@ public class AppFlowableFormController {
     private final TaskService taskService;
     private final FormService formService;
 
-    /** 动态表单:获取表单数据 */
+    */
+/** 动态表单:获取表单数据 *//*
+
     @ApiOperation("动态表单:获取表单数据")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "code", value = "动态表单编码", required=true),
@@ -48,7 +53,9 @@ public class AppFlowableFormController {
 
 
 
-    /** 动态表单:启动流程 */
+    */
+/** 动态表单:启动流程 *//*
+
     @ApiOperation("动态表单:启动流程")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -69,7 +76,9 @@ public class AppFlowableFormController {
 
 
 
-    /** 动态表单:审批 */
+    */
+/** 动态表单:审批 *//*
+
     @ApiOperation("动态表单:审批")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true),
@@ -89,3 +98,4 @@ public class AppFlowableFormController {
 
 
 }
+*/

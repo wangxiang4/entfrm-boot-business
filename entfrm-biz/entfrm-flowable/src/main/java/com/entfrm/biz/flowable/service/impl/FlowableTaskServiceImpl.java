@@ -14,7 +14,7 @@ import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableProcessService;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
 import com.entfrm.biz.flowable.util.FlowableUtil;
-import com.entfrm.biz.flowable.vo.ProcessInsVo;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import com.entfrm.biz.flowable.vo.TaskVo;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -86,17 +86,17 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
         IPage result = new Page(page, limit);
         result.setTotal(taskQuery.count());
 
-        List<ProcessInsVo> taskDTOList = taskQuery.orderByTaskCreateTime().desc()
+        List<ProcessInstanceVo> taskDTOList = taskQuery.orderByTaskCreateTime().desc()
                 .listPage((page - 1) * limit, limit).stream().map(task -> {
                     ProcessDefinition pd=repositoryService.createProcessDefinitionQuery().processDefinitionId(task.getProcessDefinitionId()).singleResult();
-                    ProcessInsVo processInsVo = new ProcessInsVo();
+                    ProcessInstanceVo processInstanceVo = new ProcessInstanceVo();
                     TaskVo taskVo = new TaskVo (task);
                     taskVo.setProcessDefKey(pd.getKey());
-                    processInsVo.setTask(taskVo);
-                    processInsVo.setVars(task.getProcessVariables());
-                    processInsVo.setProcessDefinitionName(pd.getName());
-                    processInsVo.setVersion(pd.getVersion());
-                    return processInsVo;
+                    processInstanceVo.setTask(taskVo);
+                    processInstanceVo.setVars(task.getProcessVariables());
+                    processInstanceVo.setProcessDefinitionName(pd.getName());
+                    processInstanceVo.setVersion(pd.getVersion());
+                    return processInstanceVo;
                 }).collect(Collectors.toList());
         result.setRecords(taskDTOList);
         return result;

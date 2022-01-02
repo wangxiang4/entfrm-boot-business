@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  *<p>
- * 动态表单表单相关 controller
+ * 动态表单表单 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.*;
 public class FlowableFormController {
 
     private final FlowableFormService flowableFormService;
+
     private final TaskService taskService;
+
     private final FormService formService;
 
     /** 动态表单:获取表单数据 */

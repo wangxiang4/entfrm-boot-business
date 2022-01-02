@@ -1,3 +1,4 @@
+/*
 package com.entfrm.biz.flowable.controller.app;
 
 import cn.hutool.core.io.IoUtil;
@@ -6,7 +7,7 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.flowable.entity.Workflow;
 import com.entfrm.biz.flowable.vo.TaskCommentVo;
 import com.entfrm.biz.flowable.service.FlowableTaskService;
-import com.entfrm.biz.flowable.vo.ProcessInsVo;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * <p>
  * APP任务相关 controller
@@ -32,7 +34,8 @@ import java.util.Map;
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2021-05-12
- */
+ *//*
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/app/flowable/task")
@@ -49,7 +52,7 @@ public class AppFlowableTaskController {
     })
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInsVo> taskIPage = flowableTaskService.list(params);
+        IPage<ProcessInstanceVo> taskIPage = flowableTaskService.list(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
     }
 
@@ -76,7 +79,9 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 外置表单:启动流程 */
+    */
+/** 外置表单:启动流程 *//*
+
     @ApiOperation("外置表单:启动流程 ")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -96,7 +101,9 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 外置表单:审批 */
+    */
+/** 外置表单:审批 *//*
+
     @ApiOperation("外置表单:审批")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "flow", value = "工作流通用数据实体", required=true)
@@ -116,7 +123,9 @@ public class AppFlowableTaskController {
 
 
 
-    /** 获取可退回任务节点 */
+    */
+/** 获取可退回任务节点 *//*
+
     @ApiOperation("获取可退回任务节点")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "taskId", value = "任务ID", required=true)
@@ -128,7 +137,9 @@ public class AppFlowableTaskController {
     }
 
 
-    /** 驳回任务到指定节点 */
+    */
+/** 驳回任务到指定节点 *//*
+
     @ApiOperation("驳回任务到指定节点")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "backTaskDefKey", value = "驳回任务的定义KEy", required=true),
@@ -143,3 +154,4 @@ public class AppFlowableTaskController {
 
 
 }
+*/

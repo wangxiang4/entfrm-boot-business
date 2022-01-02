@@ -1,12 +1,10 @@
 package com.entfrm.biz.flowable.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import com.entfrm.biz.flowable.enums.ProcessStatus;
-import com.entfrm.biz.flowable.vo.ProcessInsVo;
-import org.flowable.engine.history.HistoricProcessInstance;
+import com.entfrm.biz.flowable.vo.ProcessDefinitionVo;
+import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.runtime.ProcessInstance;
 
 import java.io.InputStream;
 import java.util.List;
@@ -26,71 +24,68 @@ public interface FlowableProcessService {
      * 流程定义列表
      * params:查询条件参数
      */
-    IPage<ProcessInstanceVo> list(Map<String, Object> params);
+    IPage<ProcessDefinitionVo> list(Map<String, Object> params);
+
+    /**
+     * 运行中的流程实例列表
+     * params:查询条件参数
+     */
+    IPage<ProcessInstanceVo> runList(Map<String, Object> params);
+
+    /**
+     * 历史流程列表
+     * params:查询条件参数
+     */
+    IPage<ProcessInstanceVo> historyList(Map<String, Object> params);
 
     /**
      * 读取xml/image资源
-     * procInsId:流程实例ID
-     * procDefId:流程定义ID
-     * resType:读取文件类型
+     * processInsId:流程实例ID
+     * processDefId:流程定义ID
+     * fileType:读取文件类型
      */
-    InputStream readResource(String procInsId, String procDefId, String resType);
+    InputStream readResource(String processInsId, String processDefId, String fileType);
+
+    /**
+     * 设置流程分类类别
+     * processDefId: 流程定义ID
+     * category: 类别
+     */
+    void setProcessInstanceCategory(String processDefId, String category);
 
     /**
      * 挂起/激活
+     * processDefId:流程定义ID
      * status:状态
-     * procDefId:流程定义ID
      */
-    Boolean changeStatus(String procDefId, String status);
+    void setProcessInstanceStatus(String processDefId, String status);
 
+    /**
+     * 删除流程部署
+     * deploymentId:部署ID
+     */
+    void deleteDeployment(String deploymentId);
+
+    /**
+     * 停止流程实例
+     * processInsId:流程实例ID
+     * processStatus:流程状态
+     * comment:签名备注
+     */
+    void stopProcessInstance(String processInsId, ProcessStatus processStatus, String comment);
 
     /**
      * 删除流程实例
-     * deployId:部署ID
+     * processInsId:流程实例ID
+     * deleteReason:删除原因
      */
-    Boolean removeProcIns(String deployId);
-
+    void deleteProcessInstance(String processInsId, String deleteReason);
 
     /**
-     * 获取正在运行的流程实例对象
-     * procInsId:流程实例ID
-     * @return :ProcessInstance实体
+     * 撤销流程实例
+     * processInsId:流程实例ID
      */
-    ProcessInstance getProcIns(String procInsId);
-
-    /**
-     * 获取已经结束流程实例对象
-     * procInsId:流程实例ID
-     * @return :HistoricProcessInstance实体
-     */
-    HistoricProcessInstance getFinishedProcIns(String procInsId);
-
-
-    /**
-     * 获取流程实例状态
-     * processInstanceId:流程实例ID
-     * @return :ProcessVo实体
-     */
-    ProcessInsVo queryProcessState(String processInstanceId);
-
-
-
-    /**
-     * 根据key获取流程定义
-     * key:流程定义Key
-     */
-    ProcessDefinition getProcessDefinitionByKey(String key);
-
-
-    /**
-     * 终止流程实例
-     * procInsId:流程实例ID
-     * processStatus:流程状态
-     * comment:审批意见
-     */
-    void stopProcessInstanceById(String procInsId, ProcessStatus processStatus, String comment);
-
-
+    void undoProcessInstance(String processInsId);
 
     /**
      * 节点跳转
@@ -99,6 +94,28 @@ public interface FlowableProcessService {
      */
     void moveExecutionsToSingleActivityId(List<String> executionIds, String activityId);
 
+    /**
+     * 删除历史流程实例
+     * processInsId:流程实例ID
+     */
+    void delHistoryProcessInstance(String processInsId);
 
+    /**
+     * 获取流程实例状态
+     * processInstanceId:流程实例ID
+     */
+    ProcessInstanceVo queryProcessState(String processInstanceId);
+
+    /**
+     * 获取流程定义
+     * processDefId:流程定义ID
+     */
+    ProcessDefinition getProcessDefinition(String processDefId);
+
+    /**
+     * 获取流程定义
+     * processDefKey:流程定义key
+     */
+    ProcessDefinition getProcessDefinitionByKey(String processDefKey);
 
 }

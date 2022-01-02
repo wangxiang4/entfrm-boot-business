@@ -2,7 +2,7 @@ package com.entfrm.biz.flowable.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.entfrm.biz.flowable.vo.ProcessInstanceVo;
+import com.entfrm.biz.flowable.vo.ProcessDefinitionVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -43,6 +43,6 @@ public class FlowableModel implements Serializable {
     private String tenantId;
 
     @TableField(exist = false)
-    private ProcessInstanceVo processInstanceVo;
+    private ProcessDefinitionVo processDefinitionVo;
 
 }

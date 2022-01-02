@@ -5,6 +5,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yong
@@ -23,12 +25,16 @@ public class EntfrmUser extends User {
 	 */
 	@Getter
 	private Integer deptId;
+	/**
+	 * 角色关联
+	 */
+	private List<String> roleIds;
 
-
-	public EntfrmUser(Integer id, Integer deptId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+	public EntfrmUser(Integer id, Integer deptId, String username, String password,List<String> roleIds,boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.id = id;
 		this.deptId = deptId;
+		this.roleIds = roleIds;
 	}
 
 	public boolean isAdmin() {
@@ -37,5 +43,9 @@ public class EntfrmUser extends User {
 
 	public static boolean isAdmin(Integer id) {
 		return id != null && 1 == id;
+	}
+
+	public String getRoleIds() {
+		return roleIds.stream().collect(Collectors.joining(","));
 	}
 }

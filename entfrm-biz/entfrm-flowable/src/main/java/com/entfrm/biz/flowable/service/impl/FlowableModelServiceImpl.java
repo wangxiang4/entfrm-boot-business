@@ -25,8 +25,6 @@ import org.flowable.ui.common.service.exception.BadRequestException;
 import org.flowable.ui.common.util.XmlUtil;
 import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.serviceapi.ModelService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +36,7 @@ import java.util.List;
 
 /**
  * <p>
- * 流程模型 具体实现 service
+ * 流程模型 service
  * </p>
  *
  * @Author: entfrm开发团队-王翔
@@ -89,15 +87,15 @@ public class FlowableModelServiceImpl extends ServiceImpl<FlowableModelMapper, F
     }
 
     @Override
-    public void deleteDeployment(String key) {
-        ProcessDefinition processDefinition = flowableProcessService.getProcessDefinitionByKey(key);
+    public void deleteDeployment(String processDefKey) {
+        ProcessDefinition processDefinition = flowableProcessService.getProcessDefinitionByKey(processDefKey);
         if (processDefinition != null) {
             try {
                 repositoryService.deleteDeployment(processDefinition.getDeploymentId(), true);
             } catch (Exception e) {
                 throw new BadRequestException("流程不能被删除: " + processDefinition.getDeploymentId());
             }
-            this.deleteDeployment(key);
+            this.deleteDeployment(processDefKey);
         }
     }
 

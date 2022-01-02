@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.idm.api.User;
 import org.flowable.idm.engine.impl.persistence.entity.UserEntity;
 import org.flowable.idm.engine.impl.persistence.entity.UserEntityImpl;
 import org.flowable.ui.common.security.SecurityUtils;
@@ -30,7 +29,6 @@ import org.flowable.ui.modeler.serviceapi.ModelService;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,7 +37,7 @@ import java.util.UUID;
 
 /**
  *<p>
- * 模型相关 controller
+ * 模型 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -75,7 +73,7 @@ public class FlowableModelController {
             if(processDefinition != null){
                 String deploymentId = processDefinition.getDeploymentId();
                 Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-                item.getProcessInstanceVo()
+                item.getProcessDefinitionVo()
                         .setId(processDefinition.getId())
                         .setCategory(processDefinition.getCategory())
                         .setKey(processDefinition.getKey())
@@ -105,7 +103,7 @@ public class FlowableModelController {
     }
 
     /** 删除模型 */
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping("/remove/{ids}")
     public R remove(@PathVariable String[] ids) {
         Arrays.asList(ids).forEach(id -> flowableModelService.remove(id));
         return R.ok("删除成功");

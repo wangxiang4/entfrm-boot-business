@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.workflow.entity.FlowableModel;
+import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.service.WorkflowModelService;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.security.entity.EntfrmUser;
@@ -58,15 +58,15 @@ public class WorkflowModelController {
 
     private final RepositoryService repositoryService;
 
-    private LambdaQueryWrapper<FlowableModel> getLambdaQueryWrapper(FlowableModel flowableModel) {
-        return new LambdaQueryWrapper<FlowableModel>()
-                .like(StrUtil.isNotBlank(flowableModel.getName()), FlowableModel::getName, flowableModel.getName());
+    private LambdaQueryWrapper<WorkflowModel> getLambdaQueryWrapper(WorkflowModel workflowModel) {
+        return new LambdaQueryWrapper<WorkflowModel>()
+                .like(StrUtil.isNotBlank(workflowModel.getName()), WorkflowModel::getName, workflowModel.getName());
     }
 
     /** 流程模型列表 */
     @GetMapping("/list")
-    public R list(Page page, FlowableModel flowableModel) {
-        IPage<FlowableModel> result = workflowModelService.page(page, getLambdaQueryWrapper(flowableModel));
+    public R list(Page page, WorkflowModel workflowModel) {
+        IPage<WorkflowModel> result = workflowModelService.page(page, getLambdaQueryWrapper(workflowModel));
         // 存储流程实例
         result.getRecords().forEach(item -> {
             ProcessDefinition processDefinition = workflowProcessService.getProcessDefinitionByKey(item.getModelKey());

@@ -1,7 +1,7 @@
 package com.entfrm.biz.workflow.execution.cmd;
 
 import com.entfrm.biz.workflow.constant.FlowableConstant;
-import com.entfrm.biz.workflow.util.FlowableUtil;
+import com.entfrm.biz.workflow.util.workflowUtil;
 import org.apache.commons.compress.utils.Sets;
 import org.flowable.bpmn.model.FlowNode;
 import org.flowable.bpmn.model.Process;
@@ -75,14 +75,14 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
             throw new FlowableException ("Task with id:" + taskId + " is not a UserTask");
         }
         // ps:如果目前为前进,并将前进实在子流程中,目前处理的是只能退回到子流程开始节点,无法退回至子流程中任意节点
-        String[] sourceAndTargetRealActivityId =  FlowableUtil.getSourceAndTargetRealActivityId(sourceFlowElement, targetFlowElement);
+        String[] sourceAndTargetRealActivityId =  workflowUtil.getSourceAndTargetRealActivityId(sourceFlowElement, targetFlowElement);
         // 实际应操作的当前节点ID
         String sourceRealActivityId = sourceAndTargetRealActivityId[0];
         // 实际应操作的目标节点ID
         String targetRealActivityId = sourceAndTargetRealActivityId[1];
 
         //获取当前流程中的可以并行的网关
-        Map<String, Set<String>> specialGatewayNodes = FlowableUtil.getSpecialGatewayElements(process);
+        Map<String, Set<String>> specialGatewayNodes = workflowUtil.getSpecialGatewayElements(process);
 
         // 当前节点处在的并行网关list
         List<String> sourceInSpecialGatewayList = new ArrayList<>();
@@ -111,7 +111,7 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         }
         // 4.目标节点和当前节点都在并行网关中
         else {
-            int diffSpecialGatewayLevel = FlowableUtil.getDiffLevel(sourceInSpecialGatewayList,targetInSpecialGatewayList);
+            int diffSpecialGatewayLevel = workflowUtil.getDiffLevel(sourceInSpecialGatewayList,targetInSpecialGatewayList);
             // 在并行网关同一层且在同一分支
             if (diffSpecialGatewayLevel == -1) {
                 sourceRealAcitivtyIds = Sets.newHashSet(sourceRealActivityId);
@@ -178,10 +178,10 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         ExecutionEntity taskExecution = executionEntityManager.findById(taskExecutionId);
         List<ExecutionEntity> executions =
                 executionEntityManager.findChildExecutionsByProcessInstanceId(processInstanceId);
-        Set<String> parentExecutionIds = FlowableUtil.getParentExecutionIdsByActivityId(executions,
+        Set<String> parentExecutionIds = workflowUtil.getParentExecutionIdsByActivityId(executions,
                 sourceRealActivityId);
         // 流程执行根ID
-        String realParentExecutionId = FlowableUtil.getParentExecutionIdFromParentIds(taskExecution,
+        String realParentExecutionId = workflowUtil.getParentExecutionIdFromParentIds(taskExecution,
                 parentExecutionIds);
         //查询act_ru_execution表并且符合当前的流程执行根ID,跟活动ID的执行分支路线实体
         List<ExecutionEntity> childExecutions =

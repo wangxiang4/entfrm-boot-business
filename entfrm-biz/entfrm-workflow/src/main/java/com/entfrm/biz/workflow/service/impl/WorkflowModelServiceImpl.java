@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.entfrm.biz.extension.entity.TaskExtensionProperty;
 import com.entfrm.biz.extension.service.TaskExtensionDataService;
 import com.entfrm.biz.extension.service.TaskExtensionPropertyService;
-import com.entfrm.biz.workflow.entity.FlowableModel;
+import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.mapper.WorkflowModelMapper;
 import com.entfrm.biz.workflow.service.WorkflowModelService;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
@@ -45,7 +45,7 @@ import java.util.List;
 @Service
 @Transactional
 @AllArgsConstructor
-public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, FlowableModel> implements WorkflowModelService {
+public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, WorkflowModel> implements WorkflowModelService {
 
     private final ModelService modelService;
 

@@ -14,7 +14,7 @@ import com.entfrm.biz.workflow.enums.ProcessStatus;
 import com.entfrm.biz.workflow.execution.cmd.RollBackUserTaskCmd;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
-import com.entfrm.biz.workflow.util.FlowableUtil;
+import com.entfrm.biz.workflow.util.workflowUtil;
 import com.entfrm.biz.workflow.vo.HistoricTaskVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
 import com.entfrm.biz.workflow.vo.TaskCommentVo;
@@ -380,7 +380,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
             FlowNode rollBackFlowElement = (FlowNode) process.getFlowElement(activityId, true);
 
             //目标节点是否可以到达
-            if (FlowableUtil.isReachable(process, rollBackFlowElement, currentFlowElement)){
+            if (workflowUtil.isReachable(process, rollBackFlowElement, currentFlowElement)){
                 Workflow workflow = new Workflow();
                 workflow.setTaskDefKey(activityId);
                 workflow.setTaskName(rollBackFlowElement.getName());

@@ -1,7 +1,7 @@
 package com.entfrm.biz.workflow.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.entfrm.biz.workflow.entity.FlowableModel;
+import com.entfrm.biz.workflow.entity.WorkflowModel;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.entfrm.biz.workflow.entity.FlowableModel;
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
-public interface WorkflowModelMapper extends BaseMapper<FlowableModel> {
+public interface WorkflowModelMapper extends BaseMapper<WorkflowModel> {
 
 }

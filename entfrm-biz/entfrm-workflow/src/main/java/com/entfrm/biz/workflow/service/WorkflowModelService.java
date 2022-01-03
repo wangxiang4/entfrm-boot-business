@@ -1,7 +1,7 @@
 package com.entfrm.biz.workflow.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.entfrm.biz.workflow.entity.FlowableModel;
+import com.entfrm.biz.workflow.entity.WorkflowModel;
 
 /**
  * <p>
@@ -11,7 +11,7 @@ import com.entfrm.biz.workflow.entity.FlowableModel;
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
-public interface WorkflowModelService extends IService<FlowableModel> {
+public interface WorkflowModelService extends IService<WorkflowModel> {
 
     /**
      * 导出bpmn.xml

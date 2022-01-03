@@ -18,10 +18,10 @@ import java.util.stream.Stream;
  * </p>
  *
  * @Author: entfrm开发团队-王翔
- * @Date: 2021-05-17
+ * @Date: 2022/1/4
  */
 @UtilityClass
-public class FlowableUtil {
+public class workflowUtil {
 
 
     public boolean isReachable(Process process, FlowNode sourceElement, FlowNode targetElement) {

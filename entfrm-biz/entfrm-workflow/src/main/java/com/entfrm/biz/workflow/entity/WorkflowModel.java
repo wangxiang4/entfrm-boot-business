@@ -23,7 +23,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("act_de_model")
-public class FlowableModel implements Serializable {
+public class WorkflowModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

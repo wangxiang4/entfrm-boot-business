@@ -3,12 +3,16 @@ package com.entfrm.biz.workflow.controller;
 import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
+import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.enums.ProcessStatus;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.task.api.Task;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +35,8 @@ import java.util.Map;
 @AllArgsConstructor
 @RequestMapping("/workflow/process")
 public class WorkflowProcessController {
+
+    private final TaskService taskService;
 
     private final WorkflowProcessService workflowProcessService;
 
@@ -140,6 +146,25 @@ public class WorkflowProcessController {
     public R selfProcessInstanceList(@RequestParam Map<String, Object> params) {
         IPage<ProcessInstanceVo> taskIPage = workflowProcessService.selfProcessInstanceList(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
+    }
+
+    /** 启动流程定义 */
+    @PostMapping("/startProcessDefinition")
+    public R startProcessDefinition(@RequestBody Workflow workflow) {
+        String processInsId = workflowProcessService.startProcessDefinition(
+                workflow.getProcDefKey(),
+                workflow.getBusinessTable(),
+                workflow.getBusinessId(),
+                workflow.getTitle());
+
+        // 指定下一步处理人,不设置就使用默认处理人
+        if (StringUtils.isNotBlank(workflow.getAssignee())) {
+            Task task = taskService.createTaskQuery().processInstanceId(processInsId).active().singleResult();
+            if (task != null) {
+                taskService.setAssignee(task.getId(), workflow.getAssignee());
+            }
+        }
+        return R.ok(processInsId, "启动成功");
     }
 
 }

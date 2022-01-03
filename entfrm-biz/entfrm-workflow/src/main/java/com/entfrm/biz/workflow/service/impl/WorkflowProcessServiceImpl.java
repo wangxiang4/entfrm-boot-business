@@ -429,22 +429,22 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
     @Override
     public String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title, Map<String, Object> processVars) {
-        //设置流程变量
+        // 设置流程变量
         if(processVars == null){
             processVars = MapUtil.newHashMap();
         }
 
-        //可由外部提供流程发起人
+        // 可由外部提供流程发起人
         String userId = MapUtil.getStr(processVars, FlowableConstant.INITIATOR);
         if(userId == null){
             userId= SecurityUtil.getUser().getId() + "";
         }
 
-        //设置流程执行人
+        // 设置流程执行人
         String userName = SecurityUtil.getUser().getUsername();
         processVars.put(FlowableConstant.USERNAME, userName);
 
-        //设置流程发起人
+        // 设置流程发起人
         identityService.setAuthenticatedUserId(userId);
 
         // 设置流程标题
@@ -452,12 +452,12 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
             processVars.put(FlowableConstant.TITLE, title);
         }
 
-        //启动流程实例
+        // 启动流程实例
         String processInsId = runtimeService
                 .startProcessInstanceByKey(processDefKey, String.join(":",businessTable,businessId), processVars)
                 .getProcessInstanceId();
 
-        //更新业务表流程实例ID,确保业务表字段process_ins_id存在
+        // 更新业务表流程实例ID,确保业务表字段process_ins_id存在
         Workflow act = new Workflow();
         act.setBusinessTable (businessTable);
         act.setBusinessId (businessId);

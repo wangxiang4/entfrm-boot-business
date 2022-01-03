@@ -125,25 +125,6 @@ public class WorkflowTaskController {
         return R.ok(workflow);
     }
 
-    /** 启动流程定义 */
-    @PostMapping("/startProcessDefinition")
-    public R startProcessDefinition(@RequestBody Workflow workflow) {
-        String processInsId = workflowProcessService.startProcessDefinition(
-                workflow.getProcDefKey(),
-                workflow.getBusinessTable(),
-                workflow.getBusinessId(),
-                workflow.getTitle());
-
-        // 指定下一步处理人,不设置就使用默认处理人
-        if (StringUtils.isNotBlank(workflow.getAssignee())) {
-            Task task = taskService.createTaskQuery().processInstanceId(processInsId).active().singleResult();
-            if (task != null) {
-                taskService.setAssignee(task.getId(), workflow.getAssignee());
-            }
-        }
-        return R.ok(processInsId, "启动成功");
-    }
-
     /** 提交任务 */
     @PostMapping("/complete")
     public R complete(@RequestBody Workflow workflow) {

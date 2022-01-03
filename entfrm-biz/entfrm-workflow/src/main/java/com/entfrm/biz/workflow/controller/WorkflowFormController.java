@@ -1,20 +1,30 @@
 package com.entfrm.biz.workflow.controller;
 
+import cn.hutool.core.map.MapUtil;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.entity.Workflow;
-import com.entfrm.biz.workflow.service.WorkflowFormService;
+import com.entfrm.biz.workflow.service.WorkflowTaskService;
+import com.entfrm.biz.workflow.util.Variable;
+import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.FormService;
+import org.flowable.engine.IdentityService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.form.FormProperty;
+import org.flowable.engine.form.StartFormData;
 import org.flowable.engine.form.TaskFormData;
 import org.flowable.task.api.Task;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  *<p>
- * 动态表单表单 controller
+ * 动态表单 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -25,53 +35,110 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class WorkflowFormController {
 
-    private final WorkflowFormService workflowFormService;
-
     private final TaskService taskService;
 
     private final FormService formService;
 
-    /** 动态表单:获取表单数据 */
-    @GetMapping(value = "/getTaskFormData")
-    public R getTaskFormData(String taskId) {
-        //根据任务ID拿取表单数据
-        TaskFormData taskFormData = formService.getTaskFormData(taskId);
-        return R.ok(taskFormData.getFormProperties(),"获取表单数据成功");
-    }
+    private final IdentityService identityService;
 
+    private final WorkflowTaskService workflowTaskService;
 
+    /** 启动流程定义 */
+    @PostMapping("/startProcessDefinition")
+    public R startProcessDefinition(@RequestBody Workflow workflow) {
+        String assignee = workflow.getAssignee(),
+               processDefId= workflow.getProcDefId(),
+               title = workflow.getTitle();
+        Map<String,Object> formData =workflow.getProcessVars().getMap();
 
-    /** 动态表单:启动流程 */
-    @PutMapping("submitStartFormData")
-    public R submitStartFormData(@RequestBody Workflow workFlow){
-        String procInsId = workflowFormService.submitStartFormData(workFlow.getProcDefId(), workFlow.getTitle(), workFlow.getFormData());
-        //指定下一步处理人
-        if(StringUtils.isNotBlank(workFlow.getAssignee())){
+        // 获取流程开始事件动态表单
+        StartFormData startFormData = formService.getStartFormData(processDefId);
+        // 获取表单字段值
+        List<FormProperty> formProperties = startFormData.getFormProperties();
+        // 设置流程变量
+        Map<String,String> formProcessVars = new HashMap();
+        formProcessVars.put("userName", SecurityUtil.getUser().getUsername());
+        // 设置流程发起人
+        identityService.setAuthenticatedUserId(SecurityUtil.getUser().getId() + "");
+        // 设置流程标题
+        if (StringUtils.isNotBlank(title)) {
+            formProcessVars.put("title", title);
+        }
+        // 设置动态表单默认值
+        for (FormProperty formProperty:formProperties) {
+            if (formProperty.isWritable()) {
+                if(formData.containsKey(formProperty.getId())){
+                    formProcessVars.put(formProperty.getId(), MapUtil.getStr(formData, formProperty.getId()));
+                }
+            }
+        }
+
+        // 启动流程，提交表单
+        String procInsId = formService.submitStartFormData(processDefId, formProcessVars).getId();
+
+        // 指定下一步处理人
+        if(StringUtils.isNotBlank(assignee)){
             Task task = taskService.createTaskQuery().processInstanceId(procInsId).active().singleResult();
             if(task != null){
-                taskService.setAssignee(task.getId(), workFlow.getAssignee());
+                taskService.setAssignee(task.getId(), assignee);
             }
         }
-        return R.ok(procInsId,"启动成功");
+        return R.ok(procInsId, "启动成功");
     }
 
+    /** 获取任务节点表单数据 */
+    @GetMapping("/getTaskFormData/{taskId}")
+    public R getTaskFormData(@PathVariable String taskId) {
+        // 根据任务ID获取表单数据
+        TaskFormData taskFormData = formService.getTaskFormData(taskId);
+        return R.ok(taskFormData.getFormProperties());
+    }
 
+    /** 获取流程开始事件表单数据 */
+    @GetMapping("/getProcessStartEventFormData/{processDefId}")
+    public R getProcessStartEventFormData(@PathVariable String processDefId) {
+        // 根据流程定义ID获取表单数据
+        StartFormData startFormData = formService.getStartFormData(processDefId);
+        return R.ok(startFormData.getFormProperties());
+    }
 
+    /** 审核任务 */
+    @PostMapping("/auditTask")
+    public R auditTask(@RequestBody Workflow workflow) {
+        String assignee = workflow.getAssignee(),
+               processInsId= workflow.getProcInsId(),
+               taskId = workflow.getTaskId();
+        Map<String,Object> formData =workflow.getProcessVars().getMap();
 
-    /** 动态表单:审批 */
-    @PutMapping("submitTaskFormData")
-    public R submitTaskFormData(@RequestBody Workflow workFlow) {
-        workflowFormService.submitTaskFormData(workFlow, workFlow.getFormData());
-        //指定下一步处理人
-        if(StringUtils.isNotBlank(workFlow.getAssignee())){
-            Task task = taskService.createTaskQuery().processInstanceId(workFlow.getProcInsId()).active().singleResult();
+        // 根据任务ID获取动态表单
+        TaskFormData taskFormData = formService.getTaskFormData(taskId);
+        // 获取表单字段值
+        List<FormProperty> formProperties = taskFormData.getFormProperties();
+
+        Map<String, Object> formProcessVars = new HashMap();
+        // 设置动态表单默认值
+        for (FormProperty formProperty:formProperties) {
+            if (formProperty.isWritable()) {
+                if(formData.containsKey(formProperty.getId())){
+                    formProcessVars.put(formProperty.getId(), MapUtil.getStr(formData, formProperty.getId()));
+                }
+            }
+        }
+
+        Variable variable = new Variable(formProcessVars);
+        workflow.setProcessVars(variable);
+
+        // 提交用户任务表单并且完成任务
+        workflowTaskService.complete(workflow);
+
+        // 指定下一步处理人
+        if(StringUtils.isNotBlank(assignee)){
+            Task task = taskService.createTaskQuery().processInstanceId(processInsId).active().singleResult();
             if(task != null){
-                taskService.setAssignee(task.getId(), workFlow.getAssignee());
+                taskService.setAssignee(task.getId(), assignee);
             }
         }
-        return R.ok("审批成功");
+        return R.ok("提交成功");
     }
-
-
 
 }

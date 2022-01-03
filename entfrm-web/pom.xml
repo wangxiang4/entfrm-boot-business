@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>com.entfrm</groupId>
-            <artifactId>entfrm-flowable</artifactId>
+            <artifactId>entfrm-workflow</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--<dependency>

@@ -44,6 +44,6 @@ public class WorkflowCondition extends CommonEntity {
 	private Integer sort;
 
 	/** 任务扩展数据id */
-	private Integer TaskExtensionDataId;
+	private Integer activityExtensionDataId;
 
 }

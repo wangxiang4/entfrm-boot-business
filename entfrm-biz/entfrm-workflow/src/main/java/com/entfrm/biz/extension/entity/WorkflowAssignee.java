@@ -41,7 +41,7 @@ public class WorkflowAssignee extends Condition{
 	/** 排序 */
 	private Integer sort;
 
-	/** 任务扩展数据id */
-	private Integer TaskExtensionDataId;
+	/** 活动扩展数据id */
+	private Integer activityExtensionDataId;
 
 }

@@ -40,35 +40,35 @@ public class ActivityExtensionDataServiceImpl extends ServiceImpl<ActivityExtens
     public ActivityExtensionData findById(Integer id) {
         ActivityExtensionData activityExtensionData = super.getById(id);
         activityExtensionData.setWorkflowAssigneeList(workflowAssigneeMapper.selectList(
-                new LambdaQueryWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getTaskExtensionDataId, activityExtensionData.getId())));
+                new LambdaQueryWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getActivityExtensionDataId, activityExtensionData.getId())));
         activityExtensionData.setWorkflowButtonList(workflowButtonMapper.selectList(
-                new LambdaQueryWrapper<WorkflowButton>().eq(WorkflowButton::getTaskExtensionDataId, activityExtensionData.getId())));
+                new LambdaQueryWrapper<WorkflowButton>().eq(WorkflowButton::getActivityExtensionDataId, activityExtensionData.getId())));
         activityExtensionData.setWorkflowConditionList(workflowConditionMapper.selectList(
-                new LambdaQueryWrapper<WorkflowCondition>().eq(WorkflowCondition::getTaskExtensionDataId, activityExtensionData.getId())));
+                new LambdaQueryWrapper<WorkflowCondition>().eq(WorkflowCondition::getActivityExtensionDataId, activityExtensionData.getId())));
         return activityExtensionData;
     }
 
     @Override
     public void delete(Integer id) {
         super.removeById(id);
-        workflowAssigneeMapper.delete(new LambdaUpdateWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getTaskExtensionDataId, id));
-        workflowButtonMapper.delete(new LambdaUpdateWrapper<WorkflowButton>().eq(WorkflowButton::getTaskExtensionDataId, id));
-        workflowConditionMapper.delete(new LambdaUpdateWrapper<WorkflowCondition>().eq(WorkflowCondition::getTaskExtensionDataId, id));
+        workflowAssigneeMapper.delete(new LambdaUpdateWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getActivityExtensionDataId, id));
+        workflowButtonMapper.delete(new LambdaUpdateWrapper<WorkflowButton>().eq(WorkflowButton::getActivityExtensionDataId, id));
+        workflowConditionMapper.delete(new LambdaUpdateWrapper<WorkflowCondition>().eq(WorkflowCondition::getActivityExtensionDataId, id));
     }
 
     @Override
     public boolean save(ActivityExtensionData activityExtensionData) {
         super.save(activityExtensionData);
         activityExtensionData.getWorkflowAssigneeList().forEach(workflowAssignee -> {
-            workflowAssignee.setTaskExtensionDataId(activityExtensionData.getId());
+            workflowAssignee.setActivityExtensionDataId(activityExtensionData.getId());
             workflowAssigneeMapper.insert(workflowAssignee);
         });
         activityExtensionData.getWorkflowButtonList().forEach(workflowButton -> {
-            workflowButton.setTaskExtensionDataId(activityExtensionData.getId());
+            workflowButton.setActivityExtensionDataId(activityExtensionData.getId());
             workflowButtonMapper.insert(workflowButton);
         });
         activityExtensionData.getWorkflowConditionList().forEach(workflowCondition -> {
-            workflowCondition.setTaskExtensionDataId(activityExtensionData.getId());
+            workflowCondition.setActivityExtensionDataId(activityExtensionData.getId());
             workflowConditionMapper.insert(workflowCondition);
         });
         return true;
@@ -80,9 +80,9 @@ public class ActivityExtensionDataServiceImpl extends ServiceImpl<ActivityExtens
                 .eq(ActivityExtensionData::getProcessDefId, processDefId));
         list.forEach(taskExtensionData -> {
             super.removeById(taskExtensionData.getId());
-            workflowAssigneeMapper.delete(new LambdaUpdateWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getTaskExtensionDataId, taskExtensionData.getId()));
-            workflowButtonMapper.delete(new LambdaUpdateWrapper<WorkflowButton>().eq(WorkflowButton::getTaskExtensionDataId, taskExtensionData.getId()));
-            workflowConditionMapper.delete(new LambdaUpdateWrapper<WorkflowCondition>().eq(WorkflowCondition::getTaskExtensionDataId, taskExtensionData.getId()));
+            workflowAssigneeMapper.delete(new LambdaUpdateWrapper<WorkflowAssignee>().eq(WorkflowAssignee::getActivityExtensionDataId, taskExtensionData.getId()));
+            workflowButtonMapper.delete(new LambdaUpdateWrapper<WorkflowButton>().eq(WorkflowButton::getActivityExtensionDataId, taskExtensionData.getId()));
+            workflowConditionMapper.delete(new LambdaUpdateWrapper<WorkflowCondition>().eq(WorkflowCondition::getActivityExtensionDataId, taskExtensionData.getId()));
         });
     }
 

@@ -4,7 +4,7 @@ import cn.hutool.core.io.IoUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.entity.Workflow;
-import com.entfrm.biz.workflow.enums.ProcessStatus;
+import com.entfrm.biz.workflow.enums.ExtendMessage;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
@@ -43,8 +43,8 @@ public class WorkflowProcessController {
     /** 流程定义列表 */
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessDefinitionInfoVo> processIPage = workflowProcessService.list(params);
-        return R.ok(processIPage.getRecords(), processIPage.getTotal());
+        IPage<ProcessDefinitionInfoVo> result = workflowProcessService.list(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 流程定义是否存在 */
@@ -57,15 +57,15 @@ public class WorkflowProcessController {
     /** 运行中的流程实例列表 */
     @GetMapping("/runList")
     public R runList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceInfoVo> processIPage = workflowProcessService.runList(params);
-        return R.ok(processIPage.getRecords(), processIPage.getTotal());
+        IPage<ProcessInstanceInfoVo> result = workflowProcessService.runList(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 历史流程列表 */
     @GetMapping("/historyList")
     public R historyList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceInfoVo> processIPage = workflowProcessService.historyList(params);
-        return R.ok(processIPage.getRecords(), processIPage.getTotal());
+        IPage<ProcessInstanceInfoVo> result = workflowProcessService.historyList(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 读取xml/image资源 */
@@ -129,30 +129,30 @@ public class WorkflowProcessController {
     /** 流程终止 */
     @PutMapping("/stopProcessInstance")
     public R stopProcessInstance(String processInsId, String message) {
-        workflowProcessService.stopProcessInstance(processInsId, ProcessStatus.STOP, message);
+        workflowProcessService.stopProcessInstance(processInsId, ExtendMessage.PROCESS_STOP, message);
         return R.ok("终止流程成功!");
     }
 
     /** 查询流程状态 */
     @GetMapping("/queryProcessStatus/{processInsId}")
     public R queryProcessStatus(@PathVariable String processInsId) {
-        ProcessInstanceInfoVo processInstanceInfoVo = workflowProcessService.queryProcessState(processInsId);
-        return R.ok(processInstanceInfoVo);
+        ProcessInstanceInfoVo processInstanceInfo = workflowProcessService.queryProcessState(processInsId);
+        return R.ok(processInstanceInfo);
 
     }
 
     /** 自己发起流程实例列表 */
     @GetMapping("/selfProcessInstanceList")
     public R selfProcessInstanceList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceInfoVo> taskIPage = workflowProcessService.selfProcessInstanceList(params);
-        return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
+        IPage<ProcessInstanceInfoVo> result = workflowProcessService.selfProcessInstanceList(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 启动流程定义 */
     @PostMapping("/startProcessDefinition")
     public R startProcessDefinition(@RequestBody Workflow workflow) {
         String processInsId = workflowProcessService.startProcessDefinition(
-                workflow.getProcDefKey(),
+                workflow.getProcessDefKey(),
                 workflow.getBusinessTable(),
                 workflow.getBusinessId(),
                 workflow.getTitle());

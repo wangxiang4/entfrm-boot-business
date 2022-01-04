@@ -10,9 +10,9 @@ import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
 import com.entfrm.biz.extension.service.ActivityExtensionPropertyService;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
-import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
-import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
+import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -56,38 +56,38 @@ public class WorkflowTaskController {
     /** 代办任务列表 */
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceInfoVo> taskIPage = workflowTaskService.list(params);
-        return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
+        IPage<ProcessInstanceInfoVo> result = workflowTaskService.list(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 已办流转任务列表 */
-    @GetMapping("/historicFlowChangeList/{processInsId}")
-    public R historicFlowChangeList(@PathVariable String processInsId) {
-        List<Workflow> taskIPage = workflowTaskService.historicFlowChangeList(processInsId);
-        return R.ok(taskIPage);
+    @GetMapping("/historyFlowChangeList/{processInsId}")
+    public R historyFlowChangeList(@PathVariable String processInsId) {
+        List<Workflow> result = workflowTaskService.historyFlowChangeList(processInsId);
+        return R.ok(result);
     }
 
     /** 已办任务列表 */
-    @GetMapping("/historicList")
-    public R historicList(@RequestParam Map<String, Object> params) {
-        IPage<HistoryTaskInfoVo> taskIPage = workflowTaskService.historicList(params);
-        return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
+    @GetMapping("/historyList")
+    public R historyList(@RequestParam Map<String, Object> params) {
+        IPage<HistoryTaskInfoVo> result = workflowTaskService.historyList(params);
+        return R.ok(result.getRecords(), result.getTotal());
     }
 
     /** 获取任务定义 */
     @GetMapping("/getTaskDefinition")
     public R getTaskDefinition(Workflow workflow) {
         // 获取流程XML上的表单KEY
-        String formKey = workflowTaskService.getTaskFormKey(workflow.getProcDefId(), workflow.getTaskDefKey());
+        String formKey = workflowTaskService.getTaskFormKey(workflow.getProcessDefId(), workflow.getTaskDefKey());
 
         ActivityExtensionProperty formTypeNode = activityExtensionPropertyService.getOne(new LambdaQueryWrapper<ActivityExtensionProperty>()
-                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(ActivityExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
+                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcessDefId())
+                .eq(ActivityExtensionProperty::getActivityDefId,workflow.getTaskDefKey())
                 .eq(ActivityExtensionProperty::getKey, "formType"));
 
         ActivityExtensionProperty formReadOnlyNode = activityExtensionPropertyService.getOne(new LambdaQueryWrapper<ActivityExtensionProperty>()
-                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(ActivityExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
+                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcessDefId())
+                .eq(ActivityExtensionProperty::getActivityDefId, workflow.getTaskDefKey())
                 .eq(ActivityExtensionProperty::getKey, "formReadOnly"));
 
         String formType = "1";
@@ -104,12 +104,12 @@ public class WorkflowTaskController {
         }
 
         // 获取流程实例对象
-        if (workflow.getProcInsId() != null) {
-            ProcessInstance processInstance = workflowProcessService.getProcessInstance(workflow.getProcInsId());
+        if (workflow.getProcessInsId() != null) {
+            ProcessInstance processInstance = workflowProcessService.getProcessInstance(workflow.getProcessInsId());
             if (processInstance != null) {
-                workflow.setProcIns(processInstance);
+                workflow.setProcessInstanceBusinessData(processInstance);
             } else {
-                workflow.setFinishedProcIns(workflowProcessService.getFinishedProcessInstance(workflow.getProcInsId()));
+                workflow.setFinishedProcessInstanceBusinessData(workflowProcessService.getFinishedProcessInstance(workflow.getProcessInsId()));
             }
         }
 
@@ -160,7 +160,7 @@ public class WorkflowTaskController {
         workflowTaskService.auditTask(workflow);
         //指定下一步处理人
         if(StringUtils.isNotBlank(workflow.getAssignee())){
-            Task task = taskService.createTaskQuery().processInstanceId(workflow.getProcInsId()).active().singleResult();
+            Task task = taskService.createTaskQuery().processInstanceId(workflow.getProcessInsId()).active().singleResult();
             if(task != null){
                 taskService.setAssignee(task.getId(), workflow.getAssignee());
             }
@@ -247,8 +247,8 @@ public class WorkflowTaskController {
     public R rejectTask(@RequestBody Map<String,Object> params) {
         String rollBackTaskDefKey = MapUtil.getStr(params, "rollBackTaskDefKey"),
                currentTaskId= MapUtil.getStr(params, "currentTaskId");
-        ActivityCommentInfoVo activityCommentInfoVo = MapUtil.get(params, "comment", ActivityCommentInfoVo.class);
-        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, activityCommentInfoVo);
+        ActivityCommentInfoVo activityCommentInfo = MapUtil.get(params, "comment", ActivityCommentInfoVo.class);
+        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, activityCommentInfo);
         return R.ok("驳回成功!");
     }
 

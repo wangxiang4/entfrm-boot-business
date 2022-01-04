@@ -1,5 +1,6 @@
 package com.entfrm.biz.workflow.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -7,12 +8,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.constant.CommonConstants;
 import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import com.entfrm.biz.workflow.entity.Workflow;
-import com.entfrm.biz.workflow.mapper.WorkflowMapper;
-import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.enums.ExtendMessage;
-import com.entfrm.biz.workflow.enums.ProcessStatus;
-import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
+import com.entfrm.biz.workflow.mapper.WorkflowMapper;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
+import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import com.entfrm.biz.workflow.vo.TaskInfoVo;
 import com.entfrm.security.entity.EntfrmUser;
@@ -97,18 +97,18 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         for (ProcessDefinition processDefinition : processDefinitionList) {
             if(this.validateProcessAuth(SecurityUtil.getUser(), processDefinition.getId())){
                 Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(processDefinition.getDeploymentId()).singleResult();
-                ProcessDefinitionInfoVo processDefinitionVo =new ProcessDefinitionInfoVo();
-                processDefinitionVo.setId(processDefinition.getId());
-                processDefinitionVo.setCategory(processDefinition.getCategory());
-                processDefinitionVo.setKey(processDefinition.getKey());
-                processDefinitionVo.setName(processDefinition.getName());
-                processDefinitionVo.setVersion("V:" + processDefinition.getVersion());
-                processDefinitionVo.setResourceName(processDefinition.getResourceName());
-                processDefinitionVo.setDiagramResourceName(processDefinition.getDiagramResourceName());
-                processDefinitionVo.setDeploymentId(processDefinition.getDeploymentId());
-                processDefinitionVo.setSuspend(processDefinition.isSuspended());
-                processDefinitionVo.setDeploymentTime(deployment.getDeploymentTime());
-                result.getRecords().add(processDefinitionVo);
+                ProcessDefinitionInfoVo processDefinitionInfo =new ProcessDefinitionInfoVo();
+                processDefinitionInfo.setId(processDefinition.getId());
+                processDefinitionInfo.setCategory(processDefinition.getCategory());
+                processDefinitionInfo.setKey(processDefinition.getKey());
+                processDefinitionInfo.setName(processDefinition.getName());
+                processDefinitionInfo.setVersion("V:" + processDefinition.getVersion());
+                processDefinitionInfo.setResourceName(processDefinition.getResourceName());
+                processDefinitionInfo.setDiagramResourceName(processDefinition.getDiagramResourceName());
+                processDefinitionInfo.setDeploymentId(processDefinition.getDeploymentId());
+                processDefinitionInfo.setSuspend(processDefinition.isSuspended());
+                processDefinitionInfo.setDeploymentTime(deployment.getDeploymentTime());
+                result.getRecords().add(processDefinitionInfo);
             }
         }
         return result;
@@ -136,12 +136,12 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         List<ProcessInstance> processInstanceList = query.listPage((current - 1) * size, size);
 
         for (ProcessInstance processInstance : processInstanceList) {
-            ProcessInstanceInfoVo processInstanceInfoVo = queryProcessState(processInstance.getId());
-            processInstanceInfoVo.setProcessInstanceId (processInstance.getProcessInstanceId());
-            processInstanceInfoVo.setProcessDefinitionId (processInstance.getProcessDefinitionId());
-            processInstanceInfoVo.setProcessDefinitionName (processInstance.getProcessDefinitionName ());
-            processInstanceInfoVo.setActivityId (processInstance.getActivityId ());
-            processInstanceInfoVo.setVars (processInstance.getProcessVariables());
+            ProcessInstanceInfoVo processInstanceInfo = queryProcessState(processInstance.getId());
+            processInstanceInfo.setProcessInsId(processInstance.getProcessInstanceId());
+            processInstanceInfo.setProcessDefId(processInstance.getProcessDefinitionId());
+            processInstanceInfo.setProcessDefName(processInstance.getProcessDefinitionName ());
+            processInstanceInfo.setActivityId(processInstance.getActivityId ());
+            processInstanceInfo.setVars(processInstance.getProcessVariables());
             result.getRecords().add(processInstance);
         }
         return result;
@@ -171,15 +171,15 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         List<HistoricProcessInstance> historicProcessInstanceList = query.listPage((current - 1) * size, size);
 
         for (HistoricProcessInstance historicProcessInstance : historicProcessInstanceList) {
-            ProcessInstanceInfoVo processInstanceInfoVo = queryProcessState(historicProcessInstance.getId ());
-            processInstanceInfoVo.setVars(historicProcessInstance.getProcessVariables());
-            processInstanceInfoVo.setProcessDefinitionName(historicProcessInstance.getProcessDefinitionName());
-            processInstanceInfoVo.setStartTime(historicProcessInstance.getStartTime());
-            processInstanceInfoVo.setEndTime(historicProcessInstance.getEndTime());
-            processInstanceInfoVo.setProcessInstanceId(historicProcessInstance.getId());
-            processInstanceInfoVo.setProcessDefinitionId(historicProcessInstance.getProcessDefinitionId());
-            processInstanceInfoVo.setDeleteReason(historicProcessInstance.getDeleteReason());
-            result.getRecords().add(processInstanceInfoVo);
+            ProcessInstanceInfoVo processInstanceInfo = queryProcessState(historicProcessInstance.getId());
+            processInstanceInfo.setVars(historicProcessInstance.getProcessVariables());
+            processInstanceInfo.setProcessDefName(historicProcessInstance.getProcessDefinitionName());
+            processInstanceInfo.setStartTime(historicProcessInstance.getStartTime());
+            processInstanceInfo.setEndTime(historicProcessInstance.getEndTime());
+            processInstanceInfo.setProcessInsId(historicProcessInstance.getId());
+            processInstanceInfo.setProcessDefId(historicProcessInstance.getProcessDefinitionId());
+            processInstanceInfo.setDeleteReason(historicProcessInstance.getDeleteReason());
+            result.getRecords().add(processInstanceInfo);
         }
         return result;
     }
@@ -226,42 +226,25 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
     }
 
     @Override
-    public void stopProcessInstance(String processInsId, ProcessStatus processStatus, String comment) {
+    public void stopProcessInstance(String processInsId, ExtendMessage extendMessage, String comment) {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInsId).singleResult();
         if (processInstance != null) {
-            Task currentTask = taskService.createTaskQuery().processInstanceId(processInsId).list().get(0);
+            Task task = taskService.createTaskQuery().processInstanceId(processInsId).list().get(0);
 
             // 设置审批记录
-            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
-            switch (processStatus) {
-                case REVOKE:
-                    activityCommentInfoVo.setType(ExtendMessage.REVOKE.getType());
-                    activityCommentInfoVo.setStatus(ExtendMessage.REVOKE.getStatus());
-                    break;
-                case STOP:
-                    activityCommentInfoVo.setType(ExtendMessage.STOP.getType());
-                    activityCommentInfoVo.setStatus(ExtendMessage.STOP.getStatus());
-                    break;
-                case REJECT:
-                    activityCommentInfoVo.setType(ExtendMessage.REJECT.getType());
-                    activityCommentInfoVo.setStatus(ExtendMessage.REJECT.getStatus());
-                    break;
-                case DELETED:
-                    activityCommentInfoVo.setType(ExtendMessage.DELETED.getType());
-                    activityCommentInfoVo.setStatus(ExtendMessage.DELETED.getStatus());
-                    break;
-                default:
-                    activityCommentInfoVo.setMessage(comment);
-            }
+            ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
+            activityCommentInfo.setMesCode(extendMessage.getMesCode());
+            activityCommentInfo.setMesName(extendMessage.getMesName());
+            activityCommentInfo.setMessage(comment);
 
             // 添加审批记录
-            taskService.addComment(currentTask.getId(), processInsId, activityCommentInfoVo.getCommentType(), activityCommentInfoVo.getFullMessage());
+            taskService.addComment(task.getId(), processInsId, activityCommentInfo.getExtendMessage(), activityCommentInfo.getCombinationMessage());
 
             // 处理未签收任务,未领取就让当前用户领取
-            if (StrUtil.isBlank(currentTask.getAssignee())) {
-                taskService.claim(currentTask.getId(), SecurityUtil.getUser().getId() + "");
+            if (StrUtil.isBlank(task.getAssignee())) {
+                taskService.claim(task.getId(), SecurityUtil.getUser().getId() + "");
             }
-            runtimeService.setVariable(processInsId, WorkflowConstant.PROCESS_STATUS_CODE, processStatus.getCode());
+            runtimeService.setVariable(processInsId, WorkflowConstant.PROCESS_STATUS_CODE, extendMessage.getMesCode());
             List<EndEvent> endNodes = WorkflowBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
             String endId = endNodes.get(0).getId();
 
@@ -275,12 +258,12 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
     @Override
     public void deleteProcessInstance(String processInsId, String deleteReason) {
-        this.stopProcessInstance(processInsId, ProcessStatus.DELETED, deleteReason);
+        this.stopProcessInstance(processInsId, ExtendMessage.PROCESS_DELETED, deleteReason);
     }
 
     @Override
     public void undoProcessInstance(String processInsId) {
-        this.stopProcessInstance(processInsId, ProcessStatus.REVOKE, ProcessStatus.REVOKE.getStatus());
+        this.stopProcessInstance(processInsId, ExtendMessage.PROCESS_REVOKE, ExtendMessage.PROCESS_REVOKE.getMesName());
     }
 
     @Override
@@ -295,63 +278,62 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
     @Override
     public ProcessInstanceInfoVo queryProcessState(String processInstanceId) {
-        ProcessInstanceInfoVo processInstanceInfoVo = new ProcessInstanceInfoVo();
+        ProcessInstanceInfoVo processInstanceInfo = new ProcessInstanceInfoVo();
         // 通过流程实例ID查询流程实例
-        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId (processInstanceId).singleResult();
-        if (pi != null) {
-            if (pi.isSuspended ()) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        if (processInstance != null) {
+            if (processInstance.isSuspended()) {
                 //挂起实例
-                processInstanceInfoVo.setProcessStatus(ProcessStatus.SUSPENDED);
+                processInstanceInfo.setExtendMessage(ExtendMessage.PROCESS_SUSPENDED);
             } else {
                 //执行实例
-                processInstanceInfoVo.setProcessStatus(ProcessStatus.WAITING);
-                Task currentTask = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
-                processInstanceInfoVo.setTask(new TaskInfoVo(currentTask));
-                processInstanceInfoVo.setTaskName (currentTask.getName ());
+                processInstanceInfo.setExtendMessage(ExtendMessage.PROCESS_WAITING);
+                Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
+                processInstanceInfo.setTaskInfo(new TaskInfoVo(task));
+                processInstanceInfo.setTaskName(task.getName());
             }
-            return processInstanceInfoVo;
+            return processInstanceInfo;
         } else {
-            HistoricProcessInstance pi2 =
-                    historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult ();
+            HistoricProcessInstance historicProcessInstance =
+                    historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
             //查询历史流程完整历史活动
             HistoricActivityInstance historicActivityInstance = historyService.createHistoricActivityInstanceQuery()
                     .processInstanceId(processInstanceId).finished()
                     .orderByHistoricActivityInstanceEndTime().desc().list().stream()
                     .filter(activity ->
-                            activity.getActivityType().equals (BpmnXMLConstants.ELEMENT_TASK_USER) ||
-                                    activity.getActivityType().equals (BpmnXMLConstants.ELEMENT_EVENT_END) ||
-                                    activity.getActivityType().equals (BpmnXMLConstants.ELEMENT_EVENT_START))
-                    .distinct().collect(Collectors.toList ()).get(0);
-            Process process = repositoryService.getBpmnModel (historicActivityInstance.getProcessDefinitionId()).getMainProcess();
+                            activity.getActivityType().equals(BpmnXMLConstants.ELEMENT_TASK_USER) ||
+                                    activity.getActivityType().equals(BpmnXMLConstants.ELEMENT_EVENT_END) ||
+                                    activity.getActivityType().equals(BpmnXMLConstants.ELEMENT_EVENT_START))
+                    .distinct().collect(Collectors.toList()).get(0);
+            Process process = repositoryService.getBpmnModel(historicActivityInstance.getProcessDefinitionId()).getMainProcess();
             FlowNode flowElement = (FlowNode)process.getFlowElement(historicActivityInstance.getActivityId(), true);
-            if (pi2 != null) {
+            if (historicProcessInstance != null) {
                 HistoricVariableInstance processStatusInstance = historyService.createHistoricVariableInstanceQuery()
-                        .processInstanceId(processInstanceId).variableName(WorkflowConstant.PROCESS_STATUS_CODE).singleResult ();
+                        .processInstanceId(processInstanceId).variableName(WorkflowConstant.PROCESS_STATUS_CODE).singleResult();
                 //流程删除没有出错,以及没有自定义流程状态视为审核通过
-                if (pi2.getDeleteReason() == null && processStatusInstance == null) {
-                    processInstanceInfoVo.setProcessStatus(ProcessStatus.AGREE);
-                    processInstanceInfoVo.setTaskName(flowElement.getName());
-                    return processInstanceInfoVo;
-                    //流程删除存在出错视为审核终止
-                } else if (pi2.getDeleteReason () != null) {
-                    processInstanceInfoVo.setProcessStatus (ProcessStatus.STOP);
-                    processInstanceInfoVo.setTaskName (flowElement.getName ());
-                    processInstanceInfoVo.setDeleteReason (pi2.getDeleteReason ());
-                    return processInstanceInfoVo;
-                    //自定义流程状态
+                if (historicProcessInstance.getDeleteReason() == null && processStatusInstance == null) {
+                    processInstanceInfo.setExtendMessage(ExtendMessage.PROCESS_AGREE);
+                    processInstanceInfo.setTaskName(flowElement.getName());
+                    return processInstanceInfo;
+                //流程删除存在出错视为审核终止
+                } else if (historicProcessInstance.getDeleteReason() != null) {
+                    processInstanceInfo.setExtendMessage(ExtendMessage.PROCESS_STOP);
+                    processInstanceInfo.setTaskName(flowElement.getName());
+                    processInstanceInfo.setDeleteReason(historicProcessInstance.getDeleteReason());
+                    return processInstanceInfo;
+                //自定义流程状态
                 } else {
-                    int code =Integer.valueOf (processStatusInstance.getValue().toString ());
-                    ProcessStatus processStatus = ProcessStatus.value (code);
-                    processInstanceInfoVo.setProcessStatus(processStatus);
-                    processInstanceInfoVo.setTaskName(flowElement.getName ());
-                    return processInstanceInfoVo;
+                    ExtendMessage extendMessage = ExtendMessage.getExtendMessage(processStatusInstance.getValue().toString());
+                    processInstanceInfo.setExtendMessage(extendMessage);
+                    processInstanceInfo.setTaskName(flowElement.getName());
+                    return processInstanceInfo;
                 }
                 //如果历史中查询不到视为流程作废
             } else {
-                processInstanceInfoVo.setProcessStatus (ProcessStatus.DELETED);
-                processInstanceInfoVo.setTaskName (flowElement.getName ());
-                processInstanceInfoVo.setDeleteReason (pi2.getDeleteReason ());
-                return processInstanceInfoVo;
+                processInstanceInfo.setExtendMessage(ExtendMessage.PROCESS_DELETED);
+                processInstanceInfo.setTaskName(flowElement.getName());
+                processInstanceInfo.setDeleteReason(historicProcessInstance.getDeleteReason());
+                return processInstanceInfo;
             }
         }
     }
@@ -396,7 +378,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         Date beginDate = MapUtil.getDate(params, "beginDate"),
                 endDate = MapUtil.getDate(params, "endDate");
 
-        if (StrUtil.isNotBlank (title)) {
+        if (StrUtil.isNotBlank(title)) {
             query.variableValueLike(WorkflowConstant.TITLE, "%" + title + "%");
         }
         if (beginDate != null) {
@@ -414,61 +396,61 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         List<HistoricProcessInstance> historicProcessInstanceList = query.involvedUser(SecurityUtil.getUser().getId() + "").listPage((current - 1) * size, size);
 
         for (HistoricProcessInstance historicProcessInstance : historicProcessInstanceList) {
-            ProcessInstanceInfoVo processInstanceInfoVo = this.queryProcessState(historicProcessInstance.getId());
-            processInstanceInfoVo.setEndTime (historicProcessInstance.getEndTime ());
-            processInstanceInfoVo.setStartTime (historicProcessInstance.getStartTime ());
-            processInstanceInfoVo.setProcessDefinitionId (historicProcessInstance.getProcessDefinitionId ());
-            processInstanceInfoVo.setProcessInstanceId (historicProcessInstance.getId ());
-            processInstanceInfoVo.setVars (historicProcessInstance.getProcessVariables ());
-            processInstanceInfoVo.setProcessDefinitionName (historicProcessInstance.getProcessDefinitionName ());
-            processInstanceInfoVo.setVersion ( historicProcessInstance.getProcessDefinitionVersion ());
-            result.getRecords().add(processInstanceInfoVo);
+            ProcessInstanceInfoVo processInstanceInfo = this.queryProcessState(historicProcessInstance.getId());
+            processInstanceInfo.setEndTime(historicProcessInstance.getEndTime());
+            processInstanceInfo.setStartTime(historicProcessInstance.getStartTime());
+            processInstanceInfo.setProcessDefId(historicProcessInstance.getProcessDefinitionId());
+            processInstanceInfo.setProcessInsId(historicProcessInstance.getId());
+            processInstanceInfo.setVars(historicProcessInstance.getProcessVariables());
+            processInstanceInfo.setProcessDefName(historicProcessInstance.getProcessDefinitionName());
+            processInstanceInfo.setVersion( historicProcessInstance.getProcessDefinitionVersion());
+            result.getRecords().add(processInstanceInfo);
         }
         return result;
     }
 
     @Override
-    public String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title, Map<String, Object> processVars) {
+    public String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title, Map<String, Object> vars) {
         // 设置流程变量
-        if(processVars == null){
-            processVars = MapUtil.newHashMap();
+        if(vars == null){
+            vars = CollectionUtil.newHashMap();
         }
 
         // 可由外部提供流程发起人
-        String userId = MapUtil.getStr(processVars, WorkflowConstant.INITIATOR);
+        String userId = MapUtil.getStr(vars, WorkflowConstant.INITIATOR);
         if(userId == null){
             userId= SecurityUtil.getUser().getId() + "";
         }
 
         // 设置流程执行人
-        processVars.put(WorkflowConstant.USERNAME, SecurityUtil.getUser().getUsername());
+        vars.put(WorkflowConstant.USERNAME, SecurityUtil.getUser().getUsername());
 
         // 设置流程发起人
         identityService.setAuthenticatedUserId(userId);
 
         // 设置流程标题
         if (StrUtil.isNotBlank(title)) {
-            processVars.put(WorkflowConstant.TITLE, title);
+            vars.put(WorkflowConstant.TITLE, title);
         }
 
         // 启动流程实例
         String processInsId = runtimeService
-                .startProcessInstanceByKey(processDefKey, String.join(":",businessTable,businessId), processVars)
+                .startProcessInstanceByKey(processDefKey, String.join(":",businessTable,businessId), vars)
                 .getProcessInstanceId();
 
         // 更新业务表流程实例ID,确保业务表字段process_ins_id存在
-        Workflow act = new Workflow();
-        act.setBusinessTable (businessTable);
-        act.setBusinessId (businessId);
-        act.setProcInsId (processInsId);
-        workflowMapper.updateProcInsIdByBusinessId(act);
+        Workflow workflow = new Workflow();
+        workflow.setBusinessTable(businessTable);
+        workflow.setBusinessId(businessId);
+        workflow.setProcessInsId(processInsId);
+        workflowMapper.updateProcInsIdByBusinessId(workflow);
         return processInsId;
     }
 
     @Override
     public String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title) {
-        Map<String, Object> processVars = MapUtil.newHashMap();
-        return startProcessDefinition(processDefKey, businessTable, businessId, title, processVars);
+        Map<String, Object> vars = CollectionUtil.newHashMap();
+        return startProcessDefinition(processDefKey, businessTable, businessId, title, vars);
     }
 
     /** 流程权限校验 */

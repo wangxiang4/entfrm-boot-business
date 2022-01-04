@@ -32,15 +32,14 @@ public enum ExtendMessage {
     ACTIVITY_ADD_AFTER_MULTI_INSTANCE("后加签", "_workflow_activity_after_add_multi_instance", "primary"),
 
     // 预设流程操作扩展信息
-    PROCESS_SUSPENDED("已挂起", "0", "danger"),
-    PROCESS_WAITING("等待审核", "1", "primary"),
-    PROCESS_AGREE("审核通过", "2", "success"),
-    PROCESS_REVOKE("流程撤回", "3", "warning"),
-    PROCESS_REJECT("审核驳回", "4", "danger"),
-    PROCESS_STOP("审核终止", "5", "info"),
-    PROCESS_DELETED("流程作废", "6", "danger"),
-    PROCESS_RECOMMIT("重新提交", "7", "warning");
-
+    PROCESS_SUSPENDED("已挂起", "_workflow_process_suspended", "danger"),
+    PROCESS_WAITING("等待审核", "_workflow_process_waiting", "primary"),
+    PROCESS_AGREE("审核通过", "_workflow_process_agree", "success"),
+    PROCESS_REVOKE("流程撤回", "_workflow_process_revoke", "warning"),
+    PROCESS_REJECT("审核驳回", "_workflow_process_reject", "danger"),
+    PROCESS_STOP("审核终止", "_workflow_process_stop", "info"),
+    PROCESS_DELETED("流程作废", "_workflow_process_deleted", "danger"),
+    PROCESS_RECOMMIT("重新提交", "_workflow_process_recommit", "warning");
 
     /** 操作名称 */
     @Getter

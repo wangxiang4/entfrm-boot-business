@@ -23,13 +23,13 @@ public interface WorkflowModelService extends IService<WorkflowModel> {
      * 移除模型
      * id: 模型id
      */
-    void remove (String id);
+    void remove(String id);
 
     /**
      * 移除部署
      * processDefKey: 流程定义key
      */
-    void deleteDeployment (String processDefKey);
+    void deleteDeployment(String processDefKey);
 
     /**
      * 部署模型

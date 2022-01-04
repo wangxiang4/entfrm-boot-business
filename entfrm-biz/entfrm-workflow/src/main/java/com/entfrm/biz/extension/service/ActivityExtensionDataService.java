@@ -13,9 +13,9 @@ import com.entfrm.biz.extension.entity.ActivityExtensionData;
  */
 public interface ActivityExtensionDataService extends IService<ActivityExtensionData> {
 
-    ActivityExtensionData findById (Integer id);
+    ActivityExtensionData findById(Integer id);
 
-    void delete (Integer id);
+    void delete(Integer id);
 
     void deleteByProcessDefId(String processDefId);
 

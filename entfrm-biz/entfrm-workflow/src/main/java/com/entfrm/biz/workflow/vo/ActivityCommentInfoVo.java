@@ -42,7 +42,7 @@ public class ActivityCommentInfoVo {
     /** 设置组合备注 */
     public void setCombinationMessage(String message){
         if(StrUtil.isBlank(message) || !message.contains(WorkflowConstant.EXTEND_MESSAGE)){
-            this.setMessage (message);
+            this.setMessage(message);
         }else{
             String[] list=message.split(WorkflowConstant.EXTEND_MESSAGE);
             if(list.length > 1){

@@ -241,7 +241,7 @@ public class WorkflowUtil {
                 isInsideMultiInstance = true;
             }
         }
-        Set<String> parentExecutionIds = new HashSet<> ();
+        Set<String> parentExecutionIds = new HashSet();
         if (isInsideMultiInstance) {
             Stream<ExecutionEntity> executionEntitiesStream = activityIdExecutions.stream();
             if (miExecution != null) {

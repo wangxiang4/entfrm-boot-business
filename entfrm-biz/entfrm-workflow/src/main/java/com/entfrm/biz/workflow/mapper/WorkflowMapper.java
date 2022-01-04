@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 工作流 Mapper
+ * 工作流核心 Mapper
  * </p>
  *
  * @Author: entfrm开发团队-王翔

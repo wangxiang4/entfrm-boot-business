@@ -73,7 +73,7 @@ public class WorkflowModelController {
             if(processDefinition != null){
                 String deploymentId = processDefinition.getDeploymentId();
                 Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-                item.getProcessDefinitionVo()
+                item.getProcessDefinition()
                         .setId(processDefinition.getId())
                         .setCategory(processDefinition.getCategory())
                         .setKey(processDefinition.getKey())
@@ -113,11 +113,11 @@ public class WorkflowModelController {
     @PostMapping("/copy/{id}")
     public R copy(@PathVariable String id) throws Exception {
         Model sourceModel = modelService.getModel(id);
-        ModelRepresentation modelRepresentation = new ModelRepresentation ();
-        modelRepresentation.setKey ("Process_"+ UUID.randomUUID ());
-        modelRepresentation.setName (sourceModel.getName ()+"_copy");
-        modelRepresentation.setModelType (0);
-        modelRepresentation.setDescription ("");
+        ModelRepresentation modelRepresentation = new ModelRepresentation();
+        modelRepresentation.setKey("Process_"+ UUID.randomUUID());
+        modelRepresentation.setName(sourceModel.getName()+"_copy");
+        modelRepresentation.setModelType(0);
+        modelRepresentation.setDescription("");
         modelRepresentation.setKey(modelRepresentation.getKey().replaceAll(" ", ""));
         this.checkForDuplicateKey(modelRepresentation);
         String modelJson = modelService.createModelJson(modelRepresentation);
@@ -129,15 +129,15 @@ public class WorkflowModelController {
         modelUser.setLastName("");
         // 创建新模型
         Model newModel = modelService.createModel(modelRepresentation, modelJson, modelUser);
-        String modelId = newModel.getId ();
+        String modelId = newModel.getId();
         ObjectNode sourceObjectNode = (ObjectNode) objectMapper.readTree(sourceModel.getModelEditorJson());
         ObjectNode editorNode = sourceObjectNode.deepCopy();
         ObjectNode properties = objectMapper.createObjectNode();
         properties.put("process_id", newModel.getKey());
         properties.put("name", newModel.getName());
         editorNode.set("properties", properties);
-        newModel.setModelEditorJson (editorNode.toString());
-        modelService.saveModel(modelId, newModel.getName (), newModel.getKey (), newModel.getDescription (), newModel.getModelEditorJson (), true, "", modelUser);
+        newModel.setModelEditorJson(editorNode.toString());
+        modelService.saveModel(modelId, newModel.getName(), newModel.getKey(), newModel.getDescription(), newModel.getModelEditorJson(), true, "", modelUser);
         return  R.ok("拷贝成功!");
     }
 

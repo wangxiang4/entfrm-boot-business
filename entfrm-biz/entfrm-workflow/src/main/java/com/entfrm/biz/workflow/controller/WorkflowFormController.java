@@ -1,5 +1,6 @@
 package com.entfrm.biz.workflow.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.constant.WorkflowConstant;
@@ -17,7 +18,6 @@ import org.flowable.engine.form.TaskFormData;
 import org.flowable.task.api.Task;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +56,7 @@ public class WorkflowFormController {
         // 获取表单字段值
         List<FormProperty> formProperties = startFormData.getFormProperties();
         // 设置流程变量
-        Map<String,String> formProcessVars = new HashMap();
+        Map<String,String> formProcessVars = CollectionUtil.newHashMap();
         formProcessVars.put(WorkflowConstant.USERNAME, SecurityUtil.getUser().getUsername());
         // 设置流程发起人
         identityService.setAuthenticatedUserId(SecurityUtil.getUser().getId() + "");
@@ -115,7 +115,7 @@ public class WorkflowFormController {
         // 获取表单字段值
         List<FormProperty> formProperties = taskFormData.getFormProperties();
 
-        Map<String, Object> formProcessVars = new HashMap();
+        Map<String, Object> formProcessVars = CollectionUtil.newHashMap();
         // 设置动态表单默认值
         for (FormProperty formProperty:formProperties) {
             if (formProperty.isWritable()) {

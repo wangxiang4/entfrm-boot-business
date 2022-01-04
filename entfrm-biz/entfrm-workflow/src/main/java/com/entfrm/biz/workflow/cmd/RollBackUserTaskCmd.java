@@ -1,7 +1,7 @@
-package com.entfrm.biz.workflow.execution.cmd;
+package com.entfrm.biz.workflow.cmd;
 
-import com.entfrm.biz.workflow.constant.FlowableConstant;
-import com.entfrm.biz.workflow.util.workflowUtil;
+import com.entfrm.biz.workflow.constant.WorkflowConstant;
+import com.entfrm.biz.workflow.util.WorkflowUtil;
 import org.apache.commons.compress.utils.Sets;
 import org.flowable.bpmn.model.FlowNode;
 import org.flowable.bpmn.model.Process;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 回滚任务命令定义
+ * 回滚任务命令
  * </p>
  *
  * @Author: entfrm开发团队-王翔
@@ -36,13 +36,11 @@ import java.util.stream.Collectors;
  */
 public class RollBackUserTaskCmd implements Command<String>, Serializable {
 
-
     public static final long serialVersionUID = 1L;
 
     protected RuntimeService runtimeService;
     protected String taskId;
     protected String targetActivityId;
-
 
     public RollBackUserTaskCmd(RuntimeService runtimeService, String taskId, String targetActivityId) {
         this.runtimeService = runtimeService;
@@ -50,15 +48,14 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         this.targetActivityId = targetActivityId;
     }
 
-
     @Override
     public String execute(CommandContext commandContext) {
         if (targetActivityId == null || targetActivityId.length() == 0) {
-            throw new FlowableException("TargetActivityId cannot be empty");
+            throw new FlowableException("targetActivityId不能为空");
         }
         TaskEntity task = CommandContextUtil.getTaskService().getTask(taskId);
         if (task == null) {
-            throw new FlowableObjectNotFoundException("task " + taskId + " doesn't exist", Task.class);
+            throw new FlowableObjectNotFoundException("任务" + taskId + "不存在", Task.class);
         }
         String sourceActivityId = task.getTaskDefinitionKey();
         String processInstanceId = task.getProcessInstanceId();
@@ -67,22 +64,22 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         FlowNode sourceFlowElement = (FlowNode) process.getFlowElement(sourceActivityId, true);
         // 只支持从用户任务退回
         if (!(sourceFlowElement instanceof UserTask)) {
-            throw new FlowableException ("Task with id:" + taskId + " is not a UserTask");
+            throw new FlowableException ("任务id:" + taskId + "不是一个UserTask");
         }
         FlowNode targetFlowElement = (FlowNode) process.getFlowElement(targetActivityId, true);
-        // 设置只允许用户任务退回,不允许前进
-        if (!(sourceFlowElement instanceof UserTask)) {
-            throw new FlowableException ("Task with id:" + taskId + " is not a UserTask");
+        // 退回节点到当前节点如果不可到达,不允许退回
+        if (!WorkflowUtil.isReachable(process, targetFlowElement, sourceFlowElement)) {
+            throw new FlowableException ("不能退回:" + targetActivityId);
         }
         // ps:如果目前为前进,并将前进实在子流程中,目前处理的是只能退回到子流程开始节点,无法退回至子流程中任意节点
-        String[] sourceAndTargetRealActivityId =  workflowUtil.getSourceAndTargetRealActivityId(sourceFlowElement, targetFlowElement);
+        String[] sourceAndTargetRealActivityId =  WorkflowUtil.getSourceAndTargetRealActivityId(sourceFlowElement, targetFlowElement);
         // 实际应操作的当前节点ID
         String sourceRealActivityId = sourceAndTargetRealActivityId[0];
         // 实际应操作的目标节点ID
         String targetRealActivityId = sourceAndTargetRealActivityId[1];
 
         //获取当前流程中的可以并行的网关
-        Map<String, Set<String>> specialGatewayNodes = workflowUtil.getSpecialGatewayElements(process);
+        Map<String, Set<String>> specialGatewayNodes = WorkflowUtil.getSpecialGatewayElements(process);
 
         // 当前节点处在的并行网关list
         List<String> sourceInSpecialGatewayList = new ArrayList<>();
@@ -92,37 +89,37 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
                 sourceInSpecialGatewayList, targetInSpecialGatewayList);
 
         // 实际应筛选执行分支路线的节点ID
-        Set<String> sourceRealAcitivtyIds = null;
+        Set<String> sourceRealActivityIds;
         // 重新统计驳回目标节点的并行网关汇聚节点
         String targetRealSpecialGateway = null;
 
         // 1.目标节点和当前节点都不在并行网关中
         if (targetInSpecialGatewayList.isEmpty() && sourceInSpecialGatewayList.isEmpty()) {
-            sourceRealAcitivtyIds = Sets.newHashSet(sourceRealActivityId);
+            sourceRealActivityIds = Sets.newHashSet(sourceRealActivityId);
         }
         // 2.目标节点不在并行网关中、当前节点在并行网关中
         else if (targetInSpecialGatewayList.isEmpty() && !sourceInSpecialGatewayList.isEmpty()) {
-            sourceRealAcitivtyIds = specialGatewayNodes.get(sourceInSpecialGatewayList.get(0));
+            sourceRealActivityIds = specialGatewayNodes.get(sourceInSpecialGatewayList.get(0));
         }
         // 3.目标节点在并行网关中、当前节点不在并行网关中
         else if (!targetInSpecialGatewayList.isEmpty() && sourceInSpecialGatewayList.isEmpty()) {
-            sourceRealAcitivtyIds = Sets.newHashSet(sourceRealActivityId);
+            sourceRealActivityIds = Sets.newHashSet(sourceRealActivityId);
             targetRealSpecialGateway = targetInSpecialGatewayList.get(0);
         }
         // 4.目标节点和当前节点都在并行网关中
         else {
-            int diffSpecialGatewayLevel = workflowUtil.getDiffLevel(sourceInSpecialGatewayList,targetInSpecialGatewayList);
+            int diffSpecialGatewayLevel = WorkflowUtil.getDiffLevel(sourceInSpecialGatewayList,targetInSpecialGatewayList);
             // 在并行网关同一层且在同一分支
             if (diffSpecialGatewayLevel == -1) {
-                sourceRealAcitivtyIds = Sets.newHashSet(sourceRealActivityId);
+                sourceRealActivityIds = Sets.newHashSet(sourceRealActivityId);
             } else {
                 // 目前处于节点前进操作,应该筛选当前节点前面已经执行完的执行分支路线实体
                 if (sourceInSpecialGatewayList.size() == diffSpecialGatewayLevel) {
-                    sourceRealAcitivtyIds = Sets.newHashSet(sourceRealActivityId);
+                    sourceRealActivityIds = Sets.newHashSet(sourceRealActivityId);
                 }
                 // 目前处于节点驳回操作,应该筛选目标节点前面已经执行完的执行分支路线实体
                 else {
-                    sourceRealAcitivtyIds = specialGatewayNodes.get(sourceInSpecialGatewayList.get(diffSpecialGatewayLevel));
+                    sourceRealActivityIds = specialGatewayNodes.get(sourceInSpecialGatewayList.get(diffSpecialGatewayLevel));
                 }
 
                 // 目前处于节点驳回操作,应该筛选目标节点前面已经执行完的执行分支路线实体,上面已经处理过来所以不处理
@@ -136,7 +133,7 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         }
         // 筛选需要处理的execution
         List<ExecutionEntity> realExecutions = getRealExecutions(commandContext, processInstanceId,
-                task.getExecutionId(), sourceRealActivityId, sourceRealAcitivtyIds);
+                task.getExecutionId(), sourceRealActivityId, sourceRealActivityIds);
         // 执行退回，直接跳转到实际的 targetRealActivityId
         List<String> realExecutionIds =
                 realExecutions.stream().map(ExecutionEntity::getId).collect(Collectors.toList());
@@ -178,10 +175,10 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         ExecutionEntity taskExecution = executionEntityManager.findById(taskExecutionId);
         List<ExecutionEntity> executions =
                 executionEntityManager.findChildExecutionsByProcessInstanceId(processInstanceId);
-        Set<String> parentExecutionIds = workflowUtil.getParentExecutionIdsByActivityId(executions,
+        Set<String> parentExecutionIds = WorkflowUtil.getParentExecutionIdsByActivityId(executions,
                 sourceRealActivityId);
         // 流程执行根ID
-        String realParentExecutionId = workflowUtil.getParentExecutionIdFromParentIds(taskExecution,
+        String realParentExecutionId = WorkflowUtil.getParentExecutionIdFromParentIds(taskExecution,
                 parentExecutionIds);
         //查询act_ru_execution表并且符合当前的流程执行根ID,跟活动ID的执行分支路线实体
         List<ExecutionEntity> childExecutions =
@@ -204,7 +201,7 @@ public class RollBackUserTaskCmd implements Command<String>, Serializable {
         int index = targetInSpecialGatewayList.indexOf(targetRealSpecialGateway);
         for (; index < targetInSpecialGatewayList.size(); index++) {
             String targetInSpecialGateway = targetInSpecialGatewayList.get(index);
-            String targetInSpecialGatewayEndId = targetInSpecialGateway + FlowableConstant.SPECIAL_GATEWAY_END_SUFFIX;
+            String targetInSpecialGatewayEndId = targetInSpecialGateway + WorkflowConstant.SPECIAL_GATEWAY_END_SUFFIX;
             FlowNode targetInSpecialGatewayEnd = (FlowNode) process.getFlowElement(targetInSpecialGatewayEndId, true);
             int nbrOfExecutionsToJoin = targetInSpecialGatewayEnd.getIncomingFlows().size();
             // 处理目标节点所处的分支以外的分支,即 总分枝数-1 = nbrOfExecutionsToJoin - 1

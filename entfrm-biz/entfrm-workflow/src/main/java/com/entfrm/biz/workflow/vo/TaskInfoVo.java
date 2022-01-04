@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class TaskVo {
+public class TaskInfoVo {
 
     private String id;
     private String name;
@@ -29,7 +29,7 @@ public class TaskVo {
     private String processDefKey;
 
 
-    public TaskVo(TaskInfo task){
+    public TaskInfoVo(TaskInfo task){
         this.id = task.getId ();
         this.name = task.getName ();
         this.assignee = task.getAssignee ();

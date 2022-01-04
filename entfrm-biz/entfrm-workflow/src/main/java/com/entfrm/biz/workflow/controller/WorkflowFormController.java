@@ -2,6 +2,7 @@ package com.entfrm.biz.workflow.controller;
 
 import cn.hutool.core.map.MapUtil;
 import com.entfrm.base.api.R;
+import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
 import com.entfrm.biz.workflow.util.Variable;
@@ -57,7 +58,7 @@ public class WorkflowFormController {
         List<FormProperty> formProperties = startFormData.getFormProperties();
         // 设置流程变量
         Map<String,String> formProcessVars = new HashMap();
-        formProcessVars.put("userName", SecurityUtil.getUser().getUsername());
+        formProcessVars.put(WorkflowConstant.USERNAME, SecurityUtil.getUser().getUsername());
         // 设置流程发起人
         identityService.setAuthenticatedUserId(SecurityUtil.getUser().getId() + "");
         // 设置流程标题
@@ -124,9 +125,7 @@ public class WorkflowFormController {
                 }
             }
         }
-
-        Variable variable = new Variable(formProcessVars);
-        workflow.setProcessVars(variable);
+        workflow.setProcessVars(formProcessVars);
 
         // 提交用户任务表单并且完成任务
         workflowTaskService.complete(workflow);

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Data
 @Accessors(chain = true)
-public class ProcessInstanceVo {
+public class ProcessInstanceInfoVo {
 
     //流程实例ID
     private String processInstanceId;
@@ -41,7 +41,7 @@ public class ProcessInstanceVo {
     //流程作废原因
     private String deleteReason;
     //流程当前节点
-    private TaskVo task;
+    private TaskInfoVo task;
 
 
     //流程状态码

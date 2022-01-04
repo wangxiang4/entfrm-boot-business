@@ -6,8 +6,8 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.enums.ProcessStatus;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
-import com.entfrm.biz.workflow.vo.ProcessDefinitionVo;
-import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
+import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
+import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.TaskService;
@@ -43,7 +43,7 @@ public class WorkflowProcessController {
     /** 流程定义列表 */
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessDefinitionVo> processIPage = workflowProcessService.list(params);
+        IPage<ProcessDefinitionInfoVo> processIPage = workflowProcessService.list(params);
         return R.ok(processIPage.getRecords(), processIPage.getTotal());
     }
 
@@ -57,14 +57,14 @@ public class WorkflowProcessController {
     /** 运行中的流程实例列表 */
     @GetMapping("/runList")
     public R runList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceVo> processIPage = workflowProcessService.runList(params);
+        IPage<ProcessInstanceInfoVo> processIPage = workflowProcessService.runList(params);
         return R.ok(processIPage.getRecords(), processIPage.getTotal());
     }
 
     /** 历史流程列表 */
     @GetMapping("/historyList")
     public R historyList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceVo> processIPage = workflowProcessService.historyList(params);
+        IPage<ProcessInstanceInfoVo> processIPage = workflowProcessService.historyList(params);
         return R.ok(processIPage.getRecords(), processIPage.getTotal());
     }
 
@@ -136,15 +136,15 @@ public class WorkflowProcessController {
     /** 查询流程状态 */
     @GetMapping("/queryProcessStatus/{processInsId}")
     public R queryProcessStatus(@PathVariable String processInsId) {
-        ProcessInstanceVo processInstanceVo = workflowProcessService.queryProcessState(processInsId);
-        return R.ok(processInstanceVo);
+        ProcessInstanceInfoVo processInstanceInfoVo = workflowProcessService.queryProcessState(processInsId);
+        return R.ok(processInstanceInfoVo);
 
     }
 
     /** 自己发起流程实例列表 */
     @GetMapping("/selfProcessInstanceList")
     public R selfProcessInstanceList(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceVo> taskIPage = workflowProcessService.selfProcessInstanceList(params);
+        IPage<ProcessInstanceInfoVo> taskIPage = workflowProcessService.selfProcessInstanceList(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
     }
 

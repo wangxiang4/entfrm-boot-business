@@ -10,16 +10,13 @@ import com.entfrm.biz.extension.entity.TaskExtensionProperty;
 import com.entfrm.biz.extension.service.TaskExtensionPropertyService;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
-import com.entfrm.biz.workflow.vo.HistoricTaskVo;
-import com.entfrm.biz.workflow.vo.TaskCommentVo;
+import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
+import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
-import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
+import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import com.entfrm.security.util.SecurityUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -28,9 +25,6 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +56,7 @@ public class WorkflowTaskController {
     /** 代办任务列表 */
     @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
-        IPage<ProcessInstanceVo> taskIPage = workflowTaskService.list(params);
+        IPage<ProcessInstanceInfoVo> taskIPage = workflowTaskService.list(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
     }
 
@@ -76,7 +70,7 @@ public class WorkflowTaskController {
     /** 已办任务列表 */
     @GetMapping("/historicList")
     public R historicList(@RequestParam Map<String, Object> params) {
-        IPage<HistoricTaskVo> taskIPage = workflowTaskService.historicList(params);
+        IPage<HistoryTaskInfoVo> taskIPage = workflowTaskService.historicList(params);
         return R.ok(taskIPage.getRecords(), taskIPage.getTotal());
     }
 
@@ -88,12 +82,12 @@ public class WorkflowTaskController {
 
         TaskExtensionProperty formTypeNode = taskExtensionPropertyService.getOne(new LambdaQueryWrapper<TaskExtensionProperty>()
                 .eq(TaskExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefId())
+                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
                 .eq(TaskExtensionProperty::getKey, "formType"));
 
         TaskExtensionProperty formReadOnlyNode = taskExtensionPropertyService.getOne(new LambdaQueryWrapper<TaskExtensionProperty>()
                 .eq(TaskExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefId())
+                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
                 .eq(TaskExtensionProperty::getKey, "formReadOnly"));
 
         String formType = "1";
@@ -253,8 +247,8 @@ public class WorkflowTaskController {
     public R rejectTask(@RequestBody Map<String,Object> params) {
         String rollBackTaskDefKey = MapUtil.getStr(params, "rollBackTaskDefKey"),
                currentTaskId= MapUtil.getStr(params, "currentTaskId");
-        TaskCommentVo taskCommentVo = MapUtil.get(params, "comment", TaskCommentVo.class);
-        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, taskCommentVo);
+        TaskCommentInfoVo taskCommentInfoVo = MapUtil.get(params, "comment", TaskCommentInfoVo.class);
+        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, taskCommentInfoVo);
         return R.ok("驳回成功!");
     }
 

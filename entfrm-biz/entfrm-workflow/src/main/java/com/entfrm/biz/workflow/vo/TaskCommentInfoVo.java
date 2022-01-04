@@ -1,8 +1,8 @@
 package com.entfrm.biz.workflow.vo;
 
 import cn.hutool.core.util.StrUtil;
-import com.entfrm.biz.workflow.constant.FlowableConstant;
-import com.entfrm.biz.workflow.enums.ActionType;
+import com.entfrm.biz.workflow.constant.WorkflowConstant;
+import com.entfrm.biz.workflow.enums.ExtendMessage;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class TaskCommentVo {
+public class TaskCommentInfoVo {
 
     /** 操作按钮编码 */
     private String type;
@@ -43,15 +43,15 @@ public class TaskCommentVo {
 
 
     public String getFullMessage(){
-        return this.status + FlowableConstant.FLOW_ACTION+this.message;
+        return this.status + WorkflowConstant.WORK_FLOW_ACTION+this.message;
     }
 
 
     public void setFullMessage(String fullMessage){
-        if(StrUtil.isBlank(fullMessage) || !fullMessage.contains(FlowableConstant.FLOW_ACTION)){
+        if(StrUtil.isBlank(fullMessage) || !fullMessage.contains(WorkflowConstant.WORK_FLOW_ACTION)){
             this.setMessage (fullMessage);
         }else{
-            String[] list=fullMessage.split(FlowableConstant.FLOW_ACTION);
+            String[] list=fullMessage.split(WorkflowConstant.WORK_FLOW_ACTION);
             if(list.length > 1){
                 this.setStatus (list[0]);
                 this.setMessage (list[1]);
@@ -64,13 +64,13 @@ public class TaskCommentVo {
 
     public void setType(String type){
         this.type = type;
-        this.level = ActionType.getLevel (type);
+        this.level = ExtendMessage.getLevel (type);
     }
 
     public void setCommentType(String commentType){
         if(commentType.startsWith (prefix)){
             this.type = commentType.substring(prefix.length());
-            this.level = ActionType.getLevel (type);
+            this.level = ExtendMessage.getLevel (type);
         }
     }
 

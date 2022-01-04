@@ -2,8 +2,8 @@ package com.entfrm.biz.workflow.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.biz.workflow.enums.ProcessStatus;
-import com.entfrm.biz.workflow.vo.ProcessDefinitionVo;
-import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
+import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
+import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -26,19 +26,19 @@ public interface WorkflowProcessService {
      * 流程定义列表
      * params:查询条件参数
      */
-    IPage<ProcessDefinitionVo> list(Map<String, Object> params);
+    IPage<ProcessDefinitionInfoVo> list(Map<String, Object> params);
 
     /**
      * 运行中的流程实例列表
      * params:查询条件参数
      */
-    IPage<ProcessInstanceVo> runList(Map<String, Object> params);
+    IPage<ProcessInstanceInfoVo> runList(Map<String, Object> params);
 
     /**
      * 历史流程列表
      * params:查询条件参数
      */
-    IPage<ProcessInstanceVo> historyList(Map<String, Object> params);
+    IPage<ProcessInstanceInfoVo> historyList(Map<String, Object> params);
 
     /**
      * 读取xml/image资源
@@ -106,7 +106,7 @@ public interface WorkflowProcessService {
      * 获取流程实例状态
      * processInsId:流程实例ID
      */
-    ProcessInstanceVo queryProcessState(String processInsId);
+    ProcessInstanceInfoVo queryProcessState(String processInsId);
 
     /**
      * 获取流程定义
@@ -136,7 +136,7 @@ public interface WorkflowProcessService {
      * 自己发起流程实例列表
      * params:查询条件参数
      */
-    IPage<ProcessInstanceVo> selfProcessInstanceList(Map<String, Object> params);
+    IPage<ProcessInstanceInfoVo> selfProcessInstanceList(Map<String, Object> params);
 
     /**
      * 启动流程定义

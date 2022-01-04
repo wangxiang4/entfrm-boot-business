@@ -1,6 +1,6 @@
 package com.entfrm.biz.workflow.util;
 
-import com.entfrm.biz.workflow.constant.FlowableConstant;
+import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.compress.utils.Sets;
 import org.flowable.bpmn.model.Process;
@@ -21,39 +21,31 @@ import java.util.stream.Stream;
  * @Date: 2022/1/4
  */
 @UtilityClass
-public class workflowUtil {
-
+public class WorkflowUtil {
 
     public boolean isReachable(Process process, FlowNode sourceElement, FlowNode targetElement) {
         return isReachable(process, sourceElement, targetElement, Sets.newHashSet());
     }
 
-
-    /**
-     * 当前节点是否可以到达目标节点,可以到达的目标节点均为已经完成的节点
-     */
-    public boolean isReachable(Process process, FlowNode sourceElement, FlowNode targetElement,
-                               Set<String> visitedElements) {
-        // Special case: start events in an event subprocess might exist as an execution and are most likely be able to
-        // reach the target
-        // when the target is in the event subprocess, but should be ignored as they are not 'real' runtime executions
-        // (but rather waiting for a
-        // trigger)
+    /** 当前节点是否可以到达目标节点,可以到达的目标节点均为已经完成的节点 */
+    public boolean isReachable(Process process, FlowNode sourceElement, FlowNode targetElement, Set<String> visitedElements) {
+        // 特殊情况:事件子流程中的启动事件可能作为执行而存在，并且很可能能够这样做
+        // 达到目标
+        // 当目标在事件子流程中，但应该被忽略，因为它们不是真正的运行时执行
+        // (而是等待一个触发点)
         if (sourceElement instanceof StartEvent && isInEventSubprocess(sourceElement)) {
             return false;
         }
-        // No outgoing seq flow: could be the end of eg . the process or an embedded subprocess
+        // 没有流出的seq流:可能是结束。流程或嵌入的子流程
         if (sourceElement.getOutgoingFlows().size() == 0) {
             visitedElements.add(sourceElement.getId());
             FlowElementsContainer parentElement = process.findParent(sourceElement);
             if (parentElement instanceof SubProcess) {
                 sourceElement = (SubProcess) parentElement;
-                // by zjm begin
                 // 子流程的结束节点，若目标节点在该子流程中，说明无法到达，返回false
                 if (((SubProcess) sourceElement).getFlowElement(targetElement.getId()) != null) {
                     return false;
                 }
-                // by zjm end
             } else {
                 return false;
             }
@@ -61,16 +53,13 @@ public class workflowUtil {
         if (sourceElement.getId().equals(targetElement.getId())) {
             return true;
         }
-        // To avoid infinite looping, we must capture every node we visit
-        // and check before going further in the graph if we have already
-        // visited the node.
+        // 为了避免无限循环，我们必须捕获我们访问的每个节点
+        // 在继续看之前检查一下,参观了节点。
         visitedElements.add(sourceElement.getId());
-        // by zjm begin
         // 当前节点能够到达子流程，且目标节点在子流程中，说明可以到达，返回true
         if (sourceElement instanceof SubProcess && ((SubProcess) sourceElement).getFlowElement(targetElement.getId()) != null) {
             return true;
         }
-        // by zjm end
         List<SequenceFlow> sequenceFlows = sourceElement.getOutgoingFlows();
         if (sequenceFlows != null && sequenceFlows.size() > 0) {
             for (SequenceFlow sequenceFlow : sequenceFlows) {
@@ -87,10 +76,7 @@ public class workflowUtil {
         return false;
     }
 
-
-    /**
-     * 当前元素是否是事件子流程
-     */
+    /** 当前元素是否是事件子流程 */
     protected boolean isInEventSubprocess(FlowNode flowNode) {
         FlowElementsContainer flowElementsContainer = flowNode.getParentContainer();
         while (flowElementsContainer != null) {
@@ -106,10 +92,7 @@ public class workflowUtil {
         return false;
     }
 
-
-    /**
-     * 获取当前节点跟目标节点世界的活动ID:包括子流程层级关系
-     */
+    /** 获取当前节点跟目标节点世界的活动ID:包括子流程层级关系 */
     public String[] getSourceAndTargetRealActivityId(FlowNode sourceFlowElement, FlowNode targetFlowElement) {
         // 实际应操作的当前节点ID
         String sourceRealActivityId = sourceFlowElement.getId();
@@ -128,10 +111,7 @@ public class workflowUtil {
         return new String[]{sourceRealActivityId, targetRealActivityId};
     }
 
-
-    /**
-     * 获取当前元素的父流程ID
-     */
+    /** 获取当前元素的父流程ID */
     public List<String> getParentProcessIds(FlowNode flowNode) {
         List<String> result = new ArrayList<>();
         FlowElementsContainer flowElementsContainer = flowNode.getParentContainer();
@@ -151,19 +131,17 @@ public class workflowUtil {
         return result;
     }
 
-
-    /**
-     * 查询不同层级,为后面层级之间节点跳转做准备,正常情况下都是返回最小的层级索引,如果碰到层级ID比较不一致的就返回不一致的这一层的索引
-     */
+    /** 查询不同层级,为后面层级之间节点跳转做准备,正常情况下都是返回最小的层级索引,如果碰到层级ID比较不一致的就返回不一致的这一层的索引 */
     public Integer getDiffLevel(List<String> sourceList, List<String> targetList) {
         if (sourceList == null || sourceList.isEmpty() || targetList == null || targetList.isEmpty()) {
-            throw new FlowableException("sourceList and targetList cannot be empty");
+            throw new FlowableException("sourceList和targetList不能为空");
         }
         if (sourceList.size() == 1 && targetList.size() == 1) {
             // 都在第0层且不相等
             if (!sourceList.get(0).equals(targetList.get(0))) {
                 return 0;
-            } else {// 都在第0层且相等
+            // 都在第0层且相等
+            } else {
                 return -1;
             }
         }
@@ -187,12 +165,12 @@ public class workflowUtil {
         return targetLevel;
     }
 
+    public Map<String, Set<String>> getSpecialGatewayElements(FlowElementsContainer container) {
+        return getSpecialGatewayElements(container, null);
+    }
 
-    /**
-     * 获取当前流程容器中的所有特殊网关:包括网关中定义的活动节点
-     */
-    public Map<String, Set<String>> getSpecialGatewayElements(FlowElementsContainer container,
-                                                                     Map<String, Set<String>> specialGatewayElements) {
+    /** 获取当前流程容器中的所有特殊网关:包括网关中定义的活动节点 */
+    public Map<String, Set<String>> getSpecialGatewayElements(FlowElementsContainer container, Map<String, Set<String>> specialGatewayElements) {
         if (specialGatewayElements == null) {
             specialGatewayElements = new HashMap<>(16);
         }
@@ -200,15 +178,15 @@ public class workflowUtil {
         for (FlowElement flowElement : flowelements) {
             //判断id是否有特殊网关的开始后缀已经是否是可以并行处理的网关
             boolean isBeginSpecialGateway =
-                    flowElement.getId().endsWith(FlowableConstant.SPECIAL_GATEWAY_BEGIN_SUFFIX) && (flowElement instanceof ParallelGateway || flowElement instanceof InclusiveGateway || flowElement instanceof ComplexGateway);
+                    flowElement.getId().endsWith(WorkflowConstant.SPECIAL_GATEWAY_BEGIN_SUFFIX) && (flowElement instanceof ParallelGateway || flowElement instanceof InclusiveGateway || flowElement instanceof ComplexGateway);
             if (isBeginSpecialGateway) {
                 String gatewayBeginRealId = flowElement.getId();
                 String gatewayId = gatewayBeginRealId.substring(0, gatewayBeginRealId.length() - 6);
-                Set<String> gatewayIdContainFlowelements = specialGatewayElements.computeIfAbsent(gatewayId, k -> new HashSet<>());
+                Set<String> gatewayIdContainFlowElements = specialGatewayElements.computeIfAbsent(gatewayId, k -> new HashSet<>());
                 //收集网关的节点ID已经包括网关中定义的活动节点ID
                 findElementsBetweenSpecialGateway(
-                        flowElement, gatewayId + FlowableConstant.SPECIAL_GATEWAY_END_SUFFIX,
-                        gatewayIdContainFlowelements);
+                        flowElement, gatewayId + WorkflowConstant.SPECIAL_GATEWAY_END_SUFFIX,
+                        gatewayIdContainFlowElements);
             } else if (flowElement instanceof SubProcess) {
                 getSpecialGatewayElements((SubProcess) flowElement, specialGatewayElements);
             }
@@ -222,7 +200,6 @@ public class workflowUtil {
 
         return specialGatewayNodesSort;
     }
-
 
     /** 查找特殊网关之间的关联关系,并且跟网关有关系的节点收集记录 */
     public void findElementsBetweenSpecialGateway(FlowElement specialGatewayBegin, String specialGatewayEndId,
@@ -244,20 +221,14 @@ public class workflowUtil {
             }
         }
     }
-
-    public  Map<String, Set<String>> getSpecialGatewayElements(FlowElementsContainer container) {
-        return getSpecialGatewayElements(container, null);
-    }
-
-
     /** 获取当前跟活动节点有关联的流程实例已经产生出来的分支路线的父级ID:处理了多实例情况,多实例情况下父级ID是关联多实例活动节点执行ID的 */
-    public  Set<String> getParentExecutionIdsByActivityId(List<ExecutionEntity> executions, String activityId) {
+    public Set<String> getParentExecutionIdsByActivityId(List<ExecutionEntity> executions, String activityId) {
         List<ExecutionEntity> activityIdExecutions =
                 executions.stream().filter(e -> activityId.equals(e.getActivityId())).collect(Collectors.toList());
         if (activityIdExecutions.isEmpty()) {
-            throw new FlowableException("Active execution could not be found with activity id " + activityId);
+            throw new FlowableException("无法找到具有活动id的活动执行" + activityId);
         }
-        // check for a multi instance root execution
+        // 检查多实例根执行
         ExecutionEntity miExecution = null;
         boolean isInsideMultiInstance = false;
         for (ExecutionEntity possibleMiExecution : activityIdExecutions) {
@@ -286,14 +257,13 @@ public class workflowUtil {
         return parentExecutionIds;
     }
 
-
     /** 父流程是否是以多实例执行的(一至找到根流程) */
-    public  boolean isExecutionInsideMultiInstance(ExecutionEntity execution) {
+    public boolean isExecutionInsideMultiInstance(ExecutionEntity execution) {
         return getFlowElementMultiInstanceParentId(execution.getCurrentFlowElement()).isPresent();
     }
 
     /** 查找当前元素父流程是多实例执行的ID */
-    public  Optional<String> getFlowElementMultiInstanceParentId(FlowElement flowElement) {
+    public Optional<String> getFlowElementMultiInstanceParentId(FlowElement flowElement) {
         FlowElementsContainer parentContainer = flowElement.getParentContainer();
         while (parentContainer instanceof Activity) {
             if (isFlowElementMultiInstance((Activity) parentContainer)) {
@@ -304,7 +274,6 @@ public class workflowUtil {
         return Optional.empty();
     }
 
-
     /** 检测当前父流程是否为多实例 */
     public boolean isFlowElementMultiInstance(FlowElement flowElement) {
         if (flowElement instanceof Activity) {
@@ -312,8 +281,6 @@ public class workflowUtil {
         }
         return false;
     }
-
-
 
     /**
      * 获取流程执行根ID
@@ -329,11 +296,9 @@ public class workflowUtil {
             taskParentExecution = taskParentExecution.getParent();
         }
         if (realParentExecutionId == null || realParentExecutionId.length() == 0) {
-            throw new FlowableException("Parent execution could not be found with executionId id " + execution.getId());
+            throw new FlowableException("无法找到带有executionId的父执行" + execution.getId());
         }
         return realParentExecutionId;
     }
-
-
 
 }

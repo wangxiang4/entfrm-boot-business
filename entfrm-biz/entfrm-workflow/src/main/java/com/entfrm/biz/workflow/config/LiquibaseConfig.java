@@ -6,6 +6,7 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -20,18 +21,17 @@ import javax.sql.DataSource;
  *</p>
  *
  * @Author: entfrm开发团队-王翔
- * @Date: 2021/5/8
+ * @Date: 2022/1/4
  */
+@Slf4j
 @Configuration
 public class LiquibaseConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseConfig.class);
 
     private static final String LIQUIBASE_CHANGELOG_PREFIX = "ACT_DE_";
 
     @Bean
     public Liquibase liquibase(DataSource dataSource) {
-        LOGGER.info("Configuring Liquibase");
+        log.info("Configuring Liquibase");
         try {
             DatabaseConnection connection = new JdbcConnection(dataSource.getConnection());
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection);
@@ -40,7 +40,6 @@ public class LiquibaseConfig {
             Liquibase liquibase = new Liquibase("META-INF/liquibase/flowable-modeler-app-db-changelog.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update("flowable");
             return liquibase;
-
         } catch (Exception e) {
             throw new RuntimeException("Error creating liquibase database", e);
         }

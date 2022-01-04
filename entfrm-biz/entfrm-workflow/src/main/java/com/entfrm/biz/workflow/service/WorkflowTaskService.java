@@ -2,9 +2,9 @@ package com.entfrm.biz.workflow.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.biz.workflow.entity.Workflow;
-import com.entfrm.biz.workflow.vo.HistoricTaskVo;
-import com.entfrm.biz.workflow.vo.ProcessInstanceVo;
-import com.entfrm.biz.workflow.vo.TaskCommentVo;
+import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
+import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
+import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
 
 import java.util.List;
 import java.util.Map;
@@ -24,13 +24,13 @@ public interface WorkflowTaskService {
      * 代办任务列表
      * params:查询条件参数
      */
-    IPage<ProcessInstanceVo> list(Map<String, Object> params);
+    IPage<ProcessInstanceInfoVo> list(Map<String, Object> params);
 
     /**
      * 已办任务列表
      * params:查询条件参数
      */
-    IPage<HistoricTaskVo> historicList(Map<String, Object> params);
+    IPage<HistoryTaskInfoVo> historicList(Map<String, Object> params);
 
     /**
      * 已办流转任务列表
@@ -85,7 +85,7 @@ public interface WorkflowTaskService {
      * currentTaskId:当前任务ID
      * taskCommentVo:任务备注业务实体
      */
-    void rollBackTask(String rollBackTaskDefKey, String currentTaskId, TaskCommentVo taskCommentVo);
+    void rollBackTask(String rollBackTaskDefKey, String currentTaskId, TaskCommentInfoVo taskCommentInfoVo);
 
     /**
      * 可回滚任务列表

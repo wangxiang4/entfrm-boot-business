@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-public class HistoricTaskVo {
+public class HistoryTaskInfoVo {
 
     private String id;
     private String name;
@@ -36,7 +36,7 @@ public class HistoricTaskVo {
     private String level; // 文字颜色
     private Map vars;
     // 当前流程还未结束的节点任务
-    private TaskVo currentTask;
+    private TaskInfoVo currentTask;
 
 
 }

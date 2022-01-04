@@ -1,126 +1,101 @@
 package com.entfrm.biz.workflow.entity;
 
 import com.entfrm.biz.workflow.util.Variable;
-import com.entfrm.biz.workflow.vo.TaskCommentVo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.task.api.history.HistoricTaskInstance;
 
 import java.io.Serializable;
 import java.util.Map;
 
 /**
  * <p>
- * 工作流Entity
- * 工作流通用数据
+ * 工作流核心
  * </p>
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class Workflow implements Serializable {
 
     /** 反序列化密钥 */
     private static final long serialVersionUID = 1L;
 
-    /** 任务编号 */
+    /** 流程任务ID */
     private String taskId;
-
-    /** 任务名称 */
+    /** 流程任务名称 */
     private String taskName;
-
-    /** 任务定义ID */
-    private String taskDefId;
-
-    /** 任务定义Key(任务环节标识) */
+    /** 流程任务定义key */
     private String taskDefKey;
-
-    /** 表单类型 */
-    private String formType;
-
-    /** 流程实例ID */
-    private String procInsId;
-
-    /** 流程定义ID */
-    private String procDefId;
-
-    /** 流程定义Key(流程定义标识) */
-    private String procDefKey;
-
-    /** 业务绑定ID */
-    private String businessId;
-
-    /** 业务绑定表名 */
-    private String businessTable;
-
-    /** 任务标题 */
-    private String title;
-
-    /** 任务执行人编号 */
+    /** 任务处理人ID */
     private String assignee;
-
-    /** 任务执行人名称 */
+    /** 任务处理人名称 */
     private String assigneeName;
 
+    /** 表单类型(1:动态表单,2:外置表单) */
+    private String formType;
+    /** 流程表单是否只读 */
+    private boolean formReadOnly;
     /** 流程表单地址 */
     private String formUrl;
 
-    /** 流程表单只读 */
-    private boolean formReadOnly;
+    /** 流程标题 */
+    private String title;
+    /** 流程实例ID */
+    private String processInsId;
+    /** 流程定义ID */
+    private String processDefId;
+    /** 流程定义Key */
+    private String processDefKey;
 
-    /** 动态表单数据:json */
-    private String formData;
-
-    /** 批注信息 */
-    private TaskCommentVo comment = new TaskCommentVo();
+    /** 业务数据ID */
+    private String businessId;
+    /** 业务数据表名 */
+    private String businessTable;
 
     /** 流程变量 */
-    private Variable processVars;
-
-    /** 流程实例对象 */
-    @JsonIgnore
-    private ProcessInstance procIns;
-
-    /** 历史流程实例对象 */
-    private HistoricProcessInstance hisProcIns;
-
-    /** 历史任务 */
-    private HistoricTaskInstance histTask;
-
-    /** 历史活动任务 */
-    private HistoricActivityInstance histIns;
+    private Variable processVars = new Variable();
+    /** 批注信息 */
+    private TaskCommentInfoVo taskComment = new TaskCommentInfoVo();
+    /** 历史任务活动实例 */
+    private HistoricActivityInstance historicActivityInstance;
 
 
-    /** 设置流程绑定业务数据:正在运行的流程 */
-    public void setProcIns(ProcessInstance procIns) {
-        this.procIns = procIns;
-        if (procIns != null && procIns.getBusinessKey() != null && procIns.getBusinessKey().contains("_")) {
-            String[] bind = procIns.getBusinessKey().split(":");
+    /** 设置流程实例业务数据 */
+    public void setProcessInstanceBusinessData(ProcessInstance processInstance) {
+        if (processInstance != null
+                && processInstance.getBusinessKey() != null
+                && processInstance.getBusinessKey().contains(":")) {
+            String[] bind = processInstance.getBusinessKey().split(":");
             setBusinessTable(bind[0]);
             setBusinessId(bind[1]);
-        } else if (procIns != null && procIns.getBusinessKey() != null) {
-            setBusinessId(procIns.getBusinessKey());
+        } else if (processInstance != null && processInstance.getBusinessKey() != null) {
+            setBusinessId(processInstance.getBusinessKey());
         }
     }
 
-    /** 设置流程绑定业务数据:已经结束的流程 */
-    public void setFinishedProcIns(HistoricProcessInstance procIns) {
-        this.hisProcIns = procIns;
-        if (procIns != null && procIns.getBusinessKey() != null && procIns.getBusinessKey().contains("_")) {
-            String[] bind = procIns.getBusinessKey().split(":");
+    /** 设置已经结束流程实例业务数据 */
+    public void setFinishedProcessInstanceBusinessData(HistoricProcessInstance historicProcessInstance) {
+        if (historicProcessInstance != null
+                && historicProcessInstance.getBusinessKey() != null
+                && historicProcessInstance.getBusinessKey().contains(":")) {
+            String[] bind = historicProcessInstance.getBusinessKey().split(":");
             setBusinessTable(bind[0]);
             setBusinessId(bind[1]);
-        } else if (procIns != null && procIns.getBusinessKey() != null) {
-            setBusinessId(procIns.getBusinessKey());
+        } else if (historicProcessInstance != null && historicProcessInstance.getBusinessKey() != null) {
+            setBusinessId(historicProcessInstance.getBusinessKey());
         }
     }
 
     /** 自动注入通过Map设置流程变量值 */
-    public void setVars(Map<String, Object> map) {
+    public void setProcessVars(Map<String, Object> map) {
         this.processVars = new Variable(map);
     }
 

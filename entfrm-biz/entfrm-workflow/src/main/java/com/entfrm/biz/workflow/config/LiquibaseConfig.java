@@ -21,7 +21,6 @@ import javax.sql.DataSource;
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
-@Slf4j
 @Configuration
 public class LiquibaseConfig {
 
@@ -29,7 +28,6 @@ public class LiquibaseConfig {
 
     @Bean
     public Liquibase liquibase(DataSource dataSource) {
-        log.info("配置Liquibase");
         try {
             DatabaseConnection connection = new JdbcConnection(dataSource.getConnection());
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection);

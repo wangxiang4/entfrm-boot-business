@@ -1,10 +1,15 @@
 package com.entfrm.biz.workflow.config;
 
 import com.entfrm.biz.workflow.parser.factory.WorkflowActivityBehaviorFactory;
-import lombok.AllArgsConstructor;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
+import org.flowable.spring.boot.FlowableProperties;
+import org.flowable.ui.common.properties.FlowableCommonAppProperties;
+import org.flowable.ui.modeler.properties.FlowableModelerAppProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 
 /**
@@ -15,8 +20,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
-@AllArgsConstructor
-@EnableConfigurationProperties(FlowableConfig.class)
+@Configuration
+@EnableConfigurationProperties(FlowableProperties.class)
 public class FlowableConfig implements EngineConfigurationConfigurer<SpringProcessEngineConfiguration> {
 
     @Override
@@ -42,6 +47,20 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         // 配置工作流活动行为工厂
         engineConfiguration.setActivityBehaviorFactory(new WorkflowActivityBehaviorFactory());
 
+    }
+
+    @Bean
+    public FlowableModelerAppProperties flowableModelerAppProperties() {
+        return new FlowableModelerAppProperties();
+    }
+
+    @Bean
+    @Primary
+    public FlowableCommonAppProperties flowableCommonAppProperties() {
+        FlowableCommonAppProperties flowableCommonAppProperties = new FlowableCommonAppProperties();
+        // 设置ui模型用户认值地址,具体一般不用,但是必须要设置,所以可以随便设置,绕过校验机制
+        flowableCommonAppProperties.setIdmUrl("http://localhost:0000");
+        return flowableCommonAppProperties;
     }
 
 }

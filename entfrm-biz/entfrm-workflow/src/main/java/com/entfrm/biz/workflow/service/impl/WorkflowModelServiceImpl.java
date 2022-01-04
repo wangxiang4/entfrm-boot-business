@@ -57,9 +57,9 @@ public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, W
 
     private final ActivityExtensionPropertyService activityExtensionPropertyService;
 
-    private BpmnXMLConverter bpmnXmlConverter;
+    private final BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
 
-    private BpmnJsonConverter bpmnJsonConverter;
+    private final BpmnJsonConverter bpmnJsonConverter = new BpmnJsonConverter();
 
     @Override
     public String export(String id) {

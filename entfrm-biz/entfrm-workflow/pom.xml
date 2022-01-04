@@ -35,12 +35,6 @@
             <artifactId>flowable-spring-boot-starter-process-rest</artifactId>
             <version>${flowable.version}</version>
         </dependency>
-        <!-- flowable-JSON处理依赖(json->xml,xml->json) -->
-        <dependency>
-            <groupId>org.flowable</groupId>
-            <artifactId>flowable-json-converter</artifactId>
-            <version>${flowable.version}</version>
-        </dependency>
         <!--
              引入建模设计器api请求,具体我也查看了内部是依赖了一个flowable-ui-modeler-logic做核心的逻辑操作
              具体实现: https://github.com/flowable/flowable-engine/tree/main/modules/flowable-ui/flowable-ui-modeler-rest

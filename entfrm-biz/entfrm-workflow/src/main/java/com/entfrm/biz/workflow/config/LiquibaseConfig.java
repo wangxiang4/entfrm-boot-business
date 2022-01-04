@@ -7,8 +7,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +29,7 @@ public class LiquibaseConfig {
 
     @Bean
     public Liquibase liquibase(DataSource dataSource) {
-        log.info("Configuring Liquibase");
+        log.info("配置Liquibase");
         try {
             DatabaseConnection connection = new JdbcConnection(dataSource.getConnection());
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection);
@@ -41,7 +39,7 @@ public class LiquibaseConfig {
             liquibase.update("flowable");
             return liquibase;
         } catch (Exception e) {
-            throw new RuntimeException("Error creating liquibase database", e);
+            throw new RuntimeException("创建liquibase数据库错误", e);
         }
     }
 

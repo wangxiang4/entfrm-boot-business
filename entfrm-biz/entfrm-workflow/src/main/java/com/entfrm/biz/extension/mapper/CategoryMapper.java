@@ -1,7 +1,7 @@
 package com.entfrm.biz.extension.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.entfrm.biz.extension.entity.ActCategory;
+import com.entfrm.biz.extension.entity.Category;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.entfrm.biz.extension.entity.ActCategory;
  * @Author: entfrm开发团队-王翔
  * @Date: 2021-06-21
  */
-public interface ActCategoryMapper extends BaseMapper<ActCategory> {
+public interface CategoryMapper extends BaseMapper<Category> {
 
 }

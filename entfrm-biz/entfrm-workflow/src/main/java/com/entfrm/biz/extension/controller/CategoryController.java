@@ -1,8 +1,8 @@
 package com.entfrm.biz.extension.controller;
 
 import com.entfrm.base.api.R;
-import com.entfrm.biz.extension.entity.ActCategory;
-import com.entfrm.biz.extension.service.ActCategoryService;
+import com.entfrm.biz.extension.entity.Category;
+import com.entfrm.biz.extension.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,36 +21,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/workflow/extension/actCategory")
 @AllArgsConstructor
-public class ActCategoryController {
+public class CategoryController {
 
-    private final ActCategoryService actCategoryService;
+    private final CategoryService categoryService;
 
     @GetMapping("/list")
     public R list() {
-        List<ActCategory> result = actCategoryService.list();
+        List<Category> result = categoryService.list();
         return R.ok(result);
     }
 
     @GetMapping("/{id}")
     public R getById(@PathVariable("id") Integer id) {
-        return R.ok(actCategoryService.getById(id));
+        return R.ok(categoryService.getById(id));
     }
 
     @PostMapping("/save")
-    public R save(@RequestBody ActCategory actCategory) {
-        actCategoryService.save(actCategory);
+    public R save(@RequestBody Category category) {
+        categoryService.save(category);
         return R.ok();
     }
 
     @PutMapping("/update")
-    public R update(@RequestBody ActCategory actCategory) {
-        actCategoryService.updateById(actCategory);
+    public R update(@RequestBody Category category) {
+        categoryService.updateById(category);
         return R.ok();
     }
 
     @DeleteMapping("/remove/{ids}")
     public R remove(@PathVariable Integer[] ids) {
-        actCategoryService.removeByIds(Arrays.asList(ids));
+        categoryService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
 

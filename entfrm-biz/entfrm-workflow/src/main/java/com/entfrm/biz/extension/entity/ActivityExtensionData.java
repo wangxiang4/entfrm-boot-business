@@ -1,4 +1,6 @@
 package com.entfrm.biz.extension.entity;
+
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -7,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +22,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_task_data")
-public class TaskExtensionData extends CommonEntity {
+@TableName("act_extension_activity_data")
+public class ActivityExtensionData extends CommonEntity {
 
 	/** 反序列化密钥 */
 	private static final long serialVersionUID = 1L;
@@ -33,15 +34,15 @@ public class TaskExtensionData extends CommonEntity {
 	/** 流程定义id */
 	private String processDefId;
 
-	/** 任务定义id */
-	private String taskDefId;
+	/** 活动定义id */
+	private String activityDefId;
 
 	/** 存储任务扩展数据 */
 	@TableField(exist = false)
-	private List<WorkflowAssignee> workflowAssigneeList = new ArrayList();
+	private List<WorkflowAssignee> workflowAssigneeList = CollectionUtil.newArrayList();
 	@TableField(exist = false)
-	private List<WorkflowButton> workflowButtonList = new ArrayList();
+	private List<WorkflowButton> workflowButtonList = CollectionUtil.newArrayList();
 	@TableField(exist = false)
-	private List<WorkflowCondition> workflowConditionList = new ArrayList();
+	private List<WorkflowCondition> workflowConditionList = CollectionUtil.newArrayList();
 
 }

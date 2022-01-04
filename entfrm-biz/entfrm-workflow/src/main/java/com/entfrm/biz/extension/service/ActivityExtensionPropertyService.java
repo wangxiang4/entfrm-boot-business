@@ -1,7 +1,7 @@
 package com.entfrm.biz.extension.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.entfrm.biz.extension.entity.TaskExtensionProperty;
+import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
 
 /**
  *<p>
@@ -11,7 +11,7 @@ import com.entfrm.biz.extension.entity.TaskExtensionProperty;
  * @Author: entfrm开发团队-王翔
  * @Date: 2021/5/12
  */
-public interface TaskExtensionPropertyService extends IService<TaskExtensionProperty> {
+public interface ActivityExtensionPropertyService extends IService<ActivityExtensionProperty> {
 
 }
 

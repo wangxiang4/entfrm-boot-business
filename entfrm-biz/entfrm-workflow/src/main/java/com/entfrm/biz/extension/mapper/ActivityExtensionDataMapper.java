@@ -1,7 +1,7 @@
 package com.entfrm.biz.extension.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.entfrm.biz.extension.entity.TaskExtensionData;
+import com.entfrm.biz.extension.entity.ActivityExtensionData;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.entfrm.biz.extension.entity.TaskExtensionData;
  * @Author: entfrm开发团队-王翔
  * @Date: 2021-05-11
  */
-public interface TaskExtensionDataMapper extends BaseMapper<TaskExtensionData> {
+public interface ActivityExtensionDataMapper extends BaseMapper<ActivityExtensionData> {
 
 }

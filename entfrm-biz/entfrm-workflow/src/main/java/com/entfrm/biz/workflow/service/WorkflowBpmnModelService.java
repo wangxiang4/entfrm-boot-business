@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>
- * bpmn模型相关 service
+ * bpmn模型 service
  * </p>
  *
  * @Author: entfrm开发团队-王翔
@@ -16,16 +16,15 @@ import java.util.List;
 public interface WorkflowBpmnModelService {
 
     /**
-     * 查找结束事件的元素
-     * processDefId:流程定义ID
-     */
-    List<EndEvent> findEndFlowElement(String processDefId);
-
-
-    /**
      * 获取Bpmn模型
      * processDefId:流程定义ID
      */
     BpmnModel getBpmnModelByProcessDefId(String processDefId);
+
+    /**
+     * 查找流程中结束事件的元素
+     * processDefId:流程定义ID
+     */
+    List<EndEvent> findEndFlowElement(String processDefId);
 
 }

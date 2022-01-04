@@ -17,7 +17,7 @@ import com.entfrm.biz.workflow.service.WorkflowTaskService;
 import com.entfrm.biz.workflow.util.WorkflowUtil;
 import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
-import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.vo.TaskInfoVo;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -174,9 +174,9 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
                 HistoryTaskInfoVo.setCurrentTask(currentTaskInfoVo);
             }
             // 获取意见评论内容
-            List<TaskCommentInfoVo> commentList = this.getTaskComments(historicTask.getId());
+            List<ActivityCommentInfoVo> commentList = this.getTaskComments(historicTask.getId());
             if (commentList.size () > 0) {
-                TaskCommentInfoVo comment = commentList.get(commentList.size()-1);
+                ActivityCommentInfoVo comment = commentList.get(commentList.size()-1);
                 HistoryTaskInfoVo.setComment(comment.getMessage());
                 HistoryTaskInfoVo.setLevel(comment.getLevel());
                 HistoryTaskInfoVo.setType(comment.getType());
@@ -338,7 +338,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     @Override
-    public void rollBackTask(String rollBackTaskDefKey, String currentTaskId, TaskCommentInfoVo taskCommentInfoVo) {
+    public void rollBackTask(String rollBackTaskDefKey, String currentTaskId, ActivityCommentInfoVo activityCommentInfoVo) {
         Task task = taskService.createTaskQuery().taskId(currentTaskId).singleResult();
         if(StrUtil.isBlank(task.getAssignee())){
             //代理人为空自己签收任务
@@ -348,9 +348,9 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         ActivityInstance targetRealActivityInstance = runtimeService.createActivityInstanceQuery()
                 .processInstanceId(task.getProcessInstanceId()).activityId(rollBackTaskDefKey).list().get(0);
         if (targetRealActivityInstance.getActivityType().equals(BpmnXMLConstants.ELEMENT_EVENT_START)) {
-            workflowProcessServices.stopProcessInstance(task.getProcessInstanceId(), ProcessStatus.REJECT, taskCommentInfoVo.getMessage());
+            workflowProcessServices.stopProcessInstance(task.getProcessInstanceId(), ProcessStatus.REJECT, activityCommentInfoVo.getMessage());
         } else {
-            taskService.addComment(currentTaskId,task.getProcessInstanceId(), taskCommentInfoVo.getCommentType(), taskCommentInfoVo.getFullMessage());
+            taskService.addComment(currentTaskId,task.getProcessInstanceId(), activityCommentInfoVo.getCommentType(), activityCommentInfoVo.getFullMessage());
             managementService.executeCommand(new RollBackUserTaskCmd(runtimeService, currentTaskId, rollBackTaskDefKey));
         }
     }
@@ -434,9 +434,9 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     /** 获取任务意见评论内容 */
-    private List<TaskCommentInfoVo> getTaskComments(String taskId) {
-        return jdbcTemplate.query(SqlConstants.QUERY_ACT_HI_COMMENT, new String[]{ TaskCommentInfoVo.prefix + "%", taskId } ,(ResultSet rs, int rowNum) -> {
-            TaskCommentInfoVo taskComment = new TaskCommentInfoVo();
+    private List<ActivityCommentInfoVo> getTaskComments(String taskId) {
+        return jdbcTemplate.query(SqlConstants.QUERY_ACT_HI_COMMENT, new String[]{ ActivityCommentInfoVo.prefix + "%", taskId } ,(ResultSet rs, int rowNum) -> {
+            ActivityCommentInfoVo taskComment = new ActivityCommentInfoVo();
             taskComment.setCommentType (rs.getString ("TYPE_"));
             taskComment.setFullMessage (new String(rs.getBytes ("FULL_MSG_")));
             return taskComment;
@@ -455,33 +455,33 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
                     .orderByProcessInstanceStartTime().asc().list();
             if (historicProcessInstanceList.size() > 0) {
                 if (StrUtil.isNotBlank(historicProcessInstanceList.get(0).getStartUserId())) {
-                    Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER, historicProcessInstanceList.get(0).getStartUserId());
+                    Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER_BY_ID, historicProcessInstanceList.get(0).getStartUserId());
                     if (user != null) {
                         workflow.setAssignee(historicActivityInstance.getAssignee());
                         workflow.setAssigneeName(MapUtil.getStr(user, "name"));
                     }
                 }
             }
-            TaskCommentInfoVo taskCommentInfoVo = new TaskCommentInfoVo();
-            taskCommentInfoVo.setStatus(WorkflowConstant.START_EVENT_LABEL);
-            taskCommentInfoVo.setMessage (WorkflowConstant.START_EVENT_COMMENT);
-            workflow.setComment(taskCommentInfoVo);
+            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
+            activityCommentInfoVo.setStatus(WorkflowConstant.START_EVENT_LABEL);
+            activityCommentInfoVo.setMessage (WorkflowConstant.START_EVENT_COMMENT);
+            workflow.setComment(activityCommentInfoVo);
             return workflow;
         }
 
         // 获取结束事件信息
         if (BpmnXMLConstants.ELEMENT_EVENT_END.equals(historicActivityInstance.getActivityType())) {
-            TaskCommentInfoVo taskCommentInfoVo = new TaskCommentInfoVo();
-            taskCommentInfoVo.setStatus(WorkflowConstant.END_EVENT_LABEL);
-            taskCommentInfoVo.setMessage(WorkflowConstant.END_EVENT_COMMENT);
+            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
+            activityCommentInfoVo.setStatus(WorkflowConstant.END_EVENT_LABEL);
+            activityCommentInfoVo.setMessage(WorkflowConstant.END_EVENT_COMMENT);
             workflow.setAssigneeName(WorkflowConstant.SYSTEM_EVENT_COMMENT);
-            workflow.setComment(taskCommentInfoVo);
+            workflow.setComment(activityCommentInfoVo);
             return workflow;
         }
 
         // 获取任务执行人名称
         if (StrUtil.isNotEmpty(historicActivityInstance.getAssignee())) {
-            Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER,historicActivityInstance.getAssignee());
+            Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER_BY_ID,historicActivityInstance.getAssignee());
             if (user != null) {
                 workflow.setAssignee(historicActivityInstance.getAssignee());
                 workflow.setAssigneeName(MapUtil.getStr(user, "name"));
@@ -490,16 +490,16 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
         // 获取意见评论内容
         if (StrUtil.isNotBlank(historicActivityInstance.getTaskId())) {
-            List<TaskCommentInfoVo> commentList = this.getTaskComments(historicActivityInstance.getTaskId());
+            List<ActivityCommentInfoVo> commentList = this.getTaskComments(historicActivityInstance.getTaskId());
             if (commentList.size () > 0) {
-                TaskCommentInfoVo comment = commentList.get(commentList.size ()-1);
+                ActivityCommentInfoVo comment = commentList.get(commentList.size ()-1);
                 workflow.setComment(comment);
             }
         }
 
         // 获取等待执行的任务
         if(historicActivityInstance.getEndTime () == null) {
-            TaskCommentInfoVo taskComment = new TaskCommentInfoVo();
+            ActivityCommentInfoVo taskComment = new ActivityCommentInfoVo();
             taskComment.setStatus(ExtendMessage.WAITING.getStatus());
             taskComment.setMessage(WorkflowConstant.WAITING_EVENT_COMMENT);
             workflow.setComment (taskComment);

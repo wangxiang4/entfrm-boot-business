@@ -11,7 +11,7 @@ import com.entfrm.biz.workflow.mapper.WorkflowMapper;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.enums.ExtendMessage;
 import com.entfrm.biz.workflow.enums.ProcessStatus;
-import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import com.entfrm.biz.workflow.vo.TaskInfoVo;
@@ -232,30 +232,30 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
             Task currentTask = taskService.createTaskQuery().processInstanceId(processInsId).list().get(0);
 
             // 设置审批记录
-            TaskCommentInfoVo taskCommentInfoVo = new TaskCommentInfoVo();
+            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
             switch (processStatus) {
                 case REVOKE:
-                    taskCommentInfoVo.setType(ExtendMessage.REVOKE.getType());
-                    taskCommentInfoVo.setStatus(ExtendMessage.REVOKE.getStatus());
+                    activityCommentInfoVo.setType(ExtendMessage.REVOKE.getType());
+                    activityCommentInfoVo.setStatus(ExtendMessage.REVOKE.getStatus());
                     break;
                 case STOP:
-                    taskCommentInfoVo.setType(ExtendMessage.STOP.getType());
-                    taskCommentInfoVo.setStatus(ExtendMessage.STOP.getStatus());
+                    activityCommentInfoVo.setType(ExtendMessage.STOP.getType());
+                    activityCommentInfoVo.setStatus(ExtendMessage.STOP.getStatus());
                     break;
                 case REJECT:
-                    taskCommentInfoVo.setType(ExtendMessage.REJECT.getType());
-                    taskCommentInfoVo.setStatus(ExtendMessage.REJECT.getStatus());
+                    activityCommentInfoVo.setType(ExtendMessage.REJECT.getType());
+                    activityCommentInfoVo.setStatus(ExtendMessage.REJECT.getStatus());
                     break;
                 case DELETED:
-                    taskCommentInfoVo.setType(ExtendMessage.DELETED.getType());
-                    taskCommentInfoVo.setStatus(ExtendMessage.DELETED.getStatus());
+                    activityCommentInfoVo.setType(ExtendMessage.DELETED.getType());
+                    activityCommentInfoVo.setStatus(ExtendMessage.DELETED.getStatus());
                     break;
                 default:
-                    taskCommentInfoVo.setMessage(comment);
+                    activityCommentInfoVo.setMessage(comment);
             }
 
             // 添加审批记录
-            taskService.addComment(currentTask.getId(), processInsId, taskCommentInfoVo.getCommentType(), taskCommentInfoVo.getFullMessage());
+            taskService.addComment(currentTask.getId(), processInsId, activityCommentInfoVo.getCommentType(), activityCommentInfoVo.getFullMessage());
 
             // 处理未签收任务,未领取就让当前用户领取
             if (StrUtil.isBlank(currentTask.getAssignee())) {

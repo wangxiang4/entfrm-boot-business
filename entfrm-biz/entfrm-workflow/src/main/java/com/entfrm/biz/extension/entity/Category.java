@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName(value = "act_extension_category", excludeProperty = { "delFlag" })
-public class ActCategory extends TreeEntity<ActCategory> {
+public class Category extends TreeEntity<Category> {
 
 	/** 反序列化密钥 */
 	private static final long serialVersionUID = 1L;

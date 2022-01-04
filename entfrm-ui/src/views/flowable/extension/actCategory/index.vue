@@ -184,7 +184,7 @@
  * Copyright © 2020-2021 <a href="http://www.entfrm.com/">entfrm</a> All rights reserved.
  * author entfrm开发团队-王翔
  */
-import { listActCategory, delActCategory, getActCategory, editActCategory, addActCategory } from '@/api/flowable/extension/actCategory'
+import { listActCategory, delActCategory, getActCategory, editActCategory, addActCategory } from '@/api/flowable/extension/category'
 import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
 export default {

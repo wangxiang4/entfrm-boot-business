@@ -1,7 +1,7 @@
 package com.entfrm.biz.extension.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.entfrm.biz.extension.entity.TaskExtensionData;
+import com.entfrm.biz.extension.entity.ActivityExtensionData;
 
 /**
  *<p>
@@ -11,9 +11,9 @@ import com.entfrm.biz.extension.entity.TaskExtensionData;
  * @Author: entfrm开发团队-王翔
  * @Date: 2021/5/12
  */
-public interface TaskExtensionDataService extends IService<TaskExtensionData> {
+public interface ActivityExtensionDataService extends IService<ActivityExtensionData> {
 
-    TaskExtensionData findById (Integer id);
+    ActivityExtensionData findById (Integer id);
 
     void delete (Integer id);
 

@@ -22,8 +22,8 @@ public interface WorkflowConstant {
     /** 流程标题 */
     String TITLE = "title";
 
-    /** 流程任务审核操作标识 */
-    String TASK_OPERATE = "_task_operate_";
+    /** 扩展流程信息分割标识 */
+    String EXTEND_MESSAGE = "_EXTEND_MESSAGE_";
 
     /** 可以并行处理的网关开始定义后缀 */
     String SPECIAL_GATEWAY_BEGIN_SUFFIX = "_begin";
@@ -55,6 +55,7 @@ public interface WorkflowConstant {
     /** 前加签 */
     String BEFORE_ADD_SIGN = "before";
 
-    //TODO
+    /** 任务操作备注前缀 */
+    String COMMENT_TYPE_PREFIX = "COMMENT_";
 
 }

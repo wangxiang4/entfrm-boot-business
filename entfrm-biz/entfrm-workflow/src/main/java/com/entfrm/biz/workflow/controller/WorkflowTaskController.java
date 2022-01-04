@@ -6,12 +6,12 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
-import com.entfrm.biz.extension.entity.TaskExtensionProperty;
-import com.entfrm.biz.extension.service.TaskExtensionPropertyService;
+import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
+import com.entfrm.biz.extension.service.ActivityExtensionPropertyService;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
-import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import com.entfrm.security.util.SecurityUtil;
@@ -43,7 +43,7 @@ public class WorkflowTaskController {
 
     private final WorkflowTaskService workflowTaskService;
 
-    private final TaskExtensionPropertyService taskExtensionPropertyService;
+    private final ActivityExtensionPropertyService activityExtensionPropertyService;
 
     private final WorkflowProcessService workflowProcessService;
 
@@ -80,15 +80,15 @@ public class WorkflowTaskController {
         // 获取流程XML上的表单KEY
         String formKey = workflowTaskService.getTaskFormKey(workflow.getProcDefId(), workflow.getTaskDefKey());
 
-        TaskExtensionProperty formTypeNode = taskExtensionPropertyService.getOne(new LambdaQueryWrapper<TaskExtensionProperty>()
-                .eq(TaskExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
-                .eq(TaskExtensionProperty::getKey, "formType"));
+        ActivityExtensionProperty formTypeNode = activityExtensionPropertyService.getOne(new LambdaQueryWrapper<ActivityExtensionProperty>()
+                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcDefId())
+                .eq(ActivityExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
+                .eq(ActivityExtensionProperty::getKey, "formType"));
 
-        TaskExtensionProperty formReadOnlyNode = taskExtensionPropertyService.getOne(new LambdaQueryWrapper<TaskExtensionProperty>()
-                .eq(TaskExtensionProperty::getProcessDefId, workflow.getProcDefId())
-                .eq(TaskExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
-                .eq(TaskExtensionProperty::getKey, "formReadOnly"));
+        ActivityExtensionProperty formReadOnlyNode = activityExtensionPropertyService.getOne(new LambdaQueryWrapper<ActivityExtensionProperty>()
+                .eq(ActivityExtensionProperty::getProcessDefId, workflow.getProcDefId())
+                .eq(ActivityExtensionProperty::getTaskDefId,workflow.getTaskDefKey())
+                .eq(ActivityExtensionProperty::getKey, "formReadOnly"));
 
         String formType = "1";
         boolean formReadOnly = false;
@@ -247,8 +247,8 @@ public class WorkflowTaskController {
     public R rejectTask(@RequestBody Map<String,Object> params) {
         String rollBackTaskDefKey = MapUtil.getStr(params, "rollBackTaskDefKey"),
                currentTaskId= MapUtil.getStr(params, "currentTaskId");
-        TaskCommentInfoVo taskCommentInfoVo = MapUtil.get(params, "comment", TaskCommentInfoVo.class);
-        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, taskCommentInfoVo);
+        ActivityCommentInfoVo activityCommentInfoVo = MapUtil.get(params, "comment", ActivityCommentInfoVo.class);
+        workflowTaskService.rollBackTask(rollBackTaskDefKey, currentTaskId, activityCommentInfoVo);
         return R.ok("驳回成功!");
     }
 

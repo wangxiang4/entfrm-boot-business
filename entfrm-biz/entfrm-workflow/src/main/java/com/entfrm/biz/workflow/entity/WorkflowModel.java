@@ -19,7 +19,6 @@ import java.util.Date;
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
-
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -80,6 +79,6 @@ public class WorkflowModel implements Serializable {
 
     /** 流程定义 */
     @TableField(exist = false)
-    private ProcessDefinitionInfoVo processDefinitionVo;
+    private ProcessDefinitionInfoVo processDefinition;
 
 }

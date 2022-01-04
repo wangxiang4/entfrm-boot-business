@@ -1,6 +1,8 @@
 package com.entfrm.biz.workflow.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -8,15 +10,16 @@ import java.util.Date;
 
 /**
  *<p>
- * 流程定义
+ * 流程定义信息
  *</p>
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2021/5/12
  */
-
 @Data
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProcessDefinitionInfoVo {
 
     /** 流程定义ID */

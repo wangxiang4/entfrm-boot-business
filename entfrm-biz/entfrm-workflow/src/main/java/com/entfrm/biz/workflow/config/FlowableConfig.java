@@ -1,5 +1,6 @@
 package com.entfrm.biz.workflow.config;
 
+import com.entfrm.biz.workflow.parser.factory.WorkflowActivityBehaviorFactory;
 import lombok.AllArgsConstructor;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
@@ -37,6 +38,9 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         engineConfiguration.setMailServerUsername("1827945911@qq.com");
         engineConfiguration.setMailServerPassword("skvhlkhrartadjgc");
         engineConfiguration.setMailServerUseSSL(true);
+
+        // 配置工作流活动行为工厂
+        engineConfiguration.setActivityBehaviorFactory(new WorkflowActivityBehaviorFactory());
 
     }
 

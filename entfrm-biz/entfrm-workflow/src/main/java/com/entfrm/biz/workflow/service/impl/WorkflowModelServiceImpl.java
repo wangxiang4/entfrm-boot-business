@@ -2,9 +2,9 @@ package com.entfrm.biz.workflow.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.entfrm.biz.extension.entity.TaskExtensionProperty;
-import com.entfrm.biz.extension.service.TaskExtensionDataService;
-import com.entfrm.biz.extension.service.TaskExtensionPropertyService;
+import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
+import com.entfrm.biz.extension.service.ActivityExtensionDataService;
+import com.entfrm.biz.extension.service.ActivityExtensionPropertyService;
 import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.mapper.WorkflowModelMapper;
 import com.entfrm.biz.workflow.service.WorkflowModelService;
@@ -53,9 +53,9 @@ public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, W
 
     private final RepositoryService repositoryService;
 
-    private final TaskExtensionDataService taskExtensionDataService;
+    private final ActivityExtensionDataService activityExtensionDataService;
 
-    private final TaskExtensionPropertyService taskExtensionPropertyService;
+    private final ActivityExtensionPropertyService activityExtensionPropertyService;
 
     private BpmnXMLConverter bpmnXmlConverter;
 
@@ -78,9 +78,9 @@ public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, W
         try {
             this.deleteDeployment(model.getKey());
             this.modelService.deleteModel(model.getId());
-            taskExtensionDataService.deleteByProcessDefId(model.getKey());
-            taskExtensionPropertyService.remove(new LambdaUpdateWrapper<TaskExtensionProperty>()
-                    .eq(TaskExtensionProperty::getProcessDefId, model.getKey()));
+            activityExtensionDataService.deleteByProcessDefId(model.getKey());
+            activityExtensionPropertyService.remove(new LambdaUpdateWrapper<ActivityExtensionProperty>()
+                    .eq(ActivityExtensionProperty::getProcessDefId, model.getKey()));
         } catch (Exception e) {
             throw new BadRequestException("不能删除模型: " + id);
         }

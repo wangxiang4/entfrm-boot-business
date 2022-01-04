@@ -1,14 +1,16 @@
 package com.entfrm.biz.workflow.vo;
 
+import cn.hutool.core.collection.CollectionUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
 import java.util.Map;
 
 /**
  *<p>
- * 历史任务
+ * 历史任务信息
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -16,27 +18,53 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class HistoryTaskInfoVo {
 
+    /** 任务ID */
     private String id;
-    private String name;
-    private String assignee;
-    private String executionId;
-    private String taskDefinitionKey;
-    private Date createTime;
-    private Date endTime;
-    private String processDefinitionId;
-    private String processInstanceId;
-    private String processDefinitionName; // 流程名称
-    private boolean rollBack; // 流程是否可以驳回到该节点
-    private String code; //任务办理状态：1，2
-    private String comment; //任务评论
-    private String type; // 操作类型编码
-    private String status; // 任务办理描述： 同意，驳回
-    private String level; // 文字颜色
-    private Map vars;
-    // 当前流程还未结束的节点任务
-    private TaskInfoVo currentTask;
 
+    /** 任务名称 */
+    private String name;
+
+    /** 任务处理人 */
+    private String assignee;
+
+    /** 当前任务流程执行分支ID */
+    private String executionId;
+
+    /** 任务定义key */
+    private String taskDefKey;
+
+    /** 流程定义ID */
+    private String processDefId;
+
+    /** 流程实例ID */
+    private String processInsId;
+
+    /** 流程定义名称 */
+    private String processDefName;
+
+    /** 流程是否可以回滚到该节点 */
+    private boolean rollBack;
+
+    /** 任务备注 */
+    private String comment;
+
+    /** 流程操作名称 */
+    private String mesName;
+
+    /** 流程操作编码 */
+    private String mesCode;
+
+    /** 流程操作级别 */
+    private String mesLevel;
+
+    /** 流程当前任务 */
+    private TaskInfoVo taskInfo;
+
+    /** 流程变量 */
+    private Map<String, Object> vars = CollectionUtil.newHashMap();
 
 }

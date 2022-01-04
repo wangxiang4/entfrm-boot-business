@@ -1,7 +1,7 @@
 package com.entfrm.biz.workflow.entity;
 
-import com.entfrm.biz.workflow.util.Variable;
-import com.entfrm.biz.workflow.vo.TaskCommentInfoVo;
+import cn.hutool.core.collection.CollectionUtil;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -61,9 +61,9 @@ public class Workflow implements Serializable {
     private String businessTable;
 
     /** 流程变量 */
-    private Variable processVars = new Variable();
-    /** 批注信息 */
-    private TaskCommentInfoVo taskComment = new TaskCommentInfoVo();
+    private Map<String, Object> vars = CollectionUtil.newHashMap();
+    /** 活动批注信息 */
+    private ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
     /** 历史任务活动实例 */
     private HistoricActivityInstance historicActivityInstance;
 
@@ -92,11 +92,6 @@ public class Workflow implements Serializable {
         } else if (historicProcessInstance != null && historicProcessInstance.getBusinessKey() != null) {
             setBusinessId(historicProcessInstance.getBusinessKey());
         }
-    }
-
-    /** 自动注入通过Map设置流程变量值 */
-    public void setProcessVars(Map<String, Object> map) {
-        this.processVars = new Variable(map);
     }
 
 }

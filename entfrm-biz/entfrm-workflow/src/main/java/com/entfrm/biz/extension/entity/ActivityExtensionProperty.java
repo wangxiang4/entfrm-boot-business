@@ -1,6 +1,5 @@
 package com.entfrm.biz.extension.entity;
 
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.entfrm.data.entity.CommonEntity;
@@ -19,8 +18,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_task_property")
-public class TaskExtensionProperty extends CommonEntity {
+@TableName("act_extension_activity_property")
+public class ActivityExtensionProperty extends CommonEntity {
 
 	/** 反序列化密钥 */
 	private static final long serialVersionUID = 1L;
@@ -31,8 +30,8 @@ public class TaskExtensionProperty extends CommonEntity {
 	/** 流程定义id */
 	private String processDefId;
 
-	/** 任务定义id */
-	private String taskDefId;
+	/** 活动定义id */
+	private String activityDefId;
 
 	/** 变量名 */
 	private String key;

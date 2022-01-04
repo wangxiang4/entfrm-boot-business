@@ -1,9 +1,9 @@
 package com.entfrm.biz.extension.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.entfrm.biz.extension.entity.ActCategory;
-import com.entfrm.biz.extension.mapper.ActCategoryMapper;
-import com.entfrm.biz.extension.service.ActCategoryService;
+import com.entfrm.biz.extension.entity.Category;
+import com.entfrm.biz.extension.mapper.CategoryMapper;
+import com.entfrm.biz.extension.service.CategoryService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @Date: 2021-06-21
  */
 @Service
-public class ActCategoryServiceImpl extends ServiceImpl<ActCategoryMapper, ActCategory> implements ActCategoryService {
+public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
 }

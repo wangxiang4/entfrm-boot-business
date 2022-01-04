@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.flowable.task.api.TaskInfo;
 
 import java.util.Date;
 
@@ -47,5 +48,16 @@ public class TaskInfoVo {
 
     /** 流程定义key */
     private String processDefKey;
+
+    public TaskInfoVo(TaskInfo taskInfo){
+        this.id = taskInfo.getId();
+        this.name = taskInfo.getName();
+        this.assignee = taskInfo.getAssignee();
+        this.executionId = taskInfo.getExecutionId();
+        this.taskDefKey = taskInfo.getTaskDefinitionKey();
+        this.createTime = taskInfo.getCreateTime();
+        this.processDefId = taskInfo.getProcessDefinitionId();
+        this.processInsId = taskInfo.getProcessInstanceId();
+    }
 
 }

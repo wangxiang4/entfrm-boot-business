@@ -6,18 +6,17 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.constant.CommonConstants;
-import com.entfrm.biz.workflow.constant.WorkflowConstant;
+import com.entfrm.biz.workflow.cmd.RollBackUserTaskCmd;
 import com.entfrm.biz.workflow.constant.SqlConstants;
+import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.enums.ExtendMessage;
-import com.entfrm.biz.workflow.enums.ProcessStatus;
-import com.entfrm.biz.workflow.cmd.RollBackUserTaskCmd;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
 import com.entfrm.biz.workflow.util.WorkflowUtil;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
-import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.vo.TaskInfoVo;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -116,22 +115,22 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         for (Task task : taskList) {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(task.getProcessDefinitionId()).singleResult();
-            ProcessInstanceInfoVo processInstanceInfoVo = new ProcessInstanceInfoVo();
-            TaskInfoVo taskInfoVo = new TaskInfoVo(task);
-            taskInfoVo.setProcessDefKey(processDefinition.getKey());
-            processInstanceInfoVo.setTask(taskInfoVo);
-            processInstanceInfoVo.setVars(task.getProcessVariables());
-            processInstanceInfoVo.setProcessDefinitionName(processDefinition.getName());
-            processInstanceInfoVo.setVersion(processDefinition.getVersion());
-            processInstanceInfoVo.setStatus ("todo");
-            result.getRecords().add(processInstanceInfoVo);
+            ProcessInstanceInfoVo processInstanceInfo = new ProcessInstanceInfoVo();
+            TaskInfoVo taskInfo = new TaskInfoVo(task);
+            taskInfo.setProcessDefKey(processDefinition.getKey());
+            processInstanceInfo.setTaskInfo(taskInfo);
+            processInstanceInfo.setVars(task.getProcessVariables());
+            processInstanceInfo.setProcessDefName(processDefinition.getName());
+            processInstanceInfo.setVersion(processDefinition.getVersion());
+            processInstanceInfo.setMesName("todo");
+            result.getRecords().add(processInstanceInfo);
         }
 
         return result;
     }
 
     @Override
-    public IPage<HistoryTaskInfoVo> historicList(Map<String, Object> params) {
+    public IPage<HistoryTaskInfoVo> historyList(Map<String, Object> params) {
         HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery()
                 .taskAssignee(SecurityUtil.getUser().getId() + "").finished()
                 .includeProcessVariables().orderByHistoricTaskInstanceEndTime().desc();
@@ -165,30 +164,30 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         for (HistoricTaskInstance historicTask : historicTaskList) {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(historicTask.getProcessDefinitionId()).singleResult();
-            HistoryTaskInfoVo HistoryTaskInfoVo = new HistoryTaskInfoVo();
-            HistoryTaskInfoVo.setProcessDefinitionName(processDefinition.getName());
-            HistoryTaskInfoVo.setRollBack(this.rollBackTask(historicTask));
+            HistoryTaskInfoVo HistoryTaskInfo = new HistoryTaskInfoVo();
+            HistoryTaskInfo.setProcessDefName(processDefinition.getName());
+            HistoryTaskInfo.setRollBack(this.rollBackTask(historicTask));
             List<Task> taskList = taskService.createTaskQuery().processInstanceId(historicTask.getProcessInstanceId()).list();
             if (taskList.size() > 0) {
-                TaskInfoVo currentTaskInfoVo = new TaskInfoVo(taskList.get(0));
-                HistoryTaskInfoVo.setCurrentTask(currentTaskInfoVo);
+                TaskInfoVo taskInfo = new TaskInfoVo(taskList.get(0));
+                HistoryTaskInfo.setTaskInfo(taskInfo);
             }
             // 获取意见评论内容
-            List<ActivityCommentInfoVo> commentList = this.getTaskComments(historicTask.getId());
-            if (commentList.size () > 0) {
-                ActivityCommentInfoVo comment = commentList.get(commentList.size()-1);
-                HistoryTaskInfoVo.setComment(comment.getMessage());
-                HistoryTaskInfoVo.setLevel(comment.getLevel());
-                HistoryTaskInfoVo.setType(comment.getType());
-                HistoryTaskInfoVo.setStatus(comment.getStatus());
+            List<ActivityCommentInfoVo> activityCommentInfoList = this.getTaskComments(historicTask.getId());
+            if (activityCommentInfoList.size () > 0) {
+                ActivityCommentInfoVo activityCommentInfo = activityCommentInfoList.get(activityCommentInfoList.size()-1);
+                HistoryTaskInfo.setComment(activityCommentInfo.getMessage());
+                HistoryTaskInfo.setMesLevel(activityCommentInfo.getMesLevel());
+                HistoryTaskInfo.setMesCode(activityCommentInfo.getMesCode());
+                HistoryTaskInfo.setMesName(activityCommentInfo.getMesName());
             }
-            result.getRecords().add(HistoryTaskInfoVo);
+            result.getRecords().add(HistoryTaskInfo);
         }
         return result;
     }
 
     @Override
-    public List<Workflow> historicFlowChangeList(String processInsId) {
+    public List<Workflow> historyFlowChangeList(String processInsId) {
         List<HistoricActivityInstance> historicActivityInstances = historyService.createHistoricActivityInstanceQuery()
                 .processInstanceId (processInsId).orderByHistoricActivityInstanceStartTime().asc()
                 .orderByHistoricActivityInstanceEndTime().asc().list();
@@ -239,22 +238,22 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
     @Override
     public void claim(String taskId, String userId) {
-        taskService.claim (taskId, userId);
+        taskService.claim(taskId, userId);
     }
 
     @Override
     public void complete(Workflow workFlow){
         //添加意见
-        if(StrUtil.isNotBlank(workFlow.getProcInsId())){
+        if(StrUtil.isNotBlank(workFlow.getProcessInsId())){
             taskService.addComment(
                     workFlow.getTaskId(),
-                    workFlow.getProcInsId(),
-                    workFlow.getComment().getCommentType(),
-                    workFlow.getComment().getFullMessage());
+                    workFlow.getProcessInsId(),
+                    workFlow.getActivityCommentInfo().getExtendMessage(),
+                    workFlow.getActivityCommentInfo().getCombinationMessage());
         }
 
         // 设置流程变量
-        Map<String,Object> processVars = workFlow.getProcessVars().getMap();
+        Map<String,Object> processVars = workFlow.getVars();
 
         // 设置流程标题
         if (StrUtil.isNotBlank(workFlow.getTitle())) {
@@ -338,7 +337,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     @Override
-    public void rollBackTask(String rollBackTaskDefKey, String currentTaskId, ActivityCommentInfoVo activityCommentInfoVo) {
+    public void rollBackTask(String rollBackTaskDefKey, String currentTaskId, ActivityCommentInfoVo activityCommentInfo) {
         Task task = taskService.createTaskQuery().taskId(currentTaskId).singleResult();
         if(StrUtil.isBlank(task.getAssignee())){
             //代理人为空自己签收任务
@@ -348,9 +347,9 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         ActivityInstance targetRealActivityInstance = runtimeService.createActivityInstanceQuery()
                 .processInstanceId(task.getProcessInstanceId()).activityId(rollBackTaskDefKey).list().get(0);
         if (targetRealActivityInstance.getActivityType().equals(BpmnXMLConstants.ELEMENT_EVENT_START)) {
-            workflowProcessServices.stopProcessInstance(task.getProcessInstanceId(), ProcessStatus.REJECT, activityCommentInfoVo.getMessage());
+            workflowProcessServices.stopProcessInstance(task.getProcessInstanceId(), ExtendMessage.PROCESS_REJECT, activityCommentInfo.getMessage());
         } else {
-            taskService.addComment(currentTaskId,task.getProcessInstanceId(), activityCommentInfoVo.getCommentType(), activityCommentInfoVo.getFullMessage());
+            taskService.addComment(currentTaskId,task.getProcessInstanceId(), activityCommentInfo.getExtendMessage(), activityCommentInfo.getCombinationMessage());
             managementService.executeCommand(new RollBackUserTaskCmd(runtimeService, currentTaskId, rollBackTaskDefKey));
         }
     }
@@ -409,7 +408,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
                 taskService.saveTask(taskEntity);
             }
             this.createAddSignSubTasks(userIds, taskEntity);
-            String type = mark ? ExtendMessage.ADD_AFTER_MULTI_INSTANCE.toString() : ExtendMessage.ADD_BEFORE_MULTI_INSTANCE.toString();
+            String type = mark ? ExtendMessage.ACTIVITY_ADD_AFTER_MULTI_INSTANCE.toString() : ExtendMessage.ACTIVITY_ADD_BEFORE_MULTI_INSTANCE.toString();
             taskService.addComment (taskId, taskEntity.getProcessInstanceId (), type, comment);
         } else {
             throw  new Exception ("不存在任务实例,请确认!");
@@ -417,17 +416,17 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     /** 是否可以回滚任务 */
-    private boolean rollBackTask(HistoricTaskInstance historicTask) {
+    private boolean rollBackTask(HistoricTaskInstance historicTaskInstance) {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-                .processInstanceId(historicTask.getProcessInstanceId()).singleResult();
+                .processInstanceId(historicTaskInstance.getProcessInstanceId()).singleResult();
         if (processInstance != null) {
             if (!processInstance.isSuspended()) {
-                Task currentTask = taskService.createTaskQuery().processInstanceId(historicTask.getProcessInstanceId()).list().get(0);
+                Task currentTask = taskService.createTaskQuery().processInstanceId(historicTaskInstance.getProcessInstanceId()).list().get(0);
                 HistoricTaskInstance lastHisTask = historyService.createHistoricTaskInstanceQuery()
-                        .processInstanceId(historicTask.getProcessInstanceId()).finished().includeProcessVariables().orderByHistoricTaskInstanceEndTime().desc().list().get(0);
+                        .processInstanceId(historicTaskInstance.getProcessInstanceId()).finished().includeProcessVariables().orderByHistoricTaskInstanceEndTime().desc().list().get(0);
                 // 用户已签收
                 if (currentTask.getClaimTime() != null) return false;
-                if (historicTask.getId().equals(lastHisTask.getId())) return true;
+                if (historicTaskInstance.getId().equals(lastHisTask.getId())) return true;
             }
         }
         return false;
@@ -435,18 +434,18 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
     /** 获取任务意见评论内容 */
     private List<ActivityCommentInfoVo> getTaskComments(String taskId) {
-        return jdbcTemplate.query(SqlConstants.QUERY_ACT_HI_COMMENT, new String[]{ ActivityCommentInfoVo.prefix + "%", taskId } ,(ResultSet rs, int rowNum) -> {
-            ActivityCommentInfoVo taskComment = new ActivityCommentInfoVo();
-            taskComment.setCommentType (rs.getString ("TYPE_"));
-            taskComment.setFullMessage (new String(rs.getBytes ("FULL_MSG_")));
-            return taskComment;
+        return jdbcTemplate.query(SqlConstants.QUERY_ACT_HI_COMMENT, new String[]{ WorkflowConstant.COMMENT_TYPE_PREFIX + "%", taskId } ,(ResultSet rs, int rowNum) -> {
+            ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
+            activityCommentInfo.setExtendMessage(rs.getString ("TYPE_"));
+            activityCommentInfo.setCombinationMessage(new String(rs.getBytes ("FULL_MSG_")));
+            return activityCommentInfo;
         });
     }
 
     /** 获取任务节点状态 */
     public Workflow queryTaskState(HistoricActivityInstance historicActivityInstance) {
         Workflow workflow = new Workflow();
-        workflow.setHistIns(historicActivityInstance);
+        workflow.setHistoricActivityInstance(historicActivityInstance);
 
         // 获取开始事件流程发起人名称
         if (BpmnXMLConstants.ELEMENT_EVENT_START.equals(historicActivityInstance.getActivityType())) {
@@ -462,20 +461,20 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
                     }
                 }
             }
-            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
-            activityCommentInfoVo.setStatus(WorkflowConstant.START_EVENT_LABEL);
-            activityCommentInfoVo.setMessage (WorkflowConstant.START_EVENT_COMMENT);
-            workflow.setComment(activityCommentInfoVo);
+            ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
+            activityCommentInfo.setMesName(WorkflowConstant.START_EVENT_LABEL);
+            activityCommentInfo.setMessage(WorkflowConstant.START_EVENT_COMMENT);
+            workflow.setActivityCommentInfo(activityCommentInfo);
             return workflow;
         }
 
         // 获取结束事件信息
         if (BpmnXMLConstants.ELEMENT_EVENT_END.equals(historicActivityInstance.getActivityType())) {
-            ActivityCommentInfoVo activityCommentInfoVo = new ActivityCommentInfoVo();
-            activityCommentInfoVo.setStatus(WorkflowConstant.END_EVENT_LABEL);
-            activityCommentInfoVo.setMessage(WorkflowConstant.END_EVENT_COMMENT);
+            ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
+            activityCommentInfo.setMesName(WorkflowConstant.END_EVENT_LABEL);
+            activityCommentInfo.setMessage(WorkflowConstant.END_EVENT_COMMENT);
             workflow.setAssigneeName(WorkflowConstant.SYSTEM_EVENT_COMMENT);
-            workflow.setComment(activityCommentInfoVo);
+            workflow.setActivityCommentInfo(activityCommentInfo);
             return workflow;
         }
 
@@ -490,19 +489,19 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
         // 获取意见评论内容
         if (StrUtil.isNotBlank(historicActivityInstance.getTaskId())) {
-            List<ActivityCommentInfoVo> commentList = this.getTaskComments(historicActivityInstance.getTaskId());
-            if (commentList.size () > 0) {
-                ActivityCommentInfoVo comment = commentList.get(commentList.size ()-1);
-                workflow.setComment(comment);
+            List<ActivityCommentInfoVo> activityCommentInfoList = this.getTaskComments(historicActivityInstance.getTaskId());
+            if (activityCommentInfoList.size () > 0) {
+                ActivityCommentInfoVo activityCommentInfo = activityCommentInfoList.get(activityCommentInfoList.size ()-1);
+                workflow.setActivityCommentInfo((activityCommentInfo));
             }
         }
 
         // 获取等待执行的任务
         if(historicActivityInstance.getEndTime () == null) {
-            ActivityCommentInfoVo taskComment = new ActivityCommentInfoVo();
-            taskComment.setStatus(ExtendMessage.WAITING.getStatus());
-            taskComment.setMessage(WorkflowConstant.WAITING_EVENT_COMMENT);
-            workflow.setComment (taskComment);
+            ActivityCommentInfoVo activityCommentInfo = new ActivityCommentInfoVo();
+            activityCommentInfo.setMesName(ExtendMessage.PROCESS_WAITING.getMesName());
+            activityCommentInfo.setMessage(WorkflowConstant.WAITING_EVENT_COMMENT);
+            workflow.setActivityCommentInfo(activityCommentInfo);
         }
         return workflow;
     }

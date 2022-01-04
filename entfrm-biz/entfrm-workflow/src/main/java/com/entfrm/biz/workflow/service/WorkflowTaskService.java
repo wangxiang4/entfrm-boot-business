@@ -30,13 +30,13 @@ public interface WorkflowTaskService {
      * 已办任务列表
      * params:查询条件参数
      */
-    IPage<HistoryTaskInfoVo> historicList(Map<String, Object> params);
+    IPage<HistoryTaskInfoVo> historyList(Map<String, Object> params);
 
     /**
      * 已办流转任务列表
      * processInsId:流程实例ID
      */
-    List<Workflow> historicFlowChangeList(String processInsId);
+    List<Workflow>  historyFlowChangeList(String processInsId);
 
     /**
      * 获取任务表单:首先获取任务节点表单KEY,如果没有则取流程开始节点表单KEY

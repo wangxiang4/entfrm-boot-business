@@ -1,7 +1,7 @@
 package com.entfrm.biz.workflow.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.entfrm.biz.workflow.enums.ProcessStatus;
+import com.entfrm.biz.workflow.enums.ExtendMessage;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -71,10 +71,10 @@ public interface WorkflowProcessService {
     /**
      * 停止流程实例
      * processInsId:流程实例ID
-     * processStatus:流程状态
+     * extendMessage:扩展流程信息
      * comment:备注
      */
-    void stopProcessInstance(String processInsId, ProcessStatus processStatus, String comment);
+    void stopProcessInstance(String processInsId, ExtendMessage extendMessage, String comment);
 
     /**
      * 删除流程实例
@@ -144,9 +144,9 @@ public interface WorkflowProcessService {
      * businessTable:流程业务关联表
      * businessId:流程业务关联数据ID
      * title:流程标题,显示在待办任务标题
-     * processVars:流程变量
+     * vars:流程变量
      */
-    String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title, Map<String, Object> processVars);
+    String startProcessDefinition(String processDefKey, String businessTable, String businessId, String title, Map<String, Object> vars);
 
 
     /**

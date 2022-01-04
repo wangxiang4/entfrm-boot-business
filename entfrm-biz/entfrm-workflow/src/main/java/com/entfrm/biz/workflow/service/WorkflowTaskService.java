@@ -2,9 +2,9 @@ package com.entfrm.biz.workflow.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.biz.workflow.entity.Workflow;
+import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.vo.HistoryTaskInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
-import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 
 import java.util.List;
 import java.util.Map;
@@ -83,9 +83,9 @@ public interface WorkflowTaskService {
      * 回滚任务
      * rejectTaskDefKey:驳回任务定义key,可驳回到指定节点
      * currentTaskId:当前任务ID
-     * taskCommentVo:任务备注业务实体
+     * activityCommentInfo:活动备注业务实体
      */
-    void rollBackTask(String rollBackTaskDefKey, String currentTaskId, ActivityCommentInfoVo activityCommentInfoVo);
+    void rollBackTask(String rollBackTaskDefKey, String currentTaskId, ActivityCommentInfoVo activityCommentInfo);
 
     /**
      * 可回滚任务列表

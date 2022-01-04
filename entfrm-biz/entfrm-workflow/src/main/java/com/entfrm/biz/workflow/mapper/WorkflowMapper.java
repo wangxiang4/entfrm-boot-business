@@ -15,16 +15,7 @@ import java.util.Map;
  */
 public interface WorkflowMapper {
 
-    /** 获取表单设计器渲染数据 */
-    String getFormRenderData(String code);
-
     /** 修改业务表流程ID */
-    int updateProcInsIdByBusinessId(Workflow act);
-
-    /** 查询外置表单数据 */
-    Map selectFormData(Workflow act);
-
-    /** 查询动态表单集合 */
-    List<Map> selectDynamicFormList();
+    int updateProcInsIdByBusinessId(Workflow workflow);
 
 }

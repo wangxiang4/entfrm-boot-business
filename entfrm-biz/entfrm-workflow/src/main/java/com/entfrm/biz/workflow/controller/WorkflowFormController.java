@@ -5,7 +5,6 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.service.WorkflowTaskService;
-import com.entfrm.biz.workflow.util.Variable;
 import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -48,9 +47,9 @@ public class WorkflowFormController {
     @PostMapping("/startProcessDefinition")
     public R startProcessDefinition(@RequestBody Workflow workflow) {
         String assignee = workflow.getAssignee(),
-               processDefId= workflow.getProcDefId(),
+               processDefId= workflow.getProcessDefId(),
                title = workflow.getTitle();
-        Map<String,Object> formData =workflow.getProcessVars().getMap();
+        Map<String,Object> formData =workflow.getVars();
 
         // 获取流程开始事件动态表单
         StartFormData startFormData = formService.getStartFormData(processDefId);
@@ -107,9 +106,9 @@ public class WorkflowFormController {
     @PostMapping("/auditTask")
     public R auditTask(@RequestBody Workflow workflow) {
         String assignee = workflow.getAssignee(),
-               processInsId= workflow.getProcInsId(),
+               processInsId= workflow.getProcessInsId(),
                taskId = workflow.getTaskId();
-        Map<String,Object> formData =workflow.getProcessVars().getMap();
+        Map<String,Object> formData =workflow.getVars();
 
         // 根据任务ID获取动态表单
         TaskFormData taskFormData = formService.getTaskFormData(taskId);
@@ -125,7 +124,7 @@ public class WorkflowFormController {
                 }
             }
         }
-        workflow.setProcessVars(formProcessVars);
+        workflow.setVars(formProcessVars);
 
         // 提交用户任务表单并且完成任务
         workflowTaskService.complete(workflow);

@@ -13,14 +13,14 @@ import java.util.List;
 
 /**
  *<p>
- * 任务扩展数据 controller
+ * 活动扩展数据 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2021/5/13
  */
 @RestController
-@RequestMapping("/workflow/extension/taskExtensionData")
+@RequestMapping("/workflow/extension/activityExtensionData")
 @AllArgsConstructor
 public class ActivityExtensionDataController {
 
@@ -31,15 +31,14 @@ public class ActivityExtensionDataController {
 		return R.ok(activityExtensionDataService.findById(id));
 	}
 
-
 	@GetMapping("findByDefIdAndTaskId")
 	public R findByDefIdAndTaskId(ActivityExtensionData activityExtensionData) throws Exception {
-		if(StrUtil.isBlank(activityExtensionData.getProcessDefId()) || StrUtil.isBlank(activityExtensionData.getTaskDefId())){
+		if(StrUtil.isBlank(activityExtensionData.getProcessDefId()) || StrUtil.isBlank(activityExtensionData.getActivityDefId())){
 			return R.error("ProcessDefId || askDefId 为空");
 		}
 		List<ActivityExtensionData> list = activityExtensionDataService.list(new LambdaQueryWrapper<ActivityExtensionData>()
 				.eq(StrUtil.isNotBlank(activityExtensionData.getProcessDefId()), ActivityExtensionData::getProcessDefId, activityExtensionData.getProcessDefId())
-				.eq(StrUtil.isNotBlank(activityExtensionData.getTaskDefId()), ActivityExtensionData::getTaskDefId, activityExtensionData.getTaskDefId()));
+				.eq(StrUtil.isNotBlank(activityExtensionData.getActivityDefId()), ActivityExtensionData::getActivityDefId, activityExtensionData.getActivityDefId()));
 		if(list.size() > 1){
 			throw new Exception("重复的task id定义!");
 		}
@@ -51,7 +50,7 @@ public class ActivityExtensionDataController {
 		for(ActivityExtensionData activityExtensionData : activityExtensionDataList){
 			List<ActivityExtensionData> list = activityExtensionDataService.list(new LambdaQueryWrapper<ActivityExtensionData>()
 					.eq(StrUtil.isNotBlank(activityExtensionData.getProcessDefId()), ActivityExtensionData::getProcessDefId, activityExtensionData.getProcessDefId())
-					.eq(StrUtil.isNotBlank(activityExtensionData.getTaskDefId()), ActivityExtensionData::getTaskDefId, activityExtensionData.getTaskDefId()));
+					.eq(StrUtil.isNotBlank(activityExtensionData.getActivityDefId()), ActivityExtensionData::getActivityDefId, activityExtensionData.getActivityDefId()));
 			list.forEach(item -> activityExtensionDataService.delete(item.getId()));
 			activityExtensionDataService.save(activityExtensionData);
 		}

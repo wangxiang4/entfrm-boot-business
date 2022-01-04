@@ -19,7 +19,7 @@ import java.util.List;
  * @Date: 2021/5/13
  */
 @RestController
-@RequestMapping("/workflow/extension/actCategory")
+@RequestMapping("/workflow/extension/category")
 @AllArgsConstructor
 public class CategoryController {
 

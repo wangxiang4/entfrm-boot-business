@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  *<p>
- * 任务扩展数据
+ * 活动扩展数据
  *</p>
  *
  * @Author: entfrm开发团队-王翔

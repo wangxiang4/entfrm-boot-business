@@ -17,6 +17,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ButtonServiceImpl extends ServiceImpl<ButtonMapper, Button> implements ButtonService {
-
-
+    
 }

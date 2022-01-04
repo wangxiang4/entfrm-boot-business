@@ -5,7 +5,7 @@ import com.entfrm.biz.extension.entity.ActivityExtensionData;
 
 /**
  * <p>
- * 任务扩展数据 Mapper
+ * 活动扩展数据 Mapper
  * </p>
  *
  * @Author: entfrm开发团队-王翔

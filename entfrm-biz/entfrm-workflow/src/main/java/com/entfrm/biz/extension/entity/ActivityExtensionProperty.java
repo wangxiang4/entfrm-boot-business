@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 
 /**
  *<p>
- * 任务扩展属性
+ * 活动扩展属性
  *</p>
  *
  * @Author: entfrm开发团队-王翔

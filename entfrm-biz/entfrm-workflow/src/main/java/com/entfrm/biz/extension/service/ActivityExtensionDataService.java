@@ -5,7 +5,7 @@ import com.entfrm.biz.extension.entity.ActivityExtensionData;
 
 /**
  *<p>
- * 任务扩展数据 service
+ * 活动扩展数据 service
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -18,5 +18,6 @@ public interface ActivityExtensionDataService extends IService<ActivityExtension
     void delete (Integer id);
 
     void deleteByProcessDefId(String processDefId);
+
 }
 

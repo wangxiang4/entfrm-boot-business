@@ -5,7 +5,7 @@ import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
 
 /**
  *<p>
- * 任务扩展属性 service
+ * 活动扩展属性 service
  *</p>
  *
  * @Author: entfrm开发团队-王翔

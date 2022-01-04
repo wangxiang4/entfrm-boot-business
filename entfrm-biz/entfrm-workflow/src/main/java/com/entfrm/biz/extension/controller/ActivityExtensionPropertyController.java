@@ -13,14 +13,14 @@ import java.util.List;
 
 /**
  *<p>
- * 任务扩展属性 controller
+ * 活动扩展属性 controller
  *</p>
  *
  * @Author: entfrm开发团队-王翔
  * @Date: 2021/5/13
  */
 @RestController
-@RequestMapping("/workflow/extension/taskExtensionProperty")
+@RequestMapping("/workflow/extension/activityExtensionProperty")
 @AllArgsConstructor
 public class ActivityExtensionPropertyController {
 
@@ -35,7 +35,7 @@ public class ActivityExtensionPropertyController {
     public  R findByDefIdAndTaskIdAndKey(ActivityExtensionProperty activityExtensionProperty) {
         ActivityExtensionProperty model = activityExtensionPropertyService.getOne(new LambdaUpdateWrapper<ActivityExtensionProperty>()
                 .eq(StrUtil.isNotBlank(activityExtensionProperty.getProcessDefId()), ActivityExtensionProperty::getProcessDefId, activityExtensionProperty.getProcessDefId())
-                .eq(StrUtil.isNotBlank(activityExtensionProperty.getTaskDefId()), ActivityExtensionProperty::getTaskDefId, activityExtensionProperty.getTaskDefId())
+                .eq(StrUtil.isNotBlank(activityExtensionProperty.getActivityDefId()), ActivityExtensionProperty::getActivityDefId, activityExtensionProperty.getActivityDefId())
                 .eq(StrUtil.isNotBlank(activityExtensionProperty.getKey()), ActivityExtensionProperty::getKey, activityExtensionProperty.getKey()));
         return R.ok(model);
     }
@@ -45,7 +45,7 @@ public class ActivityExtensionPropertyController {
         activityExtensionPropertyList.forEach(taskExtensionProperty -> {
             activityExtensionPropertyService.remove(new LambdaUpdateWrapper<ActivityExtensionProperty>()
                     .eq(ActivityExtensionProperty::getProcessDefId,taskExtensionProperty.getProcessDefId())
-                    .eq(ActivityExtensionProperty::getTaskDefId,taskExtensionProperty.getTaskDefId()));
+                    .eq(ActivityExtensionProperty::getActivityDefId,taskExtensionProperty.getActivityDefId()));
         });
         activityExtensionPropertyList.forEach(taskExtensionProperty -> activityExtensionPropertyService.save(taskExtensionProperty));
         return R.ok();
@@ -56,4 +56,5 @@ public class ActivityExtensionPropertyController {
         activityExtensionPropertyService.removeByIds(Arrays.asList(ids));
         return R.ok();
     }
+
 }

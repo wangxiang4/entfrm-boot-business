@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  *<p>
- * 任务扩展数据 service
+ * 活动扩展数据 service
  *</p>
  *
  * @Author: entfrm开发团队-王翔
@@ -85,4 +85,5 @@ public class ActivityExtensionDataServiceImpl extends ServiceImpl<ActivityExtens
             workflowConditionMapper.delete(new LambdaUpdateWrapper<WorkflowCondition>().eq(WorkflowCondition::getTaskExtensionDataId, taskExtensionData.getId()));
         });
     }
+
 }

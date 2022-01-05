@@ -4,10 +4,15 @@
                title="设计流程模型"
                center
                fullscreen
+               class="design"
                :visible.sync="visible"
                :close-on-click-modal="false"
     >
-      <flowable-designer ref="flowableDesigner" :bpmn-xml="bpmnXml" @save="handleSubmitModel"/>
+      <flowable-designer ref="flowableDesigner"
+                         style="height:calc(100vh - 57px)"
+                         :bpmn-xml="bpmnXml"
+                         @save="handleSubmitModel"
+      />
     </el-dialog>
   </div>
 </template>

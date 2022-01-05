@@ -95,8 +95,8 @@ import 'loquat-form-design/lib/loquat-form-design.css'
 Vue.use(LoquatFormDesign, { axiosInstance: request })
 
 // entfrm-bpmn设计器,提供三种模式的建模
-import moddle from '../lib/entfrm-flowable-designer.umd.min'
-import '../lib/entfrm-flowable-designer.css'
+import moddle from 'entfrm-flowable-designer/lib/entfrm-flowable-designer.umd.min'
+import 'entfrm-flowable-designer/lib/entfrm-flowable-designer.css'
 Vue.use(moddle, { axiosInstance: request })
 
 // 全局方法挂载

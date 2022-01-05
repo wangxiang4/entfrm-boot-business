@@ -83,20 +83,6 @@
 	padding-bottom:5px
 }
 
-/** 表格布局 **/
-.pagination-container {
-	position: relative;
-	height: 25px;
-	margin-bottom: 10px;
-	margin-top: 15px;
-	padding: 10px 20px !important;
-}
-
-.pagination-container .el-pagination {
-	right: 0;
-	position: absolute;
-}
-
 .el-table .fixed-width .el-button--mini {
 	color: #409EFF;
 	padding-left: 0;
@@ -259,6 +245,13 @@
    overflow: auto;
    color: #666666;
  }
+}
+
+.design .el-dialog__body {
+ padding: 0;
+ color: #606266;
+ font-size: 14px;
+ word-break: break-all;
 }
 
 .el-dialog__header {

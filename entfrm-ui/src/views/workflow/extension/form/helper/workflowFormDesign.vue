@@ -4,12 +4,13 @@
                title="设计流程表单"
                center
                fullscreen
+               class="design"
                :visible.sync="visible"
                :close-on-click-modal="false"
     >
       <loquat-form-design v-if="visible"
                           ref="loquat-form-design"
-                          style="height:calc(100vh - 190px)"
+                          style="height:calc(100vh - 133px)"
                           :toolbar="['clear', 'preview']"
                           :options="options"
                           :custom-fields="customFields"

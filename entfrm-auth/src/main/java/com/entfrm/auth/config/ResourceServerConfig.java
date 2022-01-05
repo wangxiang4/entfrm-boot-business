@@ -34,8 +34,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter implem
             .csrf().disable()
             .authorizeRequests()
             .antMatchers(
-                    "/oauth/**", "/common/**", "/cms/article/doc/**", "/flowable/service/**", "/app/**" , "/captcha/**",
-                    "/toolkit/dataset/api/**", "/flowable/process/resource", "/actuator/**", "/api/**", "/system/**", "/toolkit/form/**","/flowable/extension/**").permitAll()
+                    "/oauth/**", "/common/**", "/cms/article/doc/**", "/workflow/service/**", "/app/**" , "/captcha/**",
+                    "/toolkit/dataset/api/**", "/workflow/process/resource", "/actuator/**", "/api/**", "/system/**", "/toolkit/form/**","/workflow/extension/**").permitAll()
             .anyRequest().authenticated()
             .and().addFilterBefore(new CaptchaFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class);
         //让X-frame-options失效,去除iframe限制

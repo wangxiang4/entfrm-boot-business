@@ -72,7 +72,7 @@ export default {
     }
   },
   methods: {
-    /** 表单重置,主要清除参数配置对话框缓存 */
+    /** 表单重置,主要用于清除对话框缓存 */
     reset () {
       this.form = {
         id: undefined,
@@ -83,8 +83,8 @@ export default {
         isPrimary: undefined
       }
     },
-    /** 窗口传递数据 */
-    setData (data = {}) {
+    /** 初始化数据 */
+    init (data = {}) {
       // 打开窗口
       this.loading = true
       this.visible = true

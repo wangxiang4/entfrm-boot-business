@@ -101,9 +101,9 @@ export default {
     }
   },
   methods: {
-    /** 窗口传递数据 */
-    setData (method, data = {}) {
-      // todo: setData赋值
+    /** 初始化 */
+    init (method, data = {}) {
+      // todo: 初始化赋值
       this.method = method
       if (method == 'add') {
         this.title = '新建表单分类'

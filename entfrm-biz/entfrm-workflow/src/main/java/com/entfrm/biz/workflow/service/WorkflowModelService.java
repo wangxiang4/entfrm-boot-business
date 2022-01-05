@@ -17,7 +17,7 @@ public interface WorkflowModelService extends IService<WorkflowModel> {
      * 导出bpmn.xml
      * id: 模型id
      */
-    String export(String id);
+    String getBpmnXml(String id);
 
     /**
      * 移除模型

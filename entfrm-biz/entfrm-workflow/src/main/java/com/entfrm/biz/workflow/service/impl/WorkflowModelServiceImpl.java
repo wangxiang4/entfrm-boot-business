@@ -62,13 +62,13 @@ public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, W
     private final BpmnJsonConverter bpmnJsonConverter = new BpmnJsonConverter();
 
     @Override
-    public String export(String id) {
+    public String getBpmnXml(String id) {
         try {
             Model model = modelService.getModel(id);
             byte[] bpmnBytes = modelService.getBpmnXML(model);
             return new String(bpmnBytes);
         } catch (Exception e) {
-            throw new FlowableException("导出model的xml文件失败，模型ID=" + id, e);
+            throw new FlowableException("获取model的xml失败，模型ID=" + id, e);
         }
     }
 

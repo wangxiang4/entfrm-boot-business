@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
-
+import request from './utils/request'
 import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
 
@@ -90,10 +90,14 @@ VXETable.setup({
 })
 
 // 插件可拔插式枇杷表单设计器
-import request from './utils/request'
 import LoquatFormDesign from 'loquat-form-design'
 import 'loquat-form-design/lib/loquat-form-design.css'
 Vue.use(LoquatFormDesign, { axiosInstance: request })
+
+// entfrm-bpmn设计器,提供三种模式的建模
+import moddle from '../lib/entfrm-flowable-designer.umd.min'
+import '../lib/entfrm-flowable-designer.css'
+Vue.use(moddle, { axiosInstance: request })
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts

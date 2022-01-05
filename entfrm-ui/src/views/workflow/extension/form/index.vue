@@ -370,15 +370,15 @@ export default {
     },
     /** 处理添加表单分类 */
     handleAddFormCategory () {
-      this.$refs.formCategoryForm.setData('add')
+      this.$refs.formCategoryForm.init('add')
     },
     /** 处理添加子项表单分类 */
     handleAddChildFormCategory (node) {
-      this.$refs.formCategoryForm.setData('addChild', { parentId: node.id })
+      this.$refs.formCategoryForm.init('addChild', { parentId: node.id })
     },
     /** 处理修改表单分类 */
     handleEditFormCategory (node) {
-      this.$refs.formCategoryForm.setData('edit', { id: node.id })
+      this.$refs.formCategoryForm.init('edit', { id: node.id })
     },
     /** 处理删除表单分类 */
     handleDelFormCategory (node) {
@@ -481,7 +481,7 @@ export default {
     /** 处理工作流表单设计 */
     handleFlowFormDesign (row) {
       const formDefinitionJson = row.formDefinitionJson || {}
-      this.$refs.workflowFormDesign.setData({ id: formDefinitionJson.id, formDefinitionId: row.id })
+      this.$refs.workflowFormDesign.init({ id: formDefinitionJson.id, formDefinitionId: row.id })
     }
   }
 }

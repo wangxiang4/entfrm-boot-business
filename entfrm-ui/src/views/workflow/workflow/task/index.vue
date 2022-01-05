@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import {listTask, getTskDef, audit, submitTaskFormData, getFormData, backNodes, back} from "@/api/workflow/task";
+import {listTask, getTskDef, audit, submitTaskFormData, getFormData, backNodes, back} from "@/api/workflow/workflow/task";
 const _import = require('@/router/import-' + process.env.NODE_ENV)
 export default {
   name: "Task",

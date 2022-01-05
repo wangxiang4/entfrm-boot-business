@@ -17,8 +17,7 @@
         <module>entfrm-toolkit</module>
         <module>entfrm-quartz</module>
         <module>entfrm-intelligent</module>
-        <module>entfrm-flowable</module>
+        <module>entfrm-workflow</module>
     </modules>
-
 
 </project>

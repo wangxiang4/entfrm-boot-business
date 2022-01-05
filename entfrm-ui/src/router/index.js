@@ -144,7 +144,7 @@ export const constantRoutes = [
     children: [
       {
         path: '/formDefinitionJson/:id',
-        component: (resolve) => require(['@/views/flowable/extension/form/helper/formDefinitionJson'], resolve),
+        component: (resolve) => require(['@/views/workflow/extension/form/helper/formDefinitionJson'], resolve),
         name: 'FormDefinitionJson',
         meta: { title: '版本管理' }
       }

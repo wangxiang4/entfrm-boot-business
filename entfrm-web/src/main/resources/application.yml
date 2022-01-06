@@ -44,7 +44,9 @@ spring:
   # 序列化
   jackson:
     time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      # 返回时间戳
+      write-dates-as-timestamps: true
   profiles:
     active: druid
   # 文件上传

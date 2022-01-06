@@ -45,7 +45,10 @@ export function addModel(data) {
 // 编辑模型
 export function editModel(modelId, data) {
   return request({
-    url: `/rest/models/${modelId}/editor/json`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+    },
+    url: `/app/rest/models/${modelId}/editor/json`,
     method: 'post',
     data: data
   })
@@ -64,6 +67,6 @@ export function deployModel(query) {
   return request({
     url: '/workflow/model/deploy',
     method: 'post',
-    data: query
+    params: query
   })
 }

@@ -8,6 +8,7 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.service.WorkflowModelService;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
+import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.security.entity.EntfrmUser;
 import com.entfrm.security.util.SecurityUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,7 +74,7 @@ public class WorkflowModelController {
             if(processDefinition != null){
                 String deploymentId = processDefinition.getDeploymentId();
                 Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-                item.getProcessDefinition()
+                item.setProcessDefinition(new ProcessDefinitionInfoVo()
                         .setId(processDefinition.getId())
                         .setCategory(processDefinition.getCategory())
                         .setKey(processDefinition.getKey())
@@ -83,7 +84,8 @@ public class WorkflowModelController {
                         .setDiagramResourceName(processDefinition.getDiagramResourceName())
                         .setDeploymentId(processDefinition.getDeploymentId())
                         .setSuspend(processDefinition.isSuspended())
-                        .setDeploymentTime(deployment.getDeploymentTime());
+                        .setDeploymentTime(deployment.getDeploymentTime()));
+
             }
         });
         return R.ok(result.getRecords(), result.getTotal());

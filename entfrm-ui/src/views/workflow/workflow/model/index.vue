@@ -79,19 +79,20 @@
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center"/>
       <el-table-column prop="name" show-overflow-tooltip label="流程名称"/>
-      <el-table-column prop="key" show-overflow-tooltip label="流程KEY"/>
+      <el-table-column prop="modelKey" show-overflow-tooltip label="流程KEY"/>
       <el-table-column prop="processDefinition.category" label="分类"/>
-      <el-table-column prop="version" label="流程版本">
+      <el-table-column prop="processDefinition.version" label="流程版本">
         <template slot-scope="scope">
-          <el-tag>{{scope.row.processDefinition.version || '0'}}</el-tag>
+          <el-tag>{{getProcessDefinition(scope.row.processDefinition).version || 'V:0'}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="version" label="流程状态">
+      <el-table-column prop="processDefinition.suspend" label="流程状态">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.processDefinition.suspend===false?'success'
-            :(scope.row.processDefinition.suspend===undefined?'primary':'danger')"
+          <el-tag :type="getProcessDefinition(scope.row.processDefinition).suspend===false?'success'
+            :(getProcessDefinition(scope.row.processDefinition).suspend===undefined?'primary':'danger')"
           >
-            {{scope.row.processDefinition.suspend===false?'已发布' : (scope.row.processDefinition.suspend===undefined?'草稿':'已挂起')}}
+            {{getProcessDefinition(scope.row.processDefinition).suspend===false?'已发布'
+            :(getProcessDefinition(scope.row.processDefinition).suspend===undefined?'草稿':'已挂起')}}
           </el-tag>
         </template>
       </el-table-column>
@@ -120,13 +121,13 @@
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if="scope.row.processDefinition.suspend===true">
+              <el-dropdown-item v-if="getProcessDefinition(scope.row.processDefinition).suspend===true">
                 <el-button type="text"
                            size="small"
                            @click="handleProcessActive(scope.row)"
                 >激活</el-button>
               </el-dropdown-item>
-              <el-dropdown-item v-if="scope.row.processDefinition.suspend===false">
+              <el-dropdown-item v-if="getProcessDefinition(scope.row.processDefinition).suspend===false">
                 <el-button type="text"
                            size="small"
                            @click="handleProcessSuspend(scope.row)"
@@ -184,6 +185,7 @@ export default {
         size: 10,
         name: undefined
       },
+      processDefinition: {},
       showSearch: true
     }
   },
@@ -191,6 +193,10 @@ export default {
     this.getList()
   },
   methods: {
+    /** 流程定义校验 */
+    getProcessDefinition (def) {
+      return def || {}
+    },
     /** 查询模型列表 */
     getList() {
       this.loading = true

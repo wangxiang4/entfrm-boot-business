@@ -47,7 +47,7 @@ public class ProcessDefinitionInfoVo {
     private String deploymentId;
 
     /** 是否暂停 */
-    private boolean suspend;
+    private Object suspend;
 
     /** 流程部署时间 */
     private Date deploymentTime;

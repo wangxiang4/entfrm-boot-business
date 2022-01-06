@@ -79,6 +79,6 @@ public class WorkflowModel implements Serializable {
 
     /** 流程定义 */
     @TableField(exist = false)
-    private ProcessDefinitionInfoVo processDefinition = new ProcessDefinitionInfoVo();
+    private ProcessDefinitionInfoVo processDefinition;
 
 }

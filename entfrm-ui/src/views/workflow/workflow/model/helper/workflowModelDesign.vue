@@ -35,17 +35,15 @@ export default {
     reset () {
       this.form = {
         id: undefined,
-        formDefinitionId: undefined,
         key: undefined,
+        name: undefined,
         description: undefined,
         createdBy: undefined,
         lastUpdatedBy: undefined,
         lastUpdated: undefined,
         latestVersion: undefined,
         version: undefined,
-        comment: undefined,
-        modelType: undefined,
-        tenantId: undefined
+        modelType: undefined
       }
     },
     /** 初始化数据 */
@@ -72,6 +70,17 @@ export default {
         Promise.all(chain).then(() => { this.loading = false })
       })
     },
+    /** 处理保存并发布 */
+    handleSaveAndDeploy (id, code) {
+      code === 1 && deployModel({
+        id: id,
+        category: '未分类'
+      })
+    },
+    /** 处理活动属性扩展 */
+    handleActivityExtension () {
+
+    },
     /** 处理模型提交 */
     handleSubmitModel (bpmnModeler, operateCode) {
       if (bpmnModeler) {
@@ -95,10 +104,9 @@ export default {
               comment: this.form.comment,
               lastUpdated: this.form.lastUpdated
             }).then(response => {
-              operateCode === 1 && deployModel({
-                id: response.id,
-                category: '未设置'
-              })
+              this.form = response
+              this.handleSaveAndDeploy(response.id, operateCode)
+              this.handleActivityExtension()
             }))
           } else {
             // 处理模型新增
@@ -108,20 +116,16 @@ export default {
               modelType: 0,
               description: ''
             }).then(response => {
-              operateCode === 1 && deployModel({
-                id: response.id,
-                category: '未设置'
-              })
+              this.form = response
+              this.handleSaveAndDeploy(response.id, operateCode)
+              this.handleActivityExtension()
             }))
           }
-          // ----------------------------设置流程扩展属性存储与扩展属性数据存储-------------------------------------
-
-          // 加载完毕
           Promise.all(chain).then(() => {
             this.msgSuccess("保存流程模型成功")
             this.loading = false
             this.$emit('refresh')
-          })
+          }).catch(() => this.loading = false)
         })
       } else {
         this.msgError("bpmn建模对象不存在,请检查!")

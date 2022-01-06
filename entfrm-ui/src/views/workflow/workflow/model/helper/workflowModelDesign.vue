@@ -97,7 +97,7 @@ export default {
             chain.push(editModel(this.form.id, {
               key: root.id,
               name: root.name,
-              // json_xml: xml,
+              json_xml: xml,
               // 这个字段为后期版本冲突功能做准备
               newversion: false,
               description: '',

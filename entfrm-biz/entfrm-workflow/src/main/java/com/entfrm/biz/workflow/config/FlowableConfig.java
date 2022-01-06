@@ -5,11 +5,13 @@ import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
 import org.flowable.spring.boot.FlowableProperties;
 import org.flowable.ui.common.properties.FlowableCommonAppProperties;
+import org.flowable.ui.modeler.domain.Model;
+import org.flowable.ui.modeler.domain.ModelHistory;
+import org.flowable.ui.modeler.domain.ModelRelation;
 import org.flowable.ui.modeler.properties.FlowableModelerAppProperties;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 
 
 /**
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Primary;
  * @Date: 2022/1/4
  */
 @Configuration
+@ComponentScan({ "org.flowable.ui.modeler", "org.flowable.ui.common" })
 @EnableConfigurationProperties(FlowableProperties.class)
 public class FlowableConfig implements EngineConfigurationConfigurer<SpringProcessEngineConfiguration> {
 

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-@SpringBootApplication(scanBasePackages = {"com.entfrm" ,"org.flowable.ui.modeler", "org.flowable.ui.common"}, exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = "com.entfrm", exclude = SecurityAutoConfiguration.class)
 public class WebApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

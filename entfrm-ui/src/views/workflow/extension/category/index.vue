@@ -244,7 +244,7 @@ export default {
         })
         this.handleSearch()
         this.loading = false
-      })
+      }).catch(() =>  this.loading = false)
     },
     /** 获取流程分类列表 */
     getActCategoryList () {
@@ -319,12 +319,11 @@ export default {
           let treeData = XEUtils.findTree(this.dataList, item => item.id === id, {children:'children'})
           ids = XEUtils.toTreeArray([treeData.item],{children:'children',data:'id'})
         }
-        delActCategory(ids).then(()=>{
-          this.loading = false
+        return delActCategory(ids).then(()=>{
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => {})
+      }).catch(() => this.loading = false)
     },
     /** 表单提交 */
     handleSubmitForm () {

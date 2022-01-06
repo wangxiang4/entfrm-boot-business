@@ -114,25 +114,17 @@ export default {
       } else if (method == 'view') {
         this.title = '查看表单分类'
       }
-      // 打开窗口
-      this.loading = true
       this.visible = true
       this.$nextTick(() => {
         this.$refs.form.resetFields()
         this.form.parentId = data.parentId
         // 查询关联数据
-        const chain = [
-          listFormCategory().then(response => {
-            this.treeSelectList = response.data
-          })
-        ]
+        this.loading = true
+        const chain = [ listFormCategory().then(response => this.treeSelectList = response.data) ]
         if (method == 'edit' || method == 'view') {
-          chain.push(getFormCategory(data.id).then(response => {
-            this.form = response.data
-          }))
+          chain.push(getFormCategory(data.id).then(response => this.form = response.data))
         }
-        // 加载完毕
-        Promise.all(chain).then(() => { this.loading = false })
+        Promise.all(chain).then(() => this.loading = false).catch(() => this.loading = false)
       })
     },
     /** 处理表单提交 */
@@ -145,23 +137,19 @@ export default {
               if (response.code === 0) {
                 this.msgSuccess("修改成功")
                 this.visible = false
-                this.loading = false
                 this.$emit('refresh')
-              } else {
-                this.msgError(response.msg)
-              }
-            })
+              } else this.msgError(response.msg)
+              this.loading = false
+            }).catch(() => this.loading = false)
           } else {
             addFormCategory(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("新增成功")
                 this.visible = false
-                this.loading = false
                 this.$emit('refresh')
-              } else {
-                this.msgError(response.msg)
-              }
-            })
+              } else  this.msgError(response.msg)
+              this.loading = false
+            }).catch(() => this.loading = false)
           }
         }
       })

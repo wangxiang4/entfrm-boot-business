@@ -48,7 +48,7 @@ export function editModel(modelId, data) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
     },
-    url: `/app/rest/models/${modelId}/editor/json`,
+    url: '/workflow/model/saveModel/' + modelId,
     method: 'post',
     data: data
   })

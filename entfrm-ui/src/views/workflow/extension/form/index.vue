@@ -324,7 +324,7 @@ export default {
           this.formDefinitionList = response.data
           this.total = response.total
           this.loading = false
-      })
+      }).catch(() => this.loading = false)
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
     reset () {
@@ -387,18 +387,18 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.loading = true
         if(node.id){
+          this.loading = true
           // 针对于行删除做处理需要查找子集删除
           const treeData = XEUtils.findTree(this.formCategoryTreeData, item => item.id === node.id, { children:'children' })
           const ids = XEUtils.toTreeArray([treeData.item], { children:'children', data:'id' })
-          delFormCategory(ids).then(response => {
-            this.loading = false
+          return delFormCategory(ids).then(response => {
             this.msgSuccess("删除成功")
             this.getFormCategoryTree()
+            this.loading = false
           })
         }
-      }).catch(() => {})
+      }).catch(() => this.loading = false)
     },
     /** 处理新增按钮操作 */
     handleAdd () {
@@ -439,12 +439,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        delFormDefinition(ids).then(response => {
-          this.loading = false
+        return delFormDefinition(ids).then(response => {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => {})
+      }).catch(() => this.loading = false)
     },
     /** 处理表单提交 */
     handleSubmitForm () {

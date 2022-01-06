@@ -87,24 +87,21 @@ export default {
     /** 初始化数据 */
     init (data = {}) {
       // 打开窗口
-      this.loading = true
       this.visible = true
       this.$nextTick(() => {
         this.reset()
         this.options = {}
         this.form.id = data.id
         this.form.formDefinitionId = data.formDefinitionId
-        // 查询关联数据
-        const chain = []
         if (this.form.id) {
+          this.loading = true
           // 查看表单定义json详细
           getFormDefinitionJson(this.form.id).then(response => {
             this.form = response.data
             this.form.json && (this.options = this.form.json)
-          })
+            this.loading = false
+          }).catch(() =>  this.loading = false)
         }
-        // 加载完毕
-        Promise.all(chain).then(() => { this.loading = false })
       })
     },
     /** 处理表单提交 */
@@ -118,23 +115,19 @@ export default {
           if (response.code === 0) {
             this.msgSuccess("保存流程表单成功")
             this.visible = false
-            this.loading = false
             this.$emit('refresh')
-          } else {
-            this.msgError(response.msg)
-          }
-        })
+          } else this.msgError(response.msg)
+          this.loading = false
+        }).catch(() => this.loading = false)
       } else {
         addFormDefinitionJson(this.form).then(response => {
           if (response.code === 0) {
             this.msgSuccess("保存流程表单成功")
             this.visible = false
-            this.loading = false
             this.$emit('refresh')
-          } else {
-            this.msgError(response.msg)
-          }
-        })
+          } else this.msgError(response.msg)
+          this.loading = false
+        }).catch(() => this.loading = false)
       }
     }
   }

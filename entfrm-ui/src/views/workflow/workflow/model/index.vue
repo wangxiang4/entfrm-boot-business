@@ -204,7 +204,7 @@ export default {
           this.dataList = response.data
           this.total = response.total
           this.loading = false
-      })
+      }).catch(() => this.loading = false)
     },
     /** 处理搜索按钮操作 */
     handleQuery() {

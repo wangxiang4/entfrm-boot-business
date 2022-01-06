@@ -195,7 +195,7 @@ export default {
         this.dataList = response.data
         this.total = response.total
         this.loading = false
-      })
+      }).catch(() => this.loading = false)
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
     reset () {
@@ -257,12 +257,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        delCondition(ids).then(response => {
-          this.loading = false
+        return delCondition(ids).then(response => {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => {})
+      }).catch(() => this.loading = false)
     },
     /** 处理表单提交 */
     handleSubmitForm () {

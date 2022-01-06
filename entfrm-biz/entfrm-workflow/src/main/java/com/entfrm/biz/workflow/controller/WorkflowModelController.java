@@ -150,10 +150,104 @@ public class WorkflowModelController {
         return  R.ok(result);
     }
 
+    /** 保存模型 */
+    @PostMapping("/saveModel/{modelId}")
+    public ModelRepresentation saveModel(@PathVariable String modelId, @RequestBody MultiValueMap<String, String> values) {
+        long lastUpdated;
+        String lastUpdatedString = values.getFirst("lastUpdated");
+        if (lastUpdatedString == null) {
+            throw new BadRequestException("不存在上次更新日期");
+        } else {
+            try {
+                Date readValue = this.objectMapper.getDeserializationConfig().getDateFormat().parse(lastUpdatedString);
+                lastUpdated = readValue.getTime();
+            } catch (ParseException e) {
+                throw new BadRequestException("无效的上次更新日期: '" + e + "'");
+            }
+
+            // 查询模型进行比较处理
+            Model model = this.modelService.getModel(modelId);
+            EntfrmUser currentUser = SecurityUtil.getUser();
+            boolean currentUserIsOwner = model.getLastUpdatedBy().equals(currentUser.getId());
+            String resolveAction = values.getFirst("conflictResolveAction");
+            // 版本校验(如果此时你在修改模型时别人提交了你的模型版本,如果没有版本校验就会出问题)
+            if (model.getLastUpdated().getTime() != lastUpdated) {
+                String isNewVersionString;
+                if ("saveAs".equals(resolveAction)) {
+                    isNewVersionString = values.getFirst("saveAs");
+                    String json = values.getFirst("json_xml");
+                    return this.createNewModel(isNewVersionString, model.getDescription(), model.getModelType(), json);
+                } else if ("overwrite".equals(resolveAction)) {
+                    return this.updateModel(model, values, false);
+                } else if ("newVersion".equals(resolveAction)) {
+                    return this.updateModel(model, values, true);
+                } else {
+                    if (currentUserIsOwner && "true".equals(values.getFirst("newVersion"))) {
+                        return this.updateModel(model, values, true);
+                    } else {
+                        ConflictingRequestException exception = new ConflictingRequestException("别人更新了你的流程模型");
+                        exception.addCustomData("userFullName", model.getLastUpdatedBy());
+                        exception.addCustomData("newVersionAllowed", currentUserIsOwner);
+                        throw exception;
+                    }
+                }
+            } else {
+                return this.updateModel(model, values, false);
+            }
+        }
+    }
+
+    /** 创建模型 */
+    private ModelRepresentation createNewModel(String name, String description, Integer modelType, String editorJson) {
+        ModelRepresentation model = new ModelRepresentation();
+        model.setName(name);
+        model.setDescription(description);
+        model.setModelType(modelType);
+        Model newModel = this.modelService.createModel(model, editorJson, SecurityUtils.getCurrentUserObject());
+        return new ModelRepresentation(newModel);
+    }
+
+    /** 修改模型 */
+    private ModelRepresentation updateModel(Model model, MultiValueMap<String, String> values, boolean forceNewVersion) {
+        String name = values.getFirst("name"),
+                key = values.getFirst("key").replaceAll(" ", ""),
+                description = values.getFirst("description"),
+                isNewVersionString = values.getFirst("newVersion"),
+                newVersionComment = null;
+        ModelKeyRepresentation modelKeyInfo = this.modelService.validateModelKey(model, model.getModelType(), key);
+        if (modelKeyInfo.isKeyAlreadyExists()) {
+            throw new BadRequestException("所提供的模型key已经存在: " + key);
+        } else {
+            boolean newVersion = false;
+            if (forceNewVersion) {
+                newVersion = true;
+                newVersionComment = values.getFirst("comment");
+            } else if (isNewVersionString != null) {
+                newVersion = "true".equals(isNewVersionString);
+                newVersionComment = values.getFirst("comment");
+            }
+            String json = values.getFirst("json_xml");
+            json = this.workflowModelService.changeXmlToJson(json);
+            try {
+                ObjectNode editorJsonNode = (ObjectNode)this.objectMapper.readTree(json);
+                ObjectNode propertiesNode = (ObjectNode)editorJsonNode.get("properties");
+                propertiesNode.put("process_id", key);
+                propertiesNode.put("name", name);
+                if (StringUtils.isNotEmpty(description)) {
+                    propertiesNode.put("documentation", description);
+                }
+                editorJsonNode.set("properties", propertiesNode);
+                model = this.modelService.saveModel(model.getId(), name, key, description, editorJsonNode.toString(), newVersion, newVersionComment, SecurityUtils.getCurrentUserObject());
+                return new ModelRepresentation(model);
+            } catch (Exception var15) {
+                throw new BadRequestException("无法保存流程模型: " + model.getId());
+            }
+        }
+    }
+
     /** 校验是否存在重复的模型key */
     private void checkForDuplicateKey(ModelRepresentation modelRepresentation) {
         ModelKeyRepresentation modelKeyInfo = this.modelService.validateModelKey(null, modelRepresentation.getModelType(), modelRepresentation.getKey());
         if (modelKeyInfo.isKeyAlreadyExists()) throw new ConflictingRequestException("所提供的模型key已经存在: " + modelRepresentation.getKey());
     }
-
 }

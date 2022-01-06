@@ -48,53 +48,36 @@ export default {
     },
     /** 初始化数据 */
     init (data = {}) {
-      this.loading = true
       this.visible = true
       this.$nextTick(() => {
         this.reset()
         this.bpmnXml = ''
         this.form.id = data.id
-        // 查询关联数据
-        const chain = []
         if (this.form.id) {
           // 查看模型详细
-          chain.push(getModel(this.form.id).then(response => {
+          this.loading = true
+          getModel(this.form.id).then(response => {
             this.form = response.data
-          }))
-          // 查询模型xml
-          chain.push(getModelXml(this.form.id).then(response => {
+            return getModelXml(this.form.id)
+          }).then(response => {
             this.bpmnXml = response.data
-          }))
+            this.loading = false
+          }).catch(() => this.loading = false)
         }
-        // 加载完毕
-        Promise.all(chain).then(() => { this.loading = false })
       })
-    },
-    /** 处理保存并发布 */
-    handleSaveAndDeploy (id, code) {
-      code === 1 && deployModel({
-        id: id,
-        category: '未分类'
-      })
-    },
-    /** 处理活动属性扩展 */
-    handleActivityExtension () {
-
     },
     /** 处理模型提交 */
     handleSubmitModel (bpmnModeler, operateCode) {
       if (bpmnModeler) {
-        bpmnModeler.saveXML({
-          format: true
-        }).then(({ xml }) => {
-          // 获取根流程业务对象
-          const root = bpmnModeler.get('canvas')
-            .getRootElement().businessObject
-          const chain = []
-          this.loading = true
-          if (this.form.id != undefined) {
-            // 处理模型编辑
-            chain.push(editModel(this.form.id, {
+        // 获取根流程业务对象
+        const root = bpmnModeler.get('canvas').getRootElement().businessObject
+        this.loading = true
+        if (this.form.id != undefined) {
+          bpmnModeler.saveXML({
+            format: true
+          }).then(({ xml }) => {
+            // 处理模型修改
+            editModel(this.form.id, {
               key: root.id,
               name: root.name,
               json_xml: xml,
@@ -105,28 +88,36 @@ export default {
               lastUpdated: this.form.lastUpdated
             }).then(response => {
               this.form = response
-              this.handleSaveAndDeploy(response.id, operateCode)
-              this.handleActivityExtension()
-            }))
-          } else {
-            // 处理模型新增
-            chain.push(addModel({
-              key: root.id,
-              name: root.name,
-              modelType: 0,
-              description: ''
+              return operateCode === 1 && deployModel({
+                id: response.id,
+                category: '未分类'
+              })
+            }).then(() => {
+              return getModelJson(this.form.id)
             }).then(response => {
-              this.form = response
-              this.handleSaveAndDeploy(response.id, operateCode)
-              this.handleActivityExtension()
-            }))
-          }
-          Promise.all(chain).then(() => {
-            this.msgSuccess("保存流程模型成功")
-            this.loading = false
-            this.$emit('refresh')
+              // ---------------------处理活动扩展元素存储-----------------------------
+              console.log('模型json数据:', response)
+            }).then(() => {
+              this.msgSuccess("保存流程模型成功!")
+              this.loading = false
+              this.$emit('refresh')
+            }).catch(() => {
+              this.msgSuccess("保存流程模型失败!")
+              this.loading = false
+            })
+          })
+        } else {
+          // 处理模型新增
+          addModel({
+            key: root.id,
+            name: root.name,
+            modelType: 0,
+            description: ''
+          }).then(response => {
+            this.form = response
+            this.handleSubmitModel(bpmnModeler, operateCode)
           }).catch(() => this.loading = false)
-        })
+        }
       } else {
         this.msgError("bpmn建模对象不存在,请检查!")
       }

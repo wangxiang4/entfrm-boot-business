@@ -10,7 +10,6 @@
     >
       <flowable-designer ref="flowableDesigner"
                          style="height:calc(100vh - 57px)"
-                         :bpmn-xml="bpmnXml"
                          @refresh="$emit('refresh')"
       />
     </el-dialog>
@@ -24,8 +23,7 @@ export default {
   data () {
     return {
       loading: false,
-      visible: false,
-      bpmnXml: ''
+      visible: false
     }
   },
   methods: {
@@ -41,7 +39,7 @@ export default {
             this.$refs.flowableDesigner.setModelData(response)
             return getModelXml(modelId)
           }).then(response => {
-            this.bpmnXml = response
+            this.$refs.flowableDesigner.setBpmnXml(response)
             this.loading = false
           }).catch(() => { this.loading = false })
         }

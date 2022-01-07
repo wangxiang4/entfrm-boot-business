@@ -31,7 +31,7 @@ public class ActivityExtensionDataController {
 		return R.ok(activityExtensionDataService.findById(id));
 	}
 
-	@GetMapping("findByDefIdAndTaskId")
+	@GetMapping("/findByDefIdAndTaskId")
 	public R findByDefIdAndTaskId(ActivityExtensionData activityExtensionData) throws Exception {
 		if(StrUtil.isBlank(activityExtensionData.getProcessDefId()) || StrUtil.isBlank(activityExtensionData.getActivityDefId())){
 			return R.error("ProcessDefId || askDefId 为空");

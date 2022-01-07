@@ -12,15 +12,7 @@ export function listModel(query) {
 // 查询模型xml
 export function getModelXml(modelId) {
   return request({
-    url: '/workflow/getBpmnXml/' + modelId,
-    method: 'get'
-  })
-}
-
-// 查询模型json,后面需要做一些自定义元素数据保存
-export function getModelJson(modelId) {
-  return request({
-    url: `/app/rest/models/${modelId}/editor/json`,
+    url: '/workflow/model/getBpmnXml/' + modelId,
     method: 'get'
   })
 }
@@ -28,7 +20,7 @@ export function getModelJson(modelId) {
 // 查询模型详细
 export function getModel(modelId) {
   return request({
-    url: `/rest/models/` + modelId,
+    url: `/app/rest/models/` + modelId,
     method: 'get'
   })
 }
@@ -42,17 +34,6 @@ export function addModel(data) {
   })
 }
 
-// 编辑模型
-export function editModel(modelId, data) {
-  return request({
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-    },
-    url: '/workflow/model/saveModel/' + modelId,
-    method: 'post',
-    data: data
-  })
-}
 
 // 删除模型
 export function delModel(ids) {

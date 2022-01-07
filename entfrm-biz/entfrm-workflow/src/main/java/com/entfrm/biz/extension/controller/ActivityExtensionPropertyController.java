@@ -31,7 +31,7 @@ public class ActivityExtensionPropertyController {
         return R.ok(activityExtensionPropertyService.getById(id));
     }
 
-    @GetMapping("findByDefIdAndTaskIdAndKey")
+    @GetMapping("/findByDefIdAndTaskIdAndKey")
     public  R findByDefIdAndTaskIdAndKey(ActivityExtensionProperty activityExtensionProperty) {
         ActivityExtensionProperty model = activityExtensionPropertyService.getOne(new LambdaUpdateWrapper<ActivityExtensionProperty>()
                 .eq(StrUtil.isNotBlank(activityExtensionProperty.getProcessDefId()), ActivityExtensionProperty::getProcessDefId, activityExtensionProperty.getProcessDefId())
@@ -42,11 +42,10 @@ public class ActivityExtensionPropertyController {
 
     @PostMapping("/save")
     public R save(@RequestBody List<ActivityExtensionProperty> activityExtensionPropertyList) {
-        activityExtensionPropertyList.forEach(taskExtensionProperty -> {
-            activityExtensionPropertyService.remove(new LambdaUpdateWrapper<ActivityExtensionProperty>()
-                    .eq(ActivityExtensionProperty::getProcessDefId,taskExtensionProperty.getProcessDefId())
-                    .eq(ActivityExtensionProperty::getActivityDefId,taskExtensionProperty.getActivityDefId()));
-        });
+        activityExtensionPropertyList.forEach(taskExtensionProperty -> activityExtensionPropertyService
+                .remove(new LambdaUpdateWrapper<ActivityExtensionProperty>()
+                .eq(ActivityExtensionProperty::getProcessDefId,taskExtensionProperty.getProcessDefId())
+                .eq(ActivityExtensionProperty::getActivityDefId,taskExtensionProperty.getActivityDefId())));
         activityExtensionPropertyList.forEach(taskExtensionProperty -> activityExtensionPropertyService.save(taskExtensionProperty));
         return R.ok();
     }

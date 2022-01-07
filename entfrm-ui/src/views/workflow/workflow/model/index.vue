@@ -233,6 +233,7 @@ export default {
     },
     /** 处理模型设计 */
     handleDesign(row) {
+      this.$refs.modelDesign.init(row.id)
     },
     /** 处理模型部署 */
     handleDeploy(row) {

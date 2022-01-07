@@ -14,6 +14,7 @@ import com.entfrm.biz.extension.mapper.WorkflowConditionMapper;
 import com.entfrm.biz.extension.service.ActivityExtensionDataService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class ActivityExtensionDataServiceImpl extends ServiceImpl<ActivityExtensionDataMapper, ActivityExtensionData> implements ActivityExtensionDataService {
 
     private final WorkflowAssigneeMapper workflowAssigneeMapper;

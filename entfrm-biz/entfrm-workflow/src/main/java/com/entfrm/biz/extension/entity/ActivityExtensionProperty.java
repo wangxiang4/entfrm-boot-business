@@ -1,5 +1,6 @@
 package com.entfrm.biz.extension.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.entfrm.data.entity.CommonEntity;
@@ -18,7 +19,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_activity_property")
+@TableName(value = "act_extension_activity_property", excludeProperty = "delFlag")
 public class ActivityExtensionProperty extends CommonEntity {
 
 	/** 反序列化密钥 */
@@ -34,6 +35,7 @@ public class ActivityExtensionProperty extends CommonEntity {
 	private String activityDefId;
 
 	/** 变量名 */
+	@TableField("`key`")
 	private String key;
 
 	/** 变量值 */

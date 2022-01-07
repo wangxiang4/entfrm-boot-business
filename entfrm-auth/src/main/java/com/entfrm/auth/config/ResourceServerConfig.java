@@ -33,9 +33,21 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter implem
             // CRSF禁用，因为不使用session
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers(
-                    "/oauth/**", "/common/**", "/cms/article/doc/**", "/workflow/service/**", "/app/**" , "/captcha/**",
-                    "/toolkit/dataset/api/**", "/workflow/process/resource", "/actuator/**", "/api/**", "/system/**", "/toolkit/form/**","/workflow/extension/**").permitAll()
+            .antMatchers("/oauth/**",
+                    "/common/**",
+                    "/cms/article/doc/**",
+                    "/app/**" ,
+                    "/captcha/**",
+                    "/toolkit/dataset/api/**",
+                    "/actuator/**",
+                    "/api/**",
+                    "/toolkit/form/**",
+                    // 测试接口发布时可以删除
+                    "/system/**",
+                    "/app/rest/**",
+                    "/workflow/extension/**",
+                    "/workflow/model/resource",
+                    "/workflow/extension/**").permitAll()
             .anyRequest().authenticated()
             .and().addFilterBefore(new CaptchaFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class);
         //让X-frame-options失效,去除iframe限制

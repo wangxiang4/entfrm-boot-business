@@ -1,10 +1,14 @@
 package com.entfrm.biz.extension.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.entfrm.data.entity.CommonEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  *<p>
@@ -18,7 +22,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("act_extension_workflow_assignee")
-public class WorkflowAssignee extends Condition{
+public class WorkflowAssignee implements Serializable {
 
 	/** 反序列化密钥 */
 	private static final long serialVersionUID = 1L;
@@ -33,6 +37,7 @@ public class WorkflowAssignee extends Condition{
 	private String value;
 
 	/** 附加条件 */
+	@TableField("`condition`")
 	private String condition;
 
 	/** 运算类型 */

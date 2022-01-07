@@ -61,7 +61,8 @@ public class WorkflowModelController {
 
     private LambdaQueryWrapper<WorkflowModel> getLambdaQueryWrapper(WorkflowModel workflowModel) {
         return new LambdaQueryWrapper<WorkflowModel>()
-                .like(StrUtil.isNotBlank(workflowModel.getName()), WorkflowModel::getName, workflowModel.getName());
+                .like(StrUtil.isNotBlank(workflowModel.getName()), WorkflowModel::getName, workflowModel.getName())
+                .orderByDesc(WorkflowModel::getCreated);
     }
 
     /** 流程模型列表 */

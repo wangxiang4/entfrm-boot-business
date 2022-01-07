@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("act_extension_activity_data")
+@TableName(value = "act_extension_activity_data", excludeProperty = "delFlag")
 public class ActivityExtensionData extends CommonEntity {
 
 	/** 反序列化密钥 */

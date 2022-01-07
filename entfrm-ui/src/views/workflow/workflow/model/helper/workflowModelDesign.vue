@@ -33,7 +33,7 @@ export default {
     init (modelId) {
       this.visible = true
       this.$nextTick(() => {
-        this.bpmnXml = ''
+        this.$refs.flowableDesigner.setBpmnXml('')
         this.$refs.flowableDesigner.reset()
         if (modelId) {
           this.loading = true

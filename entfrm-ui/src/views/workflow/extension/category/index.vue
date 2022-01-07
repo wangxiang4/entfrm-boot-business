@@ -244,7 +244,7 @@ export default {
         })
         this.handleSearch()
         this.loading = false
-      }).catch(() =>  this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 获取流程分类列表 */
     getActCategoryList () {
@@ -323,7 +323,7 @@ export default {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 表单提交 */
     handleSubmitForm () {

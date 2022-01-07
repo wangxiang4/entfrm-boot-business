@@ -169,7 +169,7 @@ export default {
         this.dataList = response.data
         this.total = response.total
         this.loading = false
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 处理搜索按钮操作 */
     handleQuery() {
@@ -192,7 +192,7 @@ export default {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 处理设置主版本 */
     handleSetPrimaryVersion (row) {
@@ -206,7 +206,7 @@ export default {
           this.msgSuccess("设置成功")
           this.getList()
         })
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 处理预览 */
     handlePreview (row) {

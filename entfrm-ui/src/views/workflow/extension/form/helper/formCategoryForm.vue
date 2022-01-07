@@ -124,7 +124,7 @@ export default {
         if (method == 'edit' || method == 'view') {
           chain.push(getFormCategory(data.id).then(response => this.form = response.data))
         }
-        Promise.all(chain).then(() => this.loading = false).catch(() => this.loading = false)
+        Promise.all(chain).then(() => this.loading = false).catch(() => { this.loading = false })
       })
     },
     /** 处理表单提交 */
@@ -140,7 +140,7 @@ export default {
                 this.$emit('refresh')
               } else this.msgError(response.msg)
               this.loading = false
-            }).catch(() => this.loading = false)
+            }).catch(() => { this.loading = false })
           } else {
             addFormCategory(this.form).then(response => {
               if (response.code === 0) {
@@ -149,7 +149,7 @@ export default {
                 this.$emit('refresh')
               } else  this.msgError(response.msg)
               this.loading = false
-            }).catch(() => this.loading = false)
+            }).catch(() => { this.loading = false })
           }
         }
       })

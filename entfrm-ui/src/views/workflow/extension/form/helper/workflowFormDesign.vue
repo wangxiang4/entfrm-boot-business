@@ -100,7 +100,7 @@ export default {
             this.form = response.data
             this.form.json && (this.options = this.form.json)
             this.loading = false
-          }).catch(() =>  this.loading = false)
+          }).catch(() => { this.loading = false })
         }
       })
     },
@@ -118,7 +118,7 @@ export default {
             this.$emit('refresh')
           } else this.msgError(response.msg)
           this.loading = false
-        }).catch(() => this.loading = false)
+        }).catch(() => { this.loading = false })
       } else {
         addFormDefinitionJson(this.form).then(response => {
           if (response.code === 0) {
@@ -127,7 +127,7 @@ export default {
             this.$emit('refresh')
           } else this.msgError(response.msg)
           this.loading = false
-        }).catch(() => this.loading = false)
+        }).catch(() => { this.loading = false })
       }
     }
   }

@@ -324,7 +324,7 @@ export default {
           this.formDefinitionList = response.data
           this.total = response.total
           this.loading = false
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 表单重置,主要清除参数配置对话框缓存 */
     reset () {
@@ -398,7 +398,7 @@ export default {
             this.loading = false
           })
         }
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 处理新增按钮操作 */
     handleAdd () {
@@ -443,7 +443,7 @@ export default {
           this.msgSuccess("删除成功")
           this.getList()
         })
-      }).catch(() => this.loading = false)
+      }).catch(() => { this.loading = false })
     },
     /** 处理表单提交 */
     handleSubmitForm () {

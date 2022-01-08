@@ -1,5 +1,6 @@
 package com.entfrm.biz.extension.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.entfrm.base.api.R;
 import com.entfrm.biz.extension.entity.Category;
 import com.entfrm.biz.extension.service.CategoryService;
@@ -38,12 +39,18 @@ public class CategoryController {
 
     @PostMapping("/save")
     public R save(@RequestBody Category category) {
+        if (categoryService.list(new LambdaQueryWrapper<Category>().eq(Category::getName, category.getName())).size() > 0) {
+            return R.error("当前不支持名字有重复,强行添加流程分类查询会有问题,后期需要改工作流内部表添加冗余字段解决");
+        }
         categoryService.save(category);
         return R.ok();
     }
 
     @PutMapping("/update")
     public R update(@RequestBody Category category) {
+        if (categoryService.list(new LambdaQueryWrapper<Category>().eq(Category::getName, category.getName())).size() > 0) {
+            return R.error("当前不支持名字有重复,强行添加流程分类查询会有问题,后期需要改工作流内部表添加冗余字段解决");
+        }
         categoryService.updateById(category);
         return R.ok();
     }

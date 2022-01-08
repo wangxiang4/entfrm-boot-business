@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { listActCategory } from '@/api/workflow/extension/category'
+import { listCategory } from '@/api/workflow/extension/category'
 import { setProcessCategory } from '@/api/workflow/workflow/process'
 import XEUtils from 'xe-utils'
 export default {
@@ -56,7 +56,7 @@ export default {
     },
     refreshTree () {
       this.loading = true
-      listActCategory().then(response => {
+      listCategory().then(response => {
         this.categoryTreeData = XEUtils.toArrayTree(response.data,{
           parentKey: 'parentId', key: 'id', children: 'children', sortKey: 'sort'
         })

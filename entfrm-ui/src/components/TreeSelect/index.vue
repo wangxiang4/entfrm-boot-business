@@ -322,7 +322,7 @@ export default {
   font-weight: normal;
 }
 
-ul li >>>.el-tree .el-tree-node__content{
+ul li ::v-deep .el-tree .el-tree-node__content{
   height:auto;
   padding: 0 20px;
 }
@@ -331,12 +331,12 @@ ul li >>>.el-tree .el-tree-node__content{
   font-weight: normal;
 }
 
-.el-tree >>>.is-current .el-tree-node__label{
+.el-tree ::v-deep .is-current .el-tree-node__label{
   color: #409EFF;
   font-weight: 700;
 }
 
-.el-tree >>>.is-current .el-tree-node__children .el-tree-node__label{
+.el-tree ::v-deep .is-current .el-tree-node__children .el-tree-node__label{
   color:#606266;
   font-weight: normal;
 }

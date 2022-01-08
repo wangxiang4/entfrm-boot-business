@@ -82,7 +82,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
                category = MapUtil.getStr(params, "category");
 
         if (StrUtil.isNotBlank(name)) {
-            query.processDefinitionNameLike(name);
+            query.processDefinitionNameLike("%"+name+"%");
         }
         if (StrUtil.isNotBlank(category)) {
             query.processDefinitionCategory(category);
@@ -93,6 +93,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<ProcessDefinition> processDefinitionList = query.listPage((current - 1) * size, size);
         for (ProcessDefinition processDefinition : processDefinitionList) {
             if(this.validateProcessAuth(SecurityUtil.getUser(), processDefinition.getId())){

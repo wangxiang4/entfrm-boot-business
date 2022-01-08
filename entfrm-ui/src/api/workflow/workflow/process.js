@@ -1,6 +1,16 @@
 import request from '@/utils/request'
 
-// 设置流程分类
+// 查询流程定义列表
+export function listProcessDefinition(query) {
+  return request({
+    url: '/workflow/process/list',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 设置流程定义分类
 export function setProcessCategory(query) {
   return request({
     url: '/workflow/process/setProcessCategory',

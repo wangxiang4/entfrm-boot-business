@@ -184,7 +184,7 @@
  * Copyright © 2020-2021 <a href="http://www.entfrm.com/">entfrm</a> All rights reserved.
  * author entfrm开发团队-王翔
  */
-import { listActCategory, delActCategory, getActCategory, editActCategory, addActCategory } from '@/api/workflow/extension/category'
+import { listCategory, delCategory, getCategory, editCategory, addCategory } from '@/api/workflow/extension/category'
 import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
 export default {
@@ -238,7 +238,7 @@ export default {
     /** 获取数据列表 */
     getList () {
       this.loading = true
-      listActCategory().then(response => {
+      listCategory().then(response => {
         this.dataList = XEUtils.toArrayTree(response.data,{
           parentKey: 'parentId', key: 'id', children: 'children', sortKey: 'sort'
         })
@@ -247,8 +247,8 @@ export default {
       }).catch(() => { this.loading = false })
     },
     /** 获取流程分类列表 */
-    getActCategoryList () {
-      listActCategory().then(response => {
+    getCategoryList () {
+      listCategory().then(response => {
         this.treeSelectList = response.data
       })
     },
@@ -267,7 +267,7 @@ export default {
     /** 处理新增按钮操作 */
     handleAdd () {
       this.reset()
-      this.getActCategoryList()
+      this.getCategoryList()
       this.title = '添加流程分类'
       this.method = 'add'
       this.open = true
@@ -276,7 +276,7 @@ export default {
     handleAddChild (row) {
       const { id } = row
       this.reset()
-      this.getActCategoryList()
+      this.getCategoryList()
       this.title = '添加下级流程分类'
       this.method = 'addChild'
       this.form.parentId = id
@@ -285,8 +285,8 @@ export default {
     /** 处理修改按钮操作 */
     handleEdit (row) {
       const { id } = row
-      this.getActCategoryList()
-      getActCategory(id).then(response => {
+      this.getCategoryList()
+      getCategory(id).then(response => {
         this.form = response.data
         this.title = '修改流程分类'
         this.method = 'edit'
@@ -296,8 +296,8 @@ export default {
     /** 处理查看按钮操作 */
     handleView (row) {
       const { id } = row
-      this.getActCategoryList()
-      getActCategory(id).then(response => {
+      this.getCategoryList()
+      getCategory(id).then(response => {
         this.form = response.data
         this.title = '查看流程分类'
         this.method = 'view'
@@ -319,7 +319,7 @@ export default {
           let treeData = XEUtils.findTree(this.dataList, item => item.id === id, {children:'children'})
           ids = XEUtils.toTreeArray([treeData.item],{children:'children',data:'id'})
         }
-        return delActCategory(ids).then(()=>{
+        return delCategory(ids).then(()=>{
           this.msgSuccess("删除成功")
           this.getList()
         })
@@ -330,7 +330,7 @@ export default {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.method == 'edit') {
-            editActCategory(this.form).then(response => {
+            editCategory(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("修改成功")
                 this.open = false
@@ -340,7 +340,7 @@ export default {
               }
             })
           } else {
-            addActCategory(this.form).then(response => {
+            addCategory(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("新增成功")
                 this.open = false

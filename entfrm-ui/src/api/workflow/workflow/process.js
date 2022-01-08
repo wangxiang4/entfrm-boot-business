@@ -9,5 +9,12 @@ export function setProcessCategory(query) {
   })
 }
 
-
+// 设置激活或挂起流程
+export function setProcessInstanceStatus(query) {
+  return request({
+    url: '/workflow/process/setProcessInstanceStatus',
+    method: 'put',
+    params: query
+  })
+}
 

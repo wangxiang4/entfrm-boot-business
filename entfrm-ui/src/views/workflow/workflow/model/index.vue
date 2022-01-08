@@ -168,11 +168,10 @@
 </template>
 
 <script>
-import { listModel, delModel, deployModel } from "@/api/workflow/workflow/model"
+import { listModel, delModel, deployModel, copyModel } from "@/api/workflow/workflow/model"
+import { setProcessInstanceStatus } from '@/api/workflow/workflow/process'
 import workflowModelDesign from './helper/workflowModelDesign'
 import processCategoryForm from './helper/processCategoryForm'
-import XEUtils from 'xe-utils'
-import { delActCategory } from '@/api/workflow/extension/category'
 export default {
   name: "Model",
   components: { workflowModelDesign, processCategoryForm },
@@ -258,27 +257,74 @@ export default {
     },
     /** 处理模型设计 */
     handleDesign(row) {
-      this.$refs.modelDesign.init(row.id)
+      const { id } = row
+      this.$refs.modelDesign.init(id)
     },
     /** 处理模型部署 */
     handleDeploy(row) {
-
+      const { id } = row
+      this.$confirm(`确认要发布流程吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        const category = this.getProcessDefinition(row).category
+        return deployModel({ id, category: category || '未分类'}).then(() => {
+          this.msgSuccess("发布成功")
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     },
     /** 处理流程激活 */
     handleProcessActive(row) {
-
+      this.$confirm(`确定要激活该流程吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        const processDefId = this.getProcessDefinition(row).id
+        return setProcessInstanceStatus({ processDefId, status: 'active'}).then(() => {
+          this.msgSuccess("激活成功")
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     },
     /** 处理流程挂起 */
     handleProcessSuspend(row) {
-
+      this.$confirm(`确认要挂起该流程吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        const processDefId = this.getProcessDefinition(row).id
+        return setProcessInstanceStatus({ processDefId, status: 'suspend'}).then(() => {
+          this.msgSuccess("挂起成功")
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     },
     /** 处理模型导出 */
     handleExportXml(row) {
-
+      const { id } = row
+      window.open(`${process.env.VUE_APP_SERVER_URL}/app/rest/models/${id}/bpmn20?version=` + new Date().getTime())
     },
     /** 处理模型复制 */
     handleCopy(row) {
-
+      const { id } = row
+      this.$confirm(`确定复制该流程吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        return copyModel(id).then(() => {
+          this.msgSuccess("复制成功")
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     }
   }
 }

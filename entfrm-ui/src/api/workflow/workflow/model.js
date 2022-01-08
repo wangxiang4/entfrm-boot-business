@@ -41,3 +41,11 @@ export function deployModel(query) {
     params: query
   })
 }
+
+// 复制模型
+export function copyModel(modelId) {
+  return request({
+    url: '/workflow/model/copy/' + modelId,
+    method: 'post'
+  })
+}

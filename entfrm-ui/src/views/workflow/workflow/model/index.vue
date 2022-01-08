@@ -171,6 +171,8 @@
 import { listModel, delModel, deployModel } from "@/api/workflow/workflow/model"
 import workflowModelDesign from './helper/workflowModelDesign'
 import processCategoryForm from './helper/processCategoryForm'
+import XEUtils from 'xe-utils'
+import { delActCategory } from '@/api/workflow/extension/category'
 export default {
   name: "Model",
   components: { workflowModelDesign, processCategoryForm },
@@ -178,6 +180,7 @@ export default {
     return {
       loading: true,
       selections: [],
+      ids: [],
       single: true,
       multiple: true,
       total: 0,
@@ -220,6 +223,7 @@ export default {
     /** 处理多选框选中数据 */
     handleSelectionChange(selection) {
       this.selections = selection
+      this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
@@ -238,6 +242,19 @@ export default {
     },
     /** 处理模型删除 */
     handleDel(row) {
+      const { id } = row
+      let ids = id || this.ids
+      this.$confirm(`确定删除该流程吗?删除流程会级联删除已经存在的实例与历史数据，且不可恢复，请谨慎操作!`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        return delModel(ids).then(()=>{
+          this.msgSuccess("删除成功")
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     },
     /** 处理模型设计 */
     handleDesign(row) {

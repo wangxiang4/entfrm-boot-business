@@ -41,7 +41,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter implem
                     "/actuator/**",
                     "/api/**",
                     "/toolkit/form/**",
-                    "/app/rest/models/**/bpmn20",
+                    "/workflow/model/bpmnXmlDownload/**",
                     // 测试接口发布时可以删除
                     "/system/**",
                     "/workflow/extension/**",

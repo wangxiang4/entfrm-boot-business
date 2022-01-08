@@ -1,20 +1,29 @@
 package com.entfrm.biz.workflow.controller;
 
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.api.R;
+import com.entfrm.base.config.GlobalConfig;
+import com.entfrm.base.exception.BaseException;
+import com.entfrm.base.util.FileUtil;
 import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.service.WorkflowModelService;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.security.entity.EntfrmUser;
+import com.entfrm.security.exception.ServerErrorException;
 import com.entfrm.security.util.SecurityUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.common.engine.api.FlowableException;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -22,7 +31,9 @@ import org.flowable.idm.engine.impl.persistence.entity.UserEntity;
 import org.flowable.idm.engine.impl.persistence.entity.UserEntityImpl;
 import org.flowable.ui.common.security.SecurityUtils;
 import org.flowable.ui.common.service.exception.BadRequestException;
+import org.flowable.ui.common.service.exception.BaseModelerRestException;
 import org.flowable.ui.common.service.exception.ConflictingRequestException;
+import org.flowable.ui.common.service.exception.InternalServerErrorException;
 import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.model.ModelKeyRepresentation;
 import org.flowable.ui.modeler.model.ModelRepresentation;
@@ -30,6 +41,12 @@ import org.flowable.ui.modeler.serviceapi.ModelService;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,6 +61,7 @@ import java.util.UUID;
  * @Author: entfrm开发团队-王翔
  * @Date: 2022/1/4
  */
+@Slf4j
 @RestController
 @RequestMapping("/workflow/model")
 @AllArgsConstructor
@@ -244,5 +262,26 @@ public class WorkflowModelController {
     private void checkForDuplicateKey(ModelRepresentation modelRepresentation) {
         ModelKeyRepresentation modelKeyInfo = this.modelService.validateModelKey(null, modelRepresentation.getModelType(), modelRepresentation.getKey());
         if (modelKeyInfo.isKeyAlreadyExists()) throw new ConflictingRequestException("所提供的模型key已经存在: " + modelRepresentation.getKey());
+    }
+
+    @GetMapping("/bpmnXmlDownload/{modelId}" )
+    public void bpmnXmlDownload(@PathVariable String modelId, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if (modelId == null) {
+                throw new BaseException("没有提供模型id");
+            }
+            Model model = this.modelService.getModel(modelId);
+            if (model.getModelEditorJson() != null) {
+                String name = model.getName().replaceAll(" ", "_") + ".bpmn20.xml";
+                response.setContentType("application/xml" );
+                response.setHeader("Content-Disposition","attachment;fileName=" + FileUtil.setFileDownloadHeader(request, name));
+                BpmnModel bpmnModel = this.modelService.getBpmnModel(model);
+                byte[] xmlBytes = this.modelService.getBpmnXML(bpmnModel);
+                IoUtil.write(response.getOutputStream(), true, xmlBytes);
+            }
+        } catch (Exception e) {
+            log.error("不能生成BPMN 2.0 XML", e);
+            throw new ServerErrorException("不能生成BPMN 2.0 xml", e);
+        }
     }
 }

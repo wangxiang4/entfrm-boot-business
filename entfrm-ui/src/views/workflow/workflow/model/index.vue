@@ -309,7 +309,7 @@ export default {
     /** 处理模型导出 */
     handleExportXml(row) {
       const { id } = row
-      window.location.href = `${process.env.VUE_APP_BASE_API}/app/rest/models/${id}/bpmn20`
+      window.location.href = `${process.env.VUE_APP_BASE_API}/workflow/model/bpmnXmlDownload/${id}`
     },
     /** 处理模型复制 */
     handleCopy(row) {

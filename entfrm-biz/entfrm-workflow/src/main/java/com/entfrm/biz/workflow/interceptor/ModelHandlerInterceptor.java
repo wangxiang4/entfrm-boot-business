@@ -3,6 +3,7 @@ package com.entfrm.biz.workflow.interceptor;
 import com.entfrm.base.util.StrUtil;
 import com.entfrm.security.entity.EntfrmUser;
 import com.entfrm.security.util.SecurityUtil;
+import lombok.SneakyThrows;
 import org.flowable.idm.api.User;
 import org.flowable.idm.engine.impl.persistence.entity.UserEntityImpl;
 import org.flowable.ui.common.security.SecurityUtils;
@@ -23,18 +24,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ModelHandlerInterceptor implements HandlerInterceptor {
 
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		String servletPath = request.getServletPath();
+	@SneakyThrows
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		EntfrmUser entfrmUser = SecurityUtil.getUser();
-		if (!servletPath.endsWith("/bpmn20")) {
-			User currentUserObject = SecurityUtils.getCurrentUserObject();
-			if (currentUserObject == null || StrUtil.isBlank(currentUserObject.getId())) {
-				User user = new UserEntityImpl();
-				user.setId(entfrmUser.getId() + "");
-				user.setFirstName(entfrmUser.getUsername());
-				user.setLastName("");
-				SecurityUtils.assumeUser(user);
-			}
+		User currentUserObject = SecurityUtils.getCurrentUserObject();
+		if (currentUserObject == null || StrUtil.isBlank(currentUserObject.getId())) {
+			User user = new UserEntityImpl();
+			user.setId(entfrmUser.getId() + "");
+			user.setFirstName(entfrmUser.getUsername());
+			user.setLastName("");
+			SecurityUtils.assumeUser(user);
 		}
 		return true;
 	}

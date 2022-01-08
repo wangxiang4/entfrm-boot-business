@@ -25,16 +25,6 @@ export function getModel(modelId) {
   })
 }
 
-// 创建模型
-export function addModel(data) {
-  return request({
-    url: '/app/rest/models',
-    method: 'post',
-    data: data
-  })
-}
-
-
 // 删除模型
 export function delModel(ids) {
   return request({

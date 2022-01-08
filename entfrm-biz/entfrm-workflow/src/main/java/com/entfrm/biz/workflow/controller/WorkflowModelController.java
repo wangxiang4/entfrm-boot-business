@@ -98,12 +98,6 @@ public class WorkflowModelController {
         return workflowModelService.getBpmnXml(id);
     }
 
-    /** 更新Model分类 */
-    @PutMapping("/setCategory")
-    public R setCategory(String id, String category) {
-        repositoryService.setProcessDefinitionCategory(id, category);
-        return R.ok("设置成功，模块ID=" + id);
-    }
 
     /** 删除模型 */
     @DeleteMapping("/remove/{ids}")

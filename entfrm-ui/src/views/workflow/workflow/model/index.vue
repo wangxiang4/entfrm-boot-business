@@ -36,20 +36,20 @@
         >新建</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning"
-                   size="mini"
-                   icon="el-icon-edit-outline"
-                   :disabled="single"
-                   @click="handleEdit"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button type="danger"
                    size="mini"
                    icon="el-icon-delete"
-                   @click="handleDel"
                    :disabled="multiple"
+                   @click="handleDel"
         >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="success"
+                   size="mini"
+                   icon="el-icon-edit"
+                   :disabled="single"
+                   @click="setProcessCategory"
+        >设置分类</el-button>
       </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item"
@@ -83,16 +83,16 @@
       <el-table-column prop="processDefinition.category" label="分类"/>
       <el-table-column prop="processDefinition.version" label="流程版本">
         <template slot-scope="scope">
-          <el-tag>{{getProcessDefinition(scope.row.processDefinition).version || 'V:0'}}</el-tag>
+          <el-tag>{{getProcessDefinition(scope.row).version || 'V:0'}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="processDefinition.suspend" label="流程状态">
         <template slot-scope="scope">
-          <el-tag :type="getProcessDefinition(scope.row.processDefinition).suspend===false?'success'
-            :(getProcessDefinition(scope.row.processDefinition).suspend===undefined?'primary':'danger')"
+          <el-tag :type="getProcessDefinition(scope.row).suspend===false?'success'
+            :(getProcessDefinition(scope.row).suspend===undefined?'primary':'danger')"
           >
-            {{getProcessDefinition(scope.row.processDefinition).suspend===false?'已发布'
-            :(getProcessDefinition(scope.row.processDefinition).suspend===undefined?'草稿':'已挂起')}}
+            {{getProcessDefinition(scope.row).suspend===false?'已发布'
+            :(getProcessDefinition(scope.row).suspend===undefined?'草稿':'已挂起')}}
           </el-tag>
         </template>
       </el-table-column>
@@ -121,13 +121,13 @@
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if="getProcessDefinition(scope.row.processDefinition).suspend===true">
+              <el-dropdown-item v-if="getProcessDefinition(scope.row).suspend===true">
                 <el-button type="text"
                            size="small"
                            @click="handleProcessActive(scope.row)"
                 >激活</el-button>
               </el-dropdown-item>
-              <el-dropdown-item v-if="getProcessDefinition(scope.row.processDefinition).suspend===false">
+              <el-dropdown-item v-if="getProcessDefinition(scope.row).suspend===false">
                 <el-button type="text"
                            size="small"
                            @click="handleProcessSuspend(scope.row)"
@@ -148,7 +148,7 @@
               <el-dropdown-item>
                 <el-button type="text"
                            size="small"
-                           @click="handleDel(scope.row.id)"
+                           @click="handleDel(scope.row)"
                 >删除</el-button>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -163,19 +163,21 @@
                 @pagination="getList"
     />
     <workflow-model-design ref="modelDesign" @refresh="getList"/>
+    <process-category-form ref="categoryForm" @refresh="getList"/>
   </div>
 </template>
 
 <script>
-import { listModel, getModel, delModel, addModel, deployModel } from "@/api/workflow/workflow/model"
+import { listModel, delModel, deployModel } from "@/api/workflow/workflow/model"
 import workflowModelDesign from './helper/workflowModelDesign'
+import processCategoryForm from './helper/processCategoryForm'
 export default {
   name: "Model",
-  components: { workflowModelDesign },
+  components: { workflowModelDesign, processCategoryForm },
   data() {
     return {
       loading: true,
-      ids: [],
+      selections: [],
       single: true,
       multiple: true,
       total: 0,
@@ -194,8 +196,8 @@ export default {
   },
   methods: {
     /** 流程定义校验 */
-    getProcessDefinition (def) {
-      return def || {}
+    getProcessDefinition (row = {}) {
+      return row.processDefinition || {}
     },
     /** 查询模型列表 */
     getList() {
@@ -217,7 +219,7 @@ export default {
     },
     /** 处理多选框选中数据 */
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.selections = selection
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
@@ -225,8 +227,14 @@ export default {
     handleAdd() {
       this.$refs.modelDesign.init()
     },
-    /** 处理模型编辑 */
-    handleEdit(row) {
+    /** 设置流程分类 */
+    setProcessCategory() {
+      let row = this.selections[0]
+      if (row.processDefinition) {
+        this.$refs.categoryForm.init(row.processDefinition.id)
+      } else {
+        this.$message.error('未发布的流程不能设置分类,请先发布流程')
+      }
     },
     /** 处理模型删除 */
     handleDel(row) {

@@ -1,5 +1,4 @@
 <template>
-<div>
   <el-dialog v-loading="loading"
              title="请选择流程分类"
              :visible.sync="visible"
@@ -28,7 +27,6 @@
       >确定</el-button>
     </span>
   </el-dialog>
-</div>
 </template>
 
 <script>
@@ -73,7 +71,7 @@ export default {
       if (this.form.category) {
         setProcessCategory(this.form).then(response => {
           if (response.code === 0) {
-            this.msgSuccess("修改成功")
+            this.msgSuccess("设置流程分类成功!")
             this.visible = false
             this.$emit('refresh')
           } else this.msgError(response.msg)

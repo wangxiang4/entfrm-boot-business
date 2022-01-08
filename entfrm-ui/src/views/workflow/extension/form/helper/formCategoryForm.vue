@@ -1,5 +1,4 @@
 <template>
-<div>
   <el-dialog :title="title"
              :visible.sync="visible"
              :close-on-click-modal="false"
@@ -73,7 +72,6 @@
       >确定</el-button>
     </span>
   </el-dialog>
-</div>
 </template>
 
 <script>

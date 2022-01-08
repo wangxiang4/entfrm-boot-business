@@ -1,19 +1,17 @@
 <template>
-  <div>
-    <el-dialog v-loading="loading"
-               title="设计流程模型"
-               center
-               fullscreen
-               class="design"
-               :visible.sync="visible"
-               :close-on-click-modal="false"
-    >
-      <flowable-designer ref="flowableDesigner"
-                         style="height:calc(100vh - 57px)"
-                         @refresh="$emit('refresh')"
-      />
-    </el-dialog>
-  </div>
+  <el-dialog v-loading="loading"
+             title="设计流程模型"
+             center
+             fullscreen
+             class="design"
+             :visible.sync="visible"
+             :close-on-click-modal="false"
+  >
+    <flowable-designer ref="flowableDesigner"
+                       style="height:calc(100vh - 57px)"
+                       @refresh="$emit('refresh')"
+    />
+  </el-dialog>
 </template>
 
 <script>

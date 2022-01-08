@@ -1,27 +1,25 @@
 <template>
-  <div>
-    <el-dialog v-loading="loading"
-               title="设计流程表单"
-               center
-               fullscreen
-               class="design"
-               :visible.sync="visible"
-               :close-on-click-modal="false"
-    >
-      <loquat-form-design v-if="visible"
-                          ref="loquat-form-design"
-                          style="height:calc(100vh - 133px)"
-                          :toolbar="['clear', 'preview']"
-                          :options="options"
-                          :custom-fields="customFields"
-      />
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleSubmitForm(0)">保存草稿</el-button>
-        <el-button type="primary" @click="handleSubmitForm(1)">保存并发布</el-button>
-        <el-button @click="visible = false">放弃</el-button>
-      </span>
-    </el-dialog>
-  </div>
+  <el-dialog v-loading="loading"
+             title="设计流程表单"
+             center
+             fullscreen
+             class="design"
+             :visible.sync="visible"
+             :close-on-click-modal="false"
+  >
+    <loquat-form-design v-if="visible"
+                        ref="loquat-form-design"
+                        style="height:calc(100vh - 133px)"
+                        :toolbar="['clear', 'preview']"
+                        :options="options"
+                        :custom-fields="customFields"
+    />
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="handleSubmitForm(0)">保存草稿</el-button>
+      <el-button type="primary" @click="handleSubmitForm(1)">保存并发布</el-button>
+      <el-button @click="visible = false">放弃</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>

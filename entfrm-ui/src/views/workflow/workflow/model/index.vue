@@ -123,31 +123,31 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-if="getProcessDefinition(scope.row).suspend===true">
                 <el-button type="text"
-                           size="small"
+                           size="mini"
                            @click="handleProcessActive(scope.row)"
                 >激活</el-button>
               </el-dropdown-item>
               <el-dropdown-item v-if="getProcessDefinition(scope.row).suspend===false">
                 <el-button type="text"
-                           size="small"
+                           size="mini"
                            @click="handleProcessSuspend(scope.row)"
                 >挂起</el-button>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-button type="text"
-                           size="small"
+                           size="mini"
                            @click="handleExportXml(scope.row)"
                 >导出</el-button>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-button type="text"
-                           size="small"
+                           size="mini"
                            @click="handleCopy(scope.row)"
                 >复制</el-button>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-button type="text"
-                           size="small"
+                           size="mini"
                            @click="handleDel(scope.row)"
                 >删除</el-button>
               </el-dropdown-item>
@@ -309,7 +309,7 @@ export default {
     /** 处理模型导出 */
     handleExportXml(row) {
       const { id } = row
-      window.open(`${process.env.VUE_APP_SERVER_URL}/app/rest/models/${id}/bpmn20?version=` + new Date().getTime())
+      window.location.href = `${process.env.VUE_APP_BASE_API}/app/rest/models/${id}/bpmn20`
     },
     /** 处理模型复制 */
     handleCopy(row) {

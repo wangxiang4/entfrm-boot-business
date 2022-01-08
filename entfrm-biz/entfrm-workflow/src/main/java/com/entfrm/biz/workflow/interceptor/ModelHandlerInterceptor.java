@@ -26,7 +26,7 @@ public class ModelHandlerInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String servletPath = request.getServletPath();
 		EntfrmUser entfrmUser = SecurityUtil.getUser();
-		if (servletPath.startsWith("/app") || servletPath.startsWith("/idm")) {
+		if (!servletPath.endsWith("/bpmn20")) {
 			User currentUserObject = SecurityUtils.getCurrentUserObject();
 			if (currentUserObject == null || StrUtil.isBlank(currentUserObject.getId())) {
 				User user = new UserEntityImpl();

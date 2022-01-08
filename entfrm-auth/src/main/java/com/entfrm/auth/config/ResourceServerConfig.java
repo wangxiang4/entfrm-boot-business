@@ -36,15 +36,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter implem
             .antMatchers("/oauth/**",
                     "/common/**",
                     "/cms/article/doc/**",
-                    "/app/**" ,
                     "/captcha/**",
                     "/toolkit/dataset/api/**",
                     "/actuator/**",
                     "/api/**",
                     "/toolkit/form/**",
+                    "/app/rest/models/**/bpmn20",
                     // 测试接口发布时可以删除
                     "/system/**",
-                    "/app/rest/**",
                     "/workflow/extension/**",
                     "/workflow/model/resource",
                     "/workflow/extension/**").permitAll()

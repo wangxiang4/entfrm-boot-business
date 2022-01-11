@@ -149,6 +149,7 @@ export function handleTree(data, id, parentId, children, rootId) {
 
 
 /**
+ * todo: 待移除方法
  * 获取map中值-嵌套多层避免报错
  * @param {*} 源数据
  * @param {*} 选择源数据中需要的key

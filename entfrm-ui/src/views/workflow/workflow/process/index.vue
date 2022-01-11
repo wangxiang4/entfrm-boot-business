@@ -215,7 +215,7 @@ export default {
     },
     /** 处理流程定义启动 */
     handleProcessDefinitionStart (row) {
-      let processTitle = `发起流程【${row.name}】`
+      const formTitle = `${this.$store.getters.name} 在 ${this.parseTime(new Date(), '{y}-{m}-{d} {h}:{i}')} 发起了 [${row.name}]`
       getTaskDefinition( { processDefId: row.id }).then(({data}) => {
         this.$router.push({
           path: '/workflow/task/taskForm',
@@ -223,10 +223,9 @@ export default {
             processDefId: row.id,
             processDefKey: row.key,
             status: 'start',
-            title: processTitle,
+            formTitle: formTitle,
             formType: data.formType,
-            formUrl: data.formUrl,
-            formTitle: processTitle
+            formUrl: data.formUrl
           }
         })
       })

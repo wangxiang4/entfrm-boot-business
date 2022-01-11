@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 style="text-align:center">{{title}}</h4>
+    <h4 style="text-align:center">{{formTitle}}</h4>
     <el-tabs type="border-card" v-model="taskSelectedTab">
       <el-tab-pane label="表单信息" name="formInfo">
         <component v-if="formType === '2'" :class="formReadOnly?'readonly':''"
@@ -39,9 +39,9 @@
         <el-col :span="16">
           <el-form-item v-if="!procInsId"
                         label="流程标题"
-                        prop="title"
+                        prop="formTitle"
           >
-            <el-input v-model="title" placeholder="请输入流程标题"/>
+            <el-input v-model="formTitle" placeholder="请输入流程标题"/>
           </el-form-item>
           <el-form-item v-if="taskId"
                         label="审批信息"
@@ -160,7 +160,7 @@ export default {
       taskFormData: [],
       taskDefKey: '',
       status: '',
-      title: '',
+      formTitle: '',
       businessId: '',
       buttons: [],
       isCC: false,
@@ -276,7 +276,7 @@ export default {
               processDefId: this.processDefId,
               procInsId: data.procInsId,
               procDefName: '',
-              procInsName: this.title,
+              procInsName: this.formTitle,
               taskName: ''
             })
           }
@@ -296,7 +296,7 @@ export default {
             businessTable: businessTable,
             businessId: businessId,
             ...vars,
-            title: this.title,
+            title: this.formTitle,
             assignee: this.auditForm.assignee
           }).then(({data}) => {
             if (data.success) {
@@ -311,7 +311,7 @@ export default {
         this.$refs.form.submitStartFormData({
           processDefinitionId: this.processDefId,
           ...vars,
-          title: this.title,
+          title: this.formTitle,
           assignee: this.auditForm.assignee
         }, (data) => {
           if (data.success) {
@@ -460,7 +460,7 @@ export default {
       if (currentBtn.code && !currentBtn.code.startsWith('_flow_')) {
         vars[currentBtn.code] = true
       }
-      vars.title = this.title // 标题
+      vars.title = this.formTitle // 标题
       vars.assignee = this.auditForm.assignee // 指定的下一步骤处理人
       this.auditForm.type = currentBtn.code // 提交类型
       this.auditForm.status = currentBtn.name // 按钮文字

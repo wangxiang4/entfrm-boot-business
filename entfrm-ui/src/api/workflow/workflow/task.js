@@ -68,3 +68,20 @@ export function getProcessStartEventFormData (processDefId) {
     method: 'get'
   })
 }
+
+// 获取流程实例工作流图
+export function getProcessInsFlowChart (processInsId) {
+  return request({
+    url: '/workflow/task/getFlowChart/' + processInsId,
+    method: 'get'
+  })
+}
+
+
+// 获取流程定义工作流图
+export function getProcessDefFlowChart (processDefId) {
+  return request({
+    url: '/workflow/process/getFlowChart/' + processDefId,
+    method: 'get'
+  })
+}

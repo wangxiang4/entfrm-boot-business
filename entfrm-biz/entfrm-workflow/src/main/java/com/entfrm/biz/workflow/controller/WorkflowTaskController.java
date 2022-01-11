@@ -253,4 +253,10 @@ public class WorkflowTaskController {
         return R.ok("驳回成功!");
     }
 
+    /** 读取流程历史数据，用于渲染流程图 */
+    @GetMapping("/getFlowChart/{processInsId}")
+    public Map getFlowChart(@PathVariable String processInsId) {
+        return workflowTaskService.getDiagram(processInsId);
+    }
+
 }

@@ -11,23 +11,22 @@
         />
         <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
       </el-tab-pane>
-      <el-tab-pane v-if="procInsId" label="流程信息" name="processInfo">
+      <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
         <flow-time-line :historicTaskList="historicTaskList"/>
       </el-tab-pane>
-      <el-tab-pane label="流程图"  name="processChart">
-         <el-card class="box-card"  shadow="hover">
+      <el-tab-pane label="流程图" name="processChart">
+         <el-card class="box-card" shadow="hover">
             <div slot="header" class="clearfix">
               <span>流程图</span>
             </div>
-            <!--<flow-chart ref="chart1" v-if="procInsId" :processInstanceId="procInsId" />
-            <flow-chart ref="chart2" v-if="!procInsId" :processDefId="procDefId" />-->
+            <flowable-chart :options="processChat" style="height:100vh"/>
           </el-card>
       </el-tab-pane>
-      <el-tab-pane label="流转记录" v-if="procInsId" name="flowRecord">
+      <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
         <workflow-step :historicTaskList="historicTaskList"/>
       </el-tab-pane>
     </el-tabs>
-    <el-card v-if="!procInsId || taskId"
+    <el-card v-if="!processInsId || taskId"
              style="margin-top:10px;
              margin-bottom:66px"
     >
@@ -37,7 +36,7 @@
                label-width="120px"
       >
         <el-col :span="16">
-          <el-form-item v-if="!procInsId"
+          <el-form-item v-if="!processInsId"
                         label="流程标题"
                         prop="formTitle"
           >
@@ -133,7 +132,7 @@ import rollBackTaskNodes from './rollBackTaskNodes'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
-import { getProcessStartEventFormData } from '@/api/workflow/workflow/task'
+import { getProcessStartEventFormData, getProcessDefFlowChart, getProcessInsFlowChart } from '@/api/workflow/workflow/task'
 
 export default {
   name: 'TaskForm',
@@ -153,9 +152,9 @@ export default {
       taskSelectedTab: 'formInfo',
       historicTaskList: [],
       processDefId: '',
-      procInsId: '',
+      processInsId: '',
       formReadOnly: false,
-      procDefKey: '',
+      processDefKey: '',
       taskId: '',
       taskFormData: [],
       taskDefKey: '',
@@ -177,7 +176,8 @@ export default {
         status: '',
         userIds: null,
         assignee: null
-      }
+      },
+      processChat: {}
     }
   },
   watch: {
@@ -198,6 +198,16 @@ export default {
   },
   activated () {
     this.init()
+    // 加载流程图数据
+    if (this.processInsId) {
+      getProcessInsFlowChart(this.processInsId).then(response => {
+        this.processChat = response
+      })
+    } else {
+      getProcessDefFlowChart(this.processDefId).then(({data}) => {
+        this.processChat = { bpmnXml: data }
+      })
+    }
     if (this.formType === '2') { // 读取外置表单
       if (this.formUrl === '/404') {
         this.form = null

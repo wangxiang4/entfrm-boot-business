@@ -102,4 +102,11 @@ public interface WorkflowTaskService {
      */
     void addSignTask(String taskId, List<Integer> userIds, String comment, Boolean mark) throws Exception;
 
+
+    /**
+     * 读取流程历史数据,用于渲染流程图
+     * processInsId:流程实例ID
+     */
+    Map getDiagram(String processInsId);
+
 }

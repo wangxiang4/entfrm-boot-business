@@ -64,9 +64,7 @@
                         :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
                         prop="userIds"
           >
-            <user-select :value="auditForm.userIds"
-                         @getValue='(value) => {auditForm.userIds=value}'
-            >></user-select>
+            <user-select :value="auditForm.userIds" @getValue="(value) => { auditForm.userIds=value }"/>
           </el-form-item>
         </el-col>
         <el-col :span="16">
@@ -80,10 +78,7 @@
                         prop="assignee"
                         label="指定"
           >
-            <user-select :limit="1"
-                         :value="auditForm.assignee"
-                         @getValue='(value) => {auditForm.assignee=value}'
-            >></user-select>
+            <user-select :limit="1" :value="auditForm.assignee" @getValue="(value) => {auditForm.assignee=value}"/>
           </el-form-item>
         </el-col>
       </el-form>

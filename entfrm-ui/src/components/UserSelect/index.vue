@@ -4,8 +4,7 @@
               :size="size"
               :disabled="disabled"
               :readonly="readonly"
-              style="line-height:40px"
-              v-model="name"
+              v-model="label"
               class="input-with-select"
     >
       <el-button slot="append"
@@ -27,9 +26,7 @@ import UserSelectDialog from './UserSelectDialog'
 import { getUser } from '@/api/system/user'
 export default {
   name: 'UserSelect',
-  components: {
-    UserSelectDialog
-  },
+  components: { UserSelectDialog },
   props: {
     limit: Number,
     value: String,
@@ -52,7 +49,7 @@ export default {
   },
   data () {
     return {
-      name: '',
+      label: '',
       labelValue: this.value,
       selectData: []
     }
@@ -73,7 +70,7 @@ export default {
     },
     selectData: {
       handler (newVal) {
-        this.name = newVal.map(user => user.name).join(',')
+        this.label = newVal.map(user => user.userName).join(',')
       },
       immediate: true,
       deep: false
@@ -82,9 +79,9 @@ export default {
   methods: {
     selectUsersToInput (users) {
       this.selectData = users
-      this.labelValue = users.map(user => { return user.id }).join(',')
-      this.name = users.map(user => { return user.name }).join(',')
-      this.$emit('getValue', this.labelValue, this.name)
+      this.labelValue = users.map(user => user.id).join(',')
+      this.label = users.map(user => user.userName).join(',')
+      this.$emit('getValue', this.labelValue, this.label)
     },
     showUserSelect () {
       this.$refs.userSelect.init()
@@ -93,9 +90,6 @@ export default {
 }
 </script>
 <style>
-  .el-form-item__content .el-input-group {
-      vertical-align: middle;
-  }
  .el-tag + .el-tag {
     margin-left: 5px;
     margin-bottom: 5px;

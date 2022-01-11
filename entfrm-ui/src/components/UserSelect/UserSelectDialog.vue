@@ -2,7 +2,7 @@
   <div>
     <el-dialog :title="title"
                class="userDialog"
-               width="1000px"
+               width="155vh"
                :close-on-click-modal="false"
                :append-to-body="true"
                :visible.sync="visible"
@@ -31,7 +31,7 @@
           </el-card>
         </el-aside>
         <el-container>
-          <el-header style="text-align: left;font-size: 12px;height:30px">
+          <el-header style="text-align:left;font-size:12px;height:30px">
             <el-form ref="searchForm"
                      :model="searchForm"
                      size="small"
@@ -39,10 +39,10 @@
                      @keyup.enter.native="refreshList()"
                      @submit.native.prevent
             >
-              <el-form-item prop="loginName">
+              <el-form-item prop="userName">
                 <el-input size="small"
-                          v-model="searchForm.loginName"
-                          placeholder="登录名"
+                          v-model="searchForm.userName"
+                          placeholder="用户名称"
                           clearable
                 />
               </el-form-item>
@@ -65,10 +65,10 @@
                       size="small"
                       ref="userTable"
                       @selection-change="selectionChangeHandle"
-                      height="calc(100% - 40px)"
+                      height="calc(100% - 60px)"
                       style="width: 100%;"
             >
-              <el-table-column v-if="limit <= 1" header-align="center" align="center"  width="50">
+              <el-table-column v-if="limit <= 1" header-align="center" align="center" width="50">
                 <template slot-scope="scope">
                   <el-radio :label="scope.row.id"
                             :value="dataListAllSelections[0]&&dataListAllSelections[0].id"
@@ -76,17 +76,19 @@
                   ><span/></el-radio>
                 </template>
               </el-table-column>
-              <el-table-column type="selection" width="50" align="center"/>
+              <el-table-column v-else type="selection" width="50" align="center"/>
               <el-table-column label="用户编号" align="center" prop="id"/>
               <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true"/>
               <el-table-column label="用户昵称" align="center" prop="nickName" :show-overflow-tooltip="true"/>
               <el-table-column label="机构名称" align="center" prop="deptName" :show-overflow-tooltip="true"/>
             </el-table>
-            <pagination v-show="total>0"
-                        :total="total"
-                        :page.sync="searchForm.current"
-                        :limit.sync="searchForm.size"
-                        @pagination="pageChangeHandle"
+            <el-pagination :page-sizes="[5, 10, 50, 100]"
+                           :current-page="searchForm.current"
+                           :page-size="searchForm.size"
+                           :total="total"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           @size-change="sizeChangeHandle"
+                           @current-change="currentChangeHandle"
             />
           </el-main>
         </el-container>
@@ -96,7 +98,7 @@
                   closable
                   :disable-transitions="false"
                   @close="del(tag)"
-          >{{tag.name}}</el-tag>
+          >{{tag.userName}}</el-tag>
         </el-aside>
       </el-container>
       <span slot="footer" class="dialog-footer">
@@ -165,8 +167,8 @@ export default {
     },
     renderContent (h, { node, data, store }) {
       return (
-        <span class="custom-tree-node">
-          {data.type === '1' ? <i class="el-icon-user-solid"/> : <i class="el-icon-s-custom"/>}
+        <span>
+          {data.parentId == 0 ? <i class="el-icon-menu"/> : <i class="el-icon-s-custom"/>}
           <span class="text">{node.label}</span>
         </span>
       )
@@ -256,7 +258,7 @@ export default {
     /** 获取数据列表 */
     refreshList () {
       this.loading = true
-      listUser(this.queryParams).then(response => {
+      listUser(this.searchForm).then(response => {
           this.dataList = response.data
           this.total = response.total
           this.loading = false
@@ -270,7 +272,18 @@ export default {
         this.officeTreeData = data
       })
     },
-    pageChangeHandle () {
+    // 每页数
+    sizeChangeHandle (val) {
+      this.searchForm.size = val
+      this.searchForm.current = 1
+      this.refreshList()
+      this.$nextTick(() => {
+        this.changePageCoreRecordData()
+      })
+    },
+    // 当前页
+    currentChangeHandle (val) {
+      this.searchForm.current = val
       this.refreshList()
       this.$nextTick(() => {
         this.changePageCoreRecordData()
@@ -283,7 +296,7 @@ export default {
       })
     },
     handleNodeClick (node) {
-      this.searchForm.deptId = node.id
+      this.searchForm.deptId = node.deptId
       this.refreshList()
     },
     resetSearch () {
@@ -302,28 +315,32 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .org {
   height: 100%;
-  .el-card__header {
+
+  ::v-deep .el-card__header {
     padding: 10px;
   }
-  .el-card__body {
+
+  ::v-deep .el-card__body {
     padding: 10px;
     max-height: 520px;
     overflow: auto;
   }
 }
-.userDialog{
-  .el-dialog__body {
+.userDialog {
+  ::v-deep .el-dialog__body {
     padding: 10px 0px 0px 10px;
     color: #606266;
     font-size: 14px;
     word-break: break-all;
   }
-  .el-main {
+
+  ::v-deep .el-main {
     padding: 20px 20px 5px 20px;
-    .el-pagination{
+
+    ::v-deep .el-pagination{
       margin-top: 5px;
     }
   }

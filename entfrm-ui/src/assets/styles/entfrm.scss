@@ -263,3 +263,25 @@
  border-top: 1px solid #e8e8e8;
  border-radius: 0 0 4px 4px;
 }
+
+// workflow
+.workflow-form__footer {
+ position: fixed;
+ right: 0;
+ bottom: 0;
+ height: 66px;
+ z-index: 999;
+ /* margin-right: -20px;
+ margin-left: -20px; */
+ background: #fff;
+ -webkit-box-shadow: 0 -3px 5px 0 rgba(0,0,0,.12);
+ box-shadow: 0 -3px 5px 0 rgba(0,0,0,.12);
+ flex-flow: row nowrap;
+ justify-content: center;
+ align-items: center;
+ left: 230px;
+ display: flex;
+ -webkit-transition: inline-block 0.3s, left 0.3s, width 0.3s, margin-left 0.3s, font-size 0.3s;
+ transition: inline-block 0.3s, left 0.3s, width 0.3s, margin-left 0.3s, font-size 0.3s;
+ /* right: 20.125px; */
+}

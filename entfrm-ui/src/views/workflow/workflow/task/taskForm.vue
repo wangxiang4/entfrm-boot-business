@@ -89,7 +89,7 @@
         </el-col>
       </el-form>
     </el-card>
-    <div class="FlowFormFooter">
+    <div class="workflow-form__footer">
       <template v-for="(button, index) in buttons">
         <template  v-show="button.isHide === '0'">
           <el-button v-if="button.code !== '_flow_print'"
@@ -133,6 +133,8 @@ import rollBackTaskNodes from './rollBackTaskNodes'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
+import { getProcessStartEventFormData } from '@/api/workflow/workflow/task'
+
 export default {
   name: 'TaskForm',
   components: {
@@ -211,10 +213,8 @@ export default {
       }
       if (this.status === 'start') {
         // 读取启动表单配置
-        this.$http.get('/flowable/form/getStartFormData',
-          {params: {processDefinitionId: this.processDefId}}
-        ).then(({data}) => {
-          this.taskFormData = data.startFormData
+        getProcessStartEventFormData(this.processDefId).then(({data}) => {
+          this.taskFormData = data
         })
       } else {
         // 读取任务表单配置

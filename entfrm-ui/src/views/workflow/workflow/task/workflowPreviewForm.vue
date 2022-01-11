@@ -40,19 +40,19 @@ export default {
             this.options = eval('(' + data.json + ')')
             setTimeout(() => {
               const disableIds = []
-              const hideIds = []
+              const showIds = []
               this.taskFormData.forEach((item) => {
                 if (item.value !== undefined) {
                   this.formData[`${item.id}`] = item.value
                 }
-                if (item.readable === false) {
-                  hideIds.push(`${item.id}`)
+                if (item.readable === true) {
+                  showIds.push(`${item.id}`)
                 }
                 if (item.writable === false) {
                   disableIds.push(`${item.id}`)
                 }
               })
-              this.$refs['loquatForm'].setHideIds(hideIds)
+              this.$refs['loquatForm'].setShowIds(showIds)
               this.$refs['loquatForm'].setDisableIds(disableIds)
             }, 500)
           } catch (e) { this.msgError(e) }

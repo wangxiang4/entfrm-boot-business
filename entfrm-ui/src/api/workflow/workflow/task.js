@@ -60,3 +60,11 @@ export function getTaskDefinition (query) {
     params: query
   })
 }
+
+// 获取流程开始事件表单数据
+export function getProcessStartEventFormData (processDefId) {
+  return request({
+    url: '/workflow/form/getProcessStartEventFormData/' + processDefId,
+    method: 'get'
+  })
+}

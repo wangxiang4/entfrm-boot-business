@@ -3,7 +3,6 @@
    <loquat-form v-if="visible"
                 ref="loquatForm"
                 :v-model="formData"
-                style="height:calc(100vh - 190px)"
                 :option="options"
    />
  </div>
@@ -39,21 +38,23 @@ export default {
           try {
             if (!data.json) throw new Error('当前数据没有json结构体')
             this.options = eval('(' + data.json + ')')
-            const disableIds = []
-            const hideIds = []
-            this.taskFormData.forEach((item) => {
-              if (item.value !== undefined) {
-                this.formData[`${item.id}`] = item.value
-              }
-              if (item.readable === false) {
-                hideIds.push(`${item.id}`)
-              }
-              if (item.writable === false) {
-                disableIds.push(`${item.id}`)
-              }
-            })
-            this.$refs.loquatForm.setHideIds(hideIds)
-            this.$refs.loquatForm.setDisableIds(disableIds)
+            setTimeout(() => {
+              const disableIds = []
+              const hideIds = []
+              this.taskFormData.forEach((item) => {
+                if (item.value !== undefined) {
+                  this.formData[`${item.id}`] = item.value
+                }
+                if (item.readable === false) {
+                  hideIds.push(`${item.id}`)
+                }
+                if (item.writable === false) {
+                  disableIds.push(`${item.id}`)
+                }
+              })
+              this.$refs['loquatForm'].setHideIds(hideIds)
+              this.$refs['loquatForm'].setDisableIds(disableIds)
+            }, 500)
           } catch (e) { this.msgError(e) }
           this.loading = false
           this.visible = true

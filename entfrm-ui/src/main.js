@@ -30,6 +30,7 @@ import {
   vGet
 } from "@/utils/entfrm";
 import Pagination from "@/components/Pagination";
+import Print from 'vue-print-nb'
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
 // 表单设计器
@@ -127,7 +128,7 @@ Vue.prototype.msgInfo = function (msg) {
 // 全局组件挂载
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
-
+Vue.use(Print)
 Vue.use(permission)
 
 //表单设计器

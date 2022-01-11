@@ -149,6 +149,19 @@ export const constantRoutes = [
         meta: { title: '版本管理' }
       }
     ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/workflow/task/taskForm',
+        component: (resolve) => require(['@/views/workflow/workflow/task/taskForm'], resolve),
+        name: 'TaskForm',
+        meta: { title: '流程表单' }
+      }
+    ]
   }
 ]
 

@@ -135,11 +135,13 @@
 <script>
 import { listProcessDefinition } from '@/api/workflow/workflow/process'
 import { listCategory } from '@/api/workflow/extension/category'
+import { getTaskDefinition } from '@/api/workflow/workflow/task'
 import treeSelect from '@/components/TreeSelect'
 import XEUtils from 'xe-utils'
+import taskForm from '../task/taskForm'
 export default {
   name: 'Form',
-  components: { treeSelect },
+  components: { treeSelect, taskForm },
   data () {
     return {
       // 遮罩层
@@ -213,7 +215,21 @@ export default {
     },
     /** 处理流程定义启动 */
     handleProcessDefinitionStart (row) {
-
+      let processTitle = `发起流程【${row.name}】`
+      getTaskDefinition( { processDefId: row.id }).then(({data}) => {
+        this.$router.push({
+          path: '/workflow/task/taskForm',
+          query: {
+            procDefId: row.id,
+            procDefKey: row.key,
+            status: 'start',
+            title: processTitle,
+            formType: data.formType,
+            formUrl: data.formUrl,
+            formTitle: processTitle
+          }
+        })
+      })
     }
   }
 }

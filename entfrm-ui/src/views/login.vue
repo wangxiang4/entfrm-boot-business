@@ -52,7 +52,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2020-2030  entfrm团队 All Rights Reserved. <b>entfrm-ui v2.1</b></span>
+      <span>Copyright © 2020-2030  entfrm团队 All Rights Reserved. <b>entfrm-ui v2.1</b> 湘ICP备2022000478号-1 </span>
     </div>
   </div>
 </template>

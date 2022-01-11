@@ -95,11 +95,12 @@ public class WorkflowTaskController {
         if (formTypeNode != null) {
             formType = formTypeNode.getValue();
             formReadOnly = "true".equals(formReadOnlyNode.getValue());
-        } else {
-            if (StrUtil.isBlank(formKey)) {
-                formType = "1";
-            } else if (formKey.indexOf("/")>=0 || formKey.length() != 32) {
+        }
+        if (StrUtil.isNotBlank(formKey)) {
+            if (formKey.indexOf("/")>=0 && formKey.length() != 32) {
                 formType = "2";
+            } else  {
+                formType = "1";
             }
         }
 

@@ -47,6 +47,9 @@
 			<if test="ew.categoryId != null and ew.categoryId != ''">
 				AND a.category_id = #{ew.categoryId}
 			</if>
+			<if test="ew.formDefinitionJson != null and ew.formDefinitionJson.status != null and ew.formDefinitionJson.status != ''">
+				AND c.status = #{ew.formDefinitionJson.status}
+			</if>
 		</where>
 		ORDER BY a.create_time ASC
 	</select>

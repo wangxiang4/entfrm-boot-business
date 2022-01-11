@@ -1,77 +1,62 @@
 import request from '@/utils/request'
 
-// 查询任务列表
-export function listTask(query) {
+// 查询部门下拉树结构
+export function deptTree () {
   return request({
-    url: '/workflow/task/list',
+    url: '/system/dept/deptTree',
+    method: 'get'
+  })
+}
+
+// 查询用户列表
+export function listUser (query) {
+  return request({
+    url: '/system/user/list',
     method: 'get',
     params: query
   })
 }
 
-
-// 查询任务详细
-export function getTskDef(data) {
-  return  request({
-    url: '/workflow/task/getTskDef',
-    method: 'get',
-    params: data
-  })
-}
-
-
-
-
-// 外置表单审批
-export function audit(data) {
+/** 启动任务流程定义 */
+export function startTaskProcessDefinition (data) {
   return request({
-    url: '/workflow/task/audit',
+    url: '/workflow/process/startProcessDefinition',
     method: 'post',
     data: data
   })
 }
 
-
-// 动态表单审批
-export function submitTaskFormData(data) {
+/** 启动表单流程定义 */
+export function startFormProcessDefinition (data) {
   return request({
-    url: '/workflow/form/submitTaskFormData',
-    method: 'put',
+    url: '/workflow/form/startProcessDefinition',
+    method: 'post',
     data: data
   })
 }
 
-
-// 获取动态表单数据
-export function getFormData(code,procInsId) {
+/** 提交表单任务 */
+export function auditFormTask (data) {
   return request({
-    url: '/workflow/form/getTaskFormData',
+    url: '/workflow/form/auditTask',
+    method: 'post',
+    data: data
+  })
+}
+
+/** 可回滚任务列表 */
+export function rollBackTaskList (taskId) {
+  return request({
+    url: '/workflow/form/rollBackTaskList/' + taskId,
+    method: 'get'
+  })
+}
+
+/** 获取任务定义信息 */
+export function getTaskDefinition (query) {
+  return request({
+    url: '/workflow/task/getTaskDefinition/',
     method: 'get',
-    params: {code,procInsId}
+    params: query
   })
 }
-
-
-
-// 获取可驳回的节点
-export function backNodes(data) {
-  return request({
-    url: '/workflow/task/backNodes',
-    method: 'post',
-    params: data
-  })
-}
-
-
-//驳回
-export function back(data) {
-  return request({
-    url: '/workflow/task/back',
-    method: 'post',
-    params: data
-  })
-}
-
-
-
-

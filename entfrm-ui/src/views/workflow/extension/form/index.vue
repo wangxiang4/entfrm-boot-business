@@ -475,7 +475,8 @@ export default {
     },
     /** 处理版本管理 */
     handleVersionManage (row) {
-      this.$router.push({ name: 'FormDefinitionJson', params: { id: row.id } })
+      const tabTitle = `流程表单【${row.name}】`
+      this.$router.push({ name: 'FormDefinitionJson', params: { id: row.id }, query: { title: tabTitle } })
     },
     /** 处理工作流表单设计 */
     handleFlowFormDesign (row) {

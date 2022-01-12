@@ -138,28 +138,22 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/form',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/formDefinitionJson/:id',
-        component: (resolve) => require(['@/views/workflow/extension/form/helper/formDefinitionJson'], resolve),
-        name: 'FormDefinitionJson',
-        meta: { title: '版本管理' }
-      }
-    ]
-  },
-  {
     path: '/',
+    name: 'layout',
     component: Layout,
-    hidden: true,
+    meta: { title: '整体布局' },
     children: [
       {
         path: '/workflow/task/taskForm',
-        component: (resolve) => require(['@/views/workflow/workflow/task/taskForm'], resolve),
+        component: require('@/views/workflow/workflow/task/taskForm.vue').default,
         name: 'TaskForm',
         meta: { title: '流程表单' }
+      },
+      {
+        path: '/form/formDefinitionJson/:id',
+        component: require('@/views/workflow/extension/form/helper/formDefinitionJson.vue').default,
+        name: 'FormDefinitionJson',
+        meta: { title: '版本管理' }
       }
     ]
   }

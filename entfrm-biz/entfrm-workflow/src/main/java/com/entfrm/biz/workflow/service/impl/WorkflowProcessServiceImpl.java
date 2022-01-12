@@ -134,6 +134,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<ProcessInstance> processInstanceList = query.listPage((current - 1) * size, size);
 
         for (ProcessInstance processInstance : processInstanceList) {
@@ -169,6 +170,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<HistoricProcessInstance> historicProcessInstanceList = query.listPage((current - 1) * size, size);
 
         for (HistoricProcessInstance historicProcessInstance : historicProcessInstanceList) {
@@ -394,6 +396,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<HistoricProcessInstance> historicProcessInstanceList = query.involvedUser(SecurityUtil.getUser().getId() + "").listPage((current - 1) * size, size);
 
         for (HistoricProcessInstance historicProcessInstance : historicProcessInstanceList) {

@@ -66,7 +66,7 @@ export default {
     },
     startFormProcessDefinition (data, callback) {
       this.loading = true
-      const processVarsity = Object.assign(data.vars, this.formData)
+      const processVarsity = Object.assign(data.vars || {}, this.formData)
       startFormProcessDefinition({
         ...data,
         vars: processVarsity
@@ -79,7 +79,7 @@ export default {
     },
     auditFormTask (data, callback) {
       this.loading = true
-      const processVarsity = Object.assign(data.vars, this.formData)
+      const processVarsity = Object.assign(data.vars || {}, this.formData)
       auditFormTask({
         ...data,
         vars: processVarsity

@@ -111,6 +111,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<Task> taskList = query.listPage((current - 1) * size, size);
 
         for (Task task : taskList) {
@@ -160,6 +161,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
 
         IPage result = new Page(current, size);
         result.setTotal(query.count());
+        result.setRecords(CollectionUtil.newArrayList());
         List<HistoricTaskInstance> historicTaskList = query.listPage((current - 1) * size, size);
 
         for (HistoricTaskInstance historicTask : historicTaskList) {

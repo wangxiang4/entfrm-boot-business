@@ -175,3 +175,11 @@ export function delegateTask (query) {
   })
 }
 
+// 代表任务列表
+export function listTodoTask (query) {
+  return request({
+    url: '/workflow/task/list',
+    method: 'get',
+    params: query
+  })
+}

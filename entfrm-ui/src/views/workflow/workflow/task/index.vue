@@ -60,15 +60,15 @@
     <el-table v-loading="loading" :data="dataList">
       <el-table-column type="selection" header-align="center" width="50" align="center"/>
       <el-table-column prop="vars.title" show-overflow-tooltip label="实例标题"/>
-      <el-table-column prop="processDefinitionName" show-overflow-tooltip label="流程名称"/>
-      <el-table-column prop="task.name" label="当前环节">
+      <el-table-column prop="processDefName" show-overflow-tooltip label="流程名称"/>
+      <el-table-column prop="taskInfo.name" label="当前环节">
         <template slot-scope="scope">
-          <el-tag>{{scope.row.task.name}}</el-tag>
+          <el-tag>{{scope.row.taskInfo.name}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="vars.userName" label="流程发起人"/>
-      <el-table-column prop="task.createTime" show-overflow-tooltip label="创建时间">
-        <template slot-scope="scope">{{parseTime(scope.row.task.createTime)}}</template>
+      <el-table-column prop="taskInfo.createTime" show-overflow-tooltip label="创建时间">
+        <template slot-scope="scope">{{parseTime(scope.row.taskInfo.createTime)}}</template>
       </el-table-column>
       <el-table-column fixed="right"
                        header-align="center"

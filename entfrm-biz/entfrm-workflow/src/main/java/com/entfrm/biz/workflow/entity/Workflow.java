@@ -39,12 +39,12 @@ public class Workflow implements Serializable {
     /** 任务处理人名称 */
     private String assigneeName;
 
+    /** 流程表单key */
+    private String formKey;
     /** 表单类型(1:动态表单,2:外置表单) */
     private String formType;
     /** 流程表单是否只读 */
     private boolean formReadOnly;
-    /** 流程表单地址 */
-    private String formUrl;
 
     /** 流程标题 */
     private String title;

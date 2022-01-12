@@ -114,7 +114,7 @@ public class WorkflowTaskController {
             }
         }
 
-        workflow.setFormUrl(formKey);
+        workflow.setFormKey(formKey);
         workflow.setFormReadOnly(formReadOnly);
         workflow.setFormType(formType);
         return R.ok(workflow);

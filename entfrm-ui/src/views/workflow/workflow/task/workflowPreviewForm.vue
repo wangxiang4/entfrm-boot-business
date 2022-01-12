@@ -81,7 +81,7 @@ export default {
       this.loading = true
       const processVarsity = Object.assign(data.vars, this.formData)
       auditFormTask({
-        data,
+        ...data,
         vars: processVarsity
       }).then(response => {
         this.visible = false

@@ -3,16 +3,16 @@
     <h4 style="text-align:center">{{formTitle}}</h4>
     <el-tabs type="border-card" v-model="taskSelectedTab">
       <el-tab-pane label="表单信息" name="formInfo">
-        <component v-if="formType === '2'" :class="formReadOnly?'readonly':''"
+        <component v-if="formType === '2'"
                    ref="form"
+                   :is="formPath"
                    :formReadOnly="formReadOnly"
                    :businessId="businessId"
-                   :is="form"
         />
         <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
       </el-tab-pane>
       <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
-        <flow-time-line :historicTaskList="historicTaskList"/>
+        <workflow-time-line :historicTaskList="historicTaskList"/>
       </el-tab-pane>
       <el-tab-pane label="流程图" name="processChart">
          <el-card class="box-card" shadow="hover">
@@ -26,10 +26,7 @@
         <workflow-step :historicTaskList="historicTaskList"/>
       </el-tab-pane>
     </el-tabs>
-    <el-card v-if="!processInsId || taskId"
-             style="margin-top:10px;
-             margin-bottom:66px"
-    >
+    <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
       <el-form size="small"
                ref="auditForm"
                :model="auditForm"
@@ -85,7 +82,7 @@
     </el-card>
     <div class="workflow-form__footer">
       <template v-for="(button, index) in buttons">
-        <template  v-show="button.isHide === '0'">
+        <template v-show="button.isHide === '0'">
           <el-button v-if="button.code !== '_flow_print'"
                      plain
                      type="primary"
@@ -102,7 +99,7 @@
         </template>
       </template>
     </div>
-    <roll-back-task-nodes ref="rollBackTaskNodes " @getRollBackTaskDefKey="back"/>
+    <roll-back-task-nodes ref="rollBackTaskNodes" @getRollBackTaskDefKey="back"/>
     <user-select-dialog title="选择转办用户"
                         ref="transferUserSelectDialog"
                         :limit="1"
@@ -111,7 +108,7 @@
     <user-select-dialog title="选择委派用户"
                         ref="delegateUserSelectDialog"
                         :limit="1"
-                        @doSubmit="selectUsersToDelateTask"
+                        @doSubmit="selectUsersToDeleteTask"
     />
     <user-select-dialog title="选择加签用户"
                         ref="addSignTaskUserSelectDialog"
@@ -127,7 +124,23 @@ import rollBackTaskNodes from './rollBackTaskNodes'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
-import { getProcessStartEventFormData, getProcessDefFlowChart, getProcessInsFlowChart } from '@/api/workflow/workflow/task'
+import {
+  getProcessStartEventFormData,
+  getProcessDefFlowChart,
+  getProcessInsFlowChart,
+  getTaskFormData,
+  findByDefIdAndTaskIdAndKey,
+  getHistoryFlowChangeList,
+  workflowCopySave,
+  startProcessDefinition,
+  auditTask,
+  rejectTask,
+  rollBackTaskList,
+  addSignTask,
+  transferTask,
+  delegateTask
+} from '@/api/workflow/workflow/task'
+import { stopProcessInstance } from '@/api/workflow/workflow/process'
 
 export default {
   name: 'TaskForm',
@@ -141,18 +154,18 @@ export default {
   },
   data () {
     return {
-      form: null,
+      formKey: '',
       formType: '',
-      formUrl: '',
+      formPath: '',
+      formReadOnly: false,
       taskSelectedTab: 'formInfo',
       historicTaskList: [],
       processDefId: '',
       processInsId: '',
-      formReadOnly: false,
       processDefKey: '',
       taskId: '',
-      taskFormData: [],
       taskDefKey: '',
+      taskFormData: [],
       status: '',
       formTitle: '',
       businessId: '',
@@ -167,28 +180,12 @@ export default {
       },
       auditForm: {
         message: '',
-        type: '',
-        status: '',
+        mesCode: '',
+        mesName: '',
         userIds: null,
         assignee: null
       },
       processChat: {}
-    }
-  },
-  watch: {
-    isAssign (val) {
-      if (!val) {
-        this.assignee = null
-      }
-    },
-    taskSelectedTab (val) {
-      if (val === 'form-third') {
-        if (this.procInsId) {
-          this.$refs.chart1.init()
-        } else {
-          this.$refs.chart2.init()
-        }
-      }
     }
   },
   activated () {
@@ -203,51 +200,49 @@ export default {
         this.processChat = { bpmnXml: data }
       })
     }
-    if (this.formType === '2') { // 读取外置表单
-      if (this.formUrl === '/404') {
-        this.form = null
+    // 读取外置表单
+    if (this.formType === '2') {
+      if (this.formKey === '/404') {
+        this.formPath = ''
         this.$message.info('没有关联流程表单!')
       } else {
-        this.form = import(`@/views/${this.formUrl}.vue`)
+        this.formPath = require('@/views' + this.formKey + '.vue').default
       }
-    } else { // 读取动态表单
-      if (this.formUrl === '/404') {
+    // 读取动态表单
+    } else {
+      if (this.formKey === '/404') {
         this.$refs.form.init('')
       } else {
-        this.$refs.form.init(this.formUrl)
+        this.$refs.form.init(this.formKey)
       }
+      // 获取启动表单数据
       if (this.status === 'start') {
-        // 读取启动表单配置
         getProcessStartEventFormData(this.processDefId).then(({data}) => {
           this.taskFormData = data
         })
+      // 获取任务表单数据
       } else {
-        // 读取任务表单配置
-        this.$http.get('/flowable/form/getTaskFormData',
-          {params: {taskId: this.taskId}}
-        ).then(({data}) => {
+        getTaskFormData(this.taskId).then(({data}) => {
           this.taskFormData = data.taskFormData
         })
       }
     }
     // 读取按钮配置
     if (this.status === 'start') {
-      this.buttons = [{code: '_flow_start', name: '启动', isHide: '0'}]
-    } else if (this.procDefKey && this.taskDefKey) {
-      // 读取按钮
-      this.$http.get('/extension/taskDefExtension/queryByDefIdAndTaskId', {params: {
-          processDefId: this.procDefKey,
-          taskDefId: this.taskDefKey
-        }}).then(({data}) => {
-        if (data.success) {
-          this.buttons = data.taskDefExtension.flowButtonList
-        }
+      this.buttons = [{ code: '_flow_start', name: '启动', isHide: '0' }]
+    } else if (this.processDefKey && this.taskDefKey) {
+      // 获取流程设计器配置按钮
+      findByDefIdAndTaskIdAndKey({
+        processDefId: this.processDefKey,
+        activityDefId: this.taskDefKey
+      }).then(({ data }) => {
+        this.buttons = data.workflowButtonList
       })
     }
     // 读取历史任务列表
-    if (this.procInsId) {
-      this.$http.get(`/flowable/task/historicTaskList?procInsId=${this.procInsId}`).then(({data}) => {
-        this.historicTaskList = data.historicTaskList
+    if (this.processInsId) {
+      getHistoryFlowChangeList(this.processInsId).then(({ data }) => {
+        this.historicTaskList = data
       })
     }
   },
@@ -258,7 +253,7 @@ export default {
       this.processInsId = this.$route.query.processInsId
       this.processDefKey = this.$route.query.processDefKey
       this.formType = this.$route.query.formType
-      this.formUrl = this.$route.query.formUrl
+      this.formKey = this.$route.query.formKey
       this.taskId = this.$route.query.taskId
       this.taskDefKey = this.$route.query.taskDefKey
       this.status = this.$route.query.status
@@ -276,186 +271,193 @@ export default {
       if (this.isCC && this.auditForm.userIds) {
         this.$refs['auditForm'].validate((valid) => {
           if (valid) {
-            this.$http.post('/extension/flowCopy/save', {
-              userIds: this.auditForm.userIds,
+            workflowCopySave(this.auditForm.userIds, {
               processDefId: this.processDefId,
-              procInsId: data.procInsId,
-              procDefName: '',
-              procInsName: this.formTitle,
+              processInsId: data.processInsId,
+              processDefName: '',
+              processInsName: this.formTitle,
               taskName: ''
             })
           }
         })
       }
     },
-    // 暂存草稿
+    /** 暂存草稿 */
     save () {
-
     },
-    // 启动流程
+    /** 启动流程 */
     start (vars) {
-      if (this.formType === '2') { // 外置表单
+      // 外置表单
+      if (this.formType === '2') {
         this.$refs.form.saveForm((businessTable, businessId) => {
-          this.$http.post('/flowable/task/start', {
-            procDefKey: this.procDefKey,
+          startProcessDefinition({
+            processDefKey: this.processDefKey,
             businessTable: businessTable,
             businessId: businessId,
             ...vars,
             title: this.formTitle,
-            assignee: this.auditForm.assignee
+            assignee: this.auditForm.assignee,
           }).then(({data}) => {
-            if (data.success) {
-              this.$message.success(data.msg)
-              this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-              this.$router.push('/flowable/task/TodoList')
-              this.cc(data)
-            }
+            this.$message.success(data.msg)
+            this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+            this.$router.push('/workflow/workflow/task/TodoList')
+            this.cc({ processInsId: data })
           })
         })
-      } else { // 动态表单
-        this.$refs.form.submitStartFormData({
-          processDefinitionId: this.processDefId,
+      // 动态表单
+      } else {
+        this.$refs.form.startFormProcessDefinition({
+          processDefId: this.processDefId,
           ...vars,
           title: this.formTitle,
           assignee: this.auditForm.assignee
-        }, (data) => {
-          if (data.success) {
-            this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/flowable/task/TodoList')
-            this.cc(data)
-          }
+        }, ({data}) => {
+          this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+          this.$router.push('/workflow/workflow/task/TodoList')
+          this.cc({ processInsId: data })
         })
       }
     },
-    // 同意
+    /** 同意 */
     agree (vars) {
       this.commit(vars) // 同意
     },
-    // 驳回
+    /** 驳回 */
     reject () {
       this.$confirm(`确定驳回流程吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/flowable/task/backNodes', {
-          taskId: this.taskId,
-          ...this.auditForm}).then(({data}) => {
-            let backNodes = data.backNodes
-            if (backNodes.length > 0) {
-              let backTaskDefKey = backNodes[backNodes.length - 1].taskDefKey
-              this.back(backTaskDefKey)
-            }
-          })
+        rollBackTaskList(this.taskId).then(({ data }) => {
+          if (data.length > 0) {
+            let backTaskDefKey = data[data.length - 1].taskDefKey
+            this.back(backTaskDefKey)
+          }
+        })
       })
     },
-    // 驳回到任意节点
+    /** 驳回到任意节点 */
     turnBack () {
       this.$refs.taskBackNodes.init(this.taskId)
     },
-    // 回退到任意节点
+    /** 回退到任意节点 */
     back (backTaskDefKey) {
-      this.$http.post('/flowable/task/back', {
-        taskId: this.taskId,
-        backTaskDefKey: backTaskDefKey,
-        ...this.auditForm
+      rejectTask({
+        currentTaskId: this.taskId,
+        rollBackTaskDefKey: backTaskDefKey,
+        comment: this.auditForm
       }).then(({data}) => {
-        if (data.success) {
-          this.$message.success(data.msg)
-          this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/flowable/task/TodoList')
-          this.cc(data)
-        }
+        this.$message.success(data.msg)
+        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+        this.$router.push('/workflow/workflow/task/TodoList')
+        this.cc({ processInsId: data })
       })
     },
-    // 加签
+    /** 加签 */
     addMultiInstance () {
       // this.$refs.addSignTaskUserSelectDialog.init()
     },
     selectUsersToAddSignTask (users) {
-      let userIds = users.map((user) => {
-        return user.id
-      }).join(',')
-      this.$http.post('/flowable/task/addSignTask', {taskId: this.taskId, userIds: JSON.stringify(userIds), comment: '', flag: false}).then(({data}) => {
-        this.$message.success(data.msg)
+      const userIds = users.map(user => user.id).join(',')
+      addSignTask({
+        taskId: this.taskId,
+        userIds: userIds,
+        comment: '',
+        mark: false
+      }).then(({ data }) => {
+        this.$message.success(data)
       })
     },
-    // 减签
+    /** 减签 */
     delMultiInstance () {
-
     },
-    // 转办
+    /** 转办 */
     transfer () {
       this.$refs.transferUserSelectDialog.init()
     },
     selectUsersToTransferTask (user) {
-      this.$http.post('/flowable/task/transfer', {taskId: this.taskId, userId: user[0].id}).then(({data}) => {
-        this.$message.success(data.msg)
-        this.$router.push('/flowable/task/TodoList')
+      transferTask({
+        askId: this.taskId, userId: user[0].id
+      }).then(({ data }) => {
+        this.$message.success(data)
+        this.$router.push('/workflow/workflow/task/TodoList')
       })
     },
-    // 委托
+    /** 委托 */
     delegate () {
       this.$refs.delegateUserSelectDialog.init()
     },
-    selectUsersToDelateTask (user) {
-      this.$http.post('/flowable/task/delegate', {taskId: this.taskId, userId: user[0].id}).then(({data}) => {
-        this.$message.success(data.msg)
+    selectUsersToDeleteTask (user) {
+      delegateTask({
+        taskId: this.taskId,
+        userId: user[0].id
+      }).then(({ data }) => {
+        this.$message.success(data)
         this.$router.push('/flowable/task/TodoList')
       })
     },
-    // 终止
+    /** 终止 */
     stop () {
       this.$confirm(`确定终止流程吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/flowable/process/stop', {id: this.procInsId, ...this.auditForm}).then(({data}) => {
-          this.$message.success(data.msg)
-          this.$router.push('/flowable/task/TodoList')
+        stopProcessInstance({
+          processInsId: this.processInsId,
+          ...this.auditForm
+        }).then(({ data }) => {
+          this.$message.success(data)
+          this.$router.push('/workflow/workflow/task/TodoList')
         })
       })
     },
-    // 打印
+    /** 打印 */
     print () {
-
     },
-    // 自定义按钮提交
+    /** 自定义按钮提交 */
     commit (vars) {
-      if (this.formType === '2') { // 外置表单
+      // 外置表单
+      if (this.formType === '2') {
         this.$refs.form.saveForm((businessTable, businessId) => {
-          this.$http.post('/flowable/task/audit', {
+          auditTask({
             taskId: this.taskId,
             taskDefKey: this.taskDefKey,
-            procInsId: this.procInsId,
+            processInsId: this.processInsId,
             processDefId: this.processDefId,
             vars: vars,
-            comment: this.auditForm,
+            activityCommentInfo: this.auditForm,
             assignee: this.auditForm.assignee
           }).then(({data}) => {
             if (data.success) {
               this.$message.success(data.msg)
               this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-              this.$router.push('/flowable/task/TodoList')
+              this.$router.push('/workflow/workflow/task/TodoList')
               this.cc(data)
             }
           })
         })
-      } else { // 动态表单
-        this.$refs.form.submitTaskFormData(vars, this.procInsId, this.taskId, this.auditForm.assignee, this.auditForm, (data) => {
+      // 动态表单
+      } else {
+        this.$refs.form.auditFormTask({
+          taskId: this.taskId,
+          processInsId: this.processInsId,
+          vars: vars,
+          activityCommentInfo: this.auditForm,
+          assignee: this.auditForm.assignee
+        }, ({ data }) => {
           if (data.success) {
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/flowable/task/TodoList')
+            this.$router.push('/workflow/workflow/task/TodoList')
             this.cc(data)
           }
         })
       }
     },
-
     submit (currentBtn, buttons) {
-      let vars = {} // 存储流程变量
-
+      // 存储流程变量
+      let vars = {}
       // 把当前操作对应的自定义按钮(以_flow_开头的是系统按钮，排除在外）的编码，存储为对应的流程变量，值设置为true，其余自定义按钮编码对应的流程变量值为false。
       buttons.forEach((btn) => {
         if (btn.code && !btn.code.startsWith('_flow_')) {
@@ -465,10 +467,14 @@ export default {
       if (currentBtn.code && !currentBtn.code.startsWith('_flow_')) {
         vars[currentBtn.code] = true
       }
-      vars.title = this.formTitle // 标题
-      vars.assignee = this.auditForm.assignee // 指定的下一步骤处理人
-      this.auditForm.type = currentBtn.code // 提交类型
-      this.auditForm.status = currentBtn.name // 按钮文字
+      // 流程标题
+      vars.title = this.formTitle
+      // 指定的下一步骤处理人
+      vars.assignee = this.auditForm.assignee
+      // 提交类型
+      this.auditForm.mesCode = currentBtn.code
+      // 按钮文字
+      this.auditForm.mesName = currentBtn.name
       switch (currentBtn.code) {
         case '_flow_start': // 自动流程
           this.start(vars)

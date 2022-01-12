@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.entfrm.biz.extension.mapper.WorkflowCopyMapper">
+
+    <sql id="WorkflowCopyColumns">
+        a.id AS "id",
+        a.user_id AS "userId",
+        a.process_def_id AS "processDefId",
+        a.process_ins_id AS "processInsId",
+        a.task_name AS "taskName",
+        a.process_def_name AS "processDefName",
+        a.process_ins_name AS "processInsName",
+        a.create_by AS "createBy",
+        a.create_time AS "createTime"
+    </sql>
+
+    <sql id="WorkflowCopyJoins">
+        LEFT JOIN sys_user b ON a.user_id = b.id
+    </sql>
+
+    <select id="selectById" resultType="com.entfrm.biz.extension.entity.WorkflowCopy" >
+        SELECT
+        <include refid="WorkflowCopyColumns"/>
+        FROM act_extension_cc a
+        <include refid="WorkflowCopyJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.entfrm.biz.extension.entity.WorkflowCopy" >
+        SELECT
+        <include refid="WorkflowCopyColumns"/>
+        FROM act_extension_cc a
+        <include refid="WorkflowCopyJoins"/>
+        <where>
+            a.user_id = #{ew.userId}
+            <if test="ew.processDefName != null and ew.processDefName != ''">
+                AND a.process_def_name LIKE CONCAT('%', #{ew.processDefName}, '%')
+            </if>
+            <if test="ew.procInsName != null and ew.procInsName != ''">
+                AND a.process_ins_name LIKE CONCAT('%', #{ew.processInsName}, '%')
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

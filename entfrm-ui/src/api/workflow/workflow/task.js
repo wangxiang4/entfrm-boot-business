@@ -17,7 +17,7 @@ export function listUser (query) {
   })
 }
 
-/** 启动任务流程定义 */
+// 启动任务流程定义
 export function startTaskProcessDefinition (data) {
   return request({
     url: '/workflow/process/startProcessDefinition',
@@ -26,7 +26,7 @@ export function startTaskProcessDefinition (data) {
   })
 }
 
-/** 启动表单流程定义 */
+// 启动表单流程定义
 export function startFormProcessDefinition (data) {
   return request({
     url: '/workflow/form/startProcessDefinition',
@@ -35,7 +35,7 @@ export function startFormProcessDefinition (data) {
   })
 }
 
-/** 提交表单任务 */
+// 提交表单任务
 export function auditFormTask (data) {
   return request({
     url: '/workflow/form/auditTask',
@@ -44,7 +44,7 @@ export function auditFormTask (data) {
   })
 }
 
-/** 可回滚任务列表 */
+// 可回滚任务列表
 export function rollBackTaskList (taskId) {
   return request({
     url: '/workflow/form/rollBackTaskList/' + taskId,
@@ -52,7 +52,7 @@ export function rollBackTaskList (taskId) {
   })
 }
 
-/** 获取任务定义信息 */
+// 获取任务定义信息
 export function getTaskDefinition (query) {
   return request({
     url: '/workflow/task/getTaskDefinition/',
@@ -85,3 +85,93 @@ export function getProcessDefFlowChart (processDefId) {
     method: 'get'
   })
 }
+
+// 获取任务表单数据
+export function getTaskFormData (taskId) {
+  return request({
+    url: '/workflow/form/getTaskFormData/' + taskId,
+    method: 'get',
+    params: query
+  })
+}
+
+// 查找活动扩展数据
+export function findByDefIdAndTaskIdAndKey (query) {
+  return request({
+    url: '/workflow/extension/activityExtensionData/findByDefIdAndTaskIdAndKey',
+    method: 'get',
+    params: query
+  })
+}
+
+// 获取已办流转任务列表
+export function getHistoryFlowChangeList (processInsId) {
+  return request({
+    url: '/workflow/task/historyFlowChangeList/' + processInsId,
+    method: 'get'
+  })
+}
+
+// 流程抄送保存
+export function workflowCopySave (userIds, data) {
+  return request({
+    url: '/workflow/extension/workflowCopy/save/' + userIds,
+    method: 'post',
+    data: data
+  })
+}
+
+// 启动流程定义
+export function startProcessDefinition (data) {
+  return request({
+    url: '/workflow/process/startProcessDefinition',
+    method: 'post',
+    data: data
+  })
+}
+
+// 审批任务
+export function auditTask (data) {
+  return request({
+    url: '/workflow/task/auditTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 驳回任务
+export function rejectTask (data) {
+  return request({
+    url: '/workflow/task/rejectTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 加签任务
+export function addSignTask (data) {
+  return request({
+    url: '/workflow/task/addSignTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 转移任务
+export function transferTask (query) {
+  return request({
+    url: '/workflow/task/transferTask',
+    method: 'post',
+    params: query
+  })
+}
+
+// 委托任务
+export function delegateTask (query) {
+  return request({
+    url: '/workflow/task/delegateTask',
+    method: 'post',
+    params: query
+  })
+}
+

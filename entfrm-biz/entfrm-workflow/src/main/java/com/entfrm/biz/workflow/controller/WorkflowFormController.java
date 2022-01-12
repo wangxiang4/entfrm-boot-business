@@ -74,16 +74,16 @@ public class WorkflowFormController {
         }
 
         // 启动流程，提交表单
-        String procInsId = formService.submitStartFormData(processDefId, formProcessVars).getId();
+        String processInsId = formService.submitStartFormData(processDefId, formProcessVars).getId();
 
         // 指定下一步处理人
         if(StringUtils.isNotBlank(assignee)){
-            Task task = taskService.createTaskQuery().processInstanceId(procInsId).active().singleResult();
+            Task task = taskService.createTaskQuery().processInstanceId(processInsId).active().singleResult();
             if(task != null){
                 taskService.setAssignee(task.getId(), assignee);
             }
         }
-        return R.ok(procInsId, "启动成功");
+        return R.ok(processInsId, "启动成功");
     }
 
     /** 获取任务节点表单数据 */

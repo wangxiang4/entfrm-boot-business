@@ -28,3 +28,11 @@ export function setProcessInstanceStatus(query) {
   })
 }
 
+// 流程终止
+export function stopProcessInstance(query) {
+  return request({
+    url: '/workflow/process/stopProcessInstance',
+    method: 'put',
+    params: query
+  })
+}

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100vh">
     <h4 style="text-align:center">{{formTitle}}</h4>
     <el-tabs type="border-card" v-model="taskSelectedTab">
       <el-tab-pane label="表单信息" name="formInfo">
@@ -80,7 +80,7 @@
         </el-col>
       </el-form>
     </el-card>
-    <div class="workflow-form__footer">
+    <div class="workflow-form-footer">
       <template v-for="(button, index) in buttons">
         <template v-show="button.isHide === '0'">
           <el-button v-if="button.code !== '_flow_print'"

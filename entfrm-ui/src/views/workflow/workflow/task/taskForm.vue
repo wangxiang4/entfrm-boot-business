@@ -1,85 +1,87 @@
 <template>
-  <div style="height: 100vh">
-    <h4 style="text-align:center">{{formTitle}}</h4>
-    <el-tabs type="border-card" v-model="taskSelectedTab">
-      <el-tab-pane label="表单信息" name="formInfo">
-        <component v-if="formType === '2'"
-                   ref="form"
-                   :is="formPath"
-                   :formReadOnly="formReadOnly"
-                   :businessId="businessId"
-        />
-        <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
-      </el-tab-pane>
-      <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
-        <workflow-time-line :historicTaskList="historicTaskList"/>
-      </el-tab-pane>
-      <el-tab-pane label="流程图" name="processChart">
-         <el-card class="box-card" shadow="hover">
+  <div>
+    <el-main style="min-height: 100vh">
+      <h4 style="text-align:center">{{formTitle}}</h4>
+      <el-tabs type="border-card" v-model="taskSelectedTab">
+        <el-tab-pane label="表单信息" name="formInfo">
+          <component v-if="formType === '2'"
+                     ref="form"
+                     :is="formPath"
+                     :formReadOnly="formReadOnly"
+                     :businessId="businessId"
+          />
+          <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
+        </el-tab-pane>
+        <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
+          <workflow-time-line :historicTaskList="historicTaskList"/>
+        </el-tab-pane>
+        <el-tab-pane label="流程图" name="processChart">
+          <el-card class="box-card" shadow="hover">
             <div slot="header" class="clearfix">
               <span>流程图</span>
             </div>
             <flowable-chart :options="processChat" style="height:100vh"/>
           </el-card>
-      </el-tab-pane>
-      <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
-        <workflow-step :historicTaskList="historicTaskList"/>
-      </el-tab-pane>
-    </el-tabs>
-    <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
-      <el-form size="small"
-               ref="auditForm"
-               :model="auditForm"
-               label-width="120px"
-      >
-        <el-col :span="16">
-          <el-form-item v-if="!processInsId"
-                        label="流程标题"
-                        prop="formTitle"
-          >
-            <el-input v-model="formTitle" placeholder="请输入流程标题"/>
-          </el-form-item>
-          <el-form-item v-if="taskId"
-                        label="审批信息"
-                        prop="message"
-          >
-            <el-input v-model="auditForm.message"
-                      type="textarea"
-                      :rows="3"
-                      placeholder="请输入审批意见"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item>
-            <el-checkbox v-model="isCC">是否抄送</el-checkbox>
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item v-if="isCC"
-                        label="抄送给"
-                        :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
-                        prop="userIds"
-          >
-            <user-select :value="auditForm.userIds" @getValue="(value) => { auditForm.userIds=value }"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item>
-            <el-checkbox v-model="isAssign">指定下一步处理者(不设置就使用默认处理人)</el-checkbox>
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item v-if="isAssign"
-                        :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
-                        prop="assignee"
-                        label="指定"
-          >
-            <user-select :limit="1" :value="auditForm.assignee" @getValue="(value) => {auditForm.assignee=value}"/>
-          </el-form-item>
-        </el-col>
-      </el-form>
-    </el-card>
+        </el-tab-pane>
+        <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
+          <workflow-step :historicTaskList="historicTaskList"/>
+        </el-tab-pane>
+      </el-tabs>
+      <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
+        <el-form size="small"
+                 ref="auditForm"
+                 :model="auditForm"
+                 label-width="120px"
+        >
+          <el-col :span="16">
+            <el-form-item v-if="!processInsId"
+                          label="流程标题"
+                          prop="formTitle"
+            >
+              <el-input v-model="formTitle" placeholder="请输入流程标题"/>
+            </el-form-item>
+            <el-form-item v-if="taskId"
+                          label="审批信息"
+                          prop="message"
+            >
+              <el-input v-model="auditForm.message"
+                        type="textarea"
+                        :rows="3"
+                        placeholder="请输入审批意见"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
+            <el-form-item>
+              <el-checkbox v-model="isCC">是否抄送</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
+            <el-form-item v-if="isCC"
+                          label="抄送给"
+                          :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
+                          prop="userIds"
+            >
+              <user-select :value="auditForm.userIds" @getValue="(value) => { auditForm.userIds=value }"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
+            <el-form-item>
+              <el-checkbox v-model="isAssign">指定下一步处理者(不设置就使用默认处理人)</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
+            <el-form-item v-if="isAssign"
+                          :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
+                          prop="assignee"
+                          label="指定"
+            >
+              <user-select :limit="1" :value="auditForm.assignee" @getValue="(value) => {auditForm.assignee=value}"/>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-card>
+    </el-main>
     <div class="workflow-form-footer">
       <template v-for="(button, index) in buttons">
         <template v-show="button.isHide === '0'">

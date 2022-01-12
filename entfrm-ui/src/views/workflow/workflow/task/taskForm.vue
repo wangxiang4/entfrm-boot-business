@@ -190,61 +190,63 @@ export default {
   },
   activated () {
     this.init()
-    // 加载流程图数据
-    if (this.processInsId) {
-      getProcessInsFlowChart(this.processInsId).then(response => {
-        this.processChat = response
-      })
-    } else {
-      getProcessDefFlowChart(this.processDefId).then(({data}) => {
-        this.processChat = { bpmnXml: data }
-      })
-    }
-    // 读取外置表单
-    if (this.formType === '2') {
-      if (this.formKey === '/404') {
-        this.formPath = ''
-        this.$message.info('没有关联流程表单!')
+    this.$nextTick(() => {
+      // 加载流程图数据
+      if (this.processInsId) {
+        getProcessInsFlowChart(this.processInsId).then(response => {
+          this.processChat = response
+        })
       } else {
-        this.formPath = require('@/views' + this.formKey + '.vue').default
+        getProcessDefFlowChart(this.processDefId).then(({data}) => {
+          this.processChat = { bpmnXml: data }
+        })
       }
-    // 读取动态表单
-    } else {
-      if (this.formKey === '/404') {
-        this.$refs.form.init('')
+      // 读取外置表单
+      if (this.formType === '2') {
+        if (this.formKey === '/404') {
+          this.formPath = ''
+          this.$message.info('没有关联流程表单!')
+        } else {
+          this.formPath = require('@/views' + this.formKey + '.vue').default
+        }
+        // 读取动态表单
       } else {
-        this.$refs.form.init(this.formKey)
+        if (this.formKey === '/404') {
+          this.$refs.form.init('')
+        } else {
+          this.$refs.form.init(this.formKey)
+        }
+        // 获取启动表单数据
+        if (this.status === 'start') {
+          getProcessStartEventFormData(this.processDefId).then(({data}) => {
+            this.taskFormData = data
+          })
+          // 获取任务表单数据
+        } else {
+          getTaskFormData(this.taskId).then(({data}) => {
+            this.taskFormData = data.taskFormData
+          })
+        }
       }
-      // 获取启动表单数据
+      // 读取按钮配置
       if (this.status === 'start') {
-        getProcessStartEventFormData(this.processDefId).then(({data}) => {
-          this.taskFormData = data
-        })
-      // 获取任务表单数据
-      } else {
-        getTaskFormData(this.taskId).then(({data}) => {
-          this.taskFormData = data.taskFormData
+        this.buttons = [{ code: '_flow_start', name: '启动', isHide: '0' }]
+      } else if (this.processDefKey && this.taskDefKey) {
+        // 获取流程设计器配置按钮
+        findByDefIdAndTaskIdAndKey({
+          processDefId: this.processDefKey,
+          activityDefId: this.taskDefKey
+        }).then(({ data }) => {
+          this.buttons = data.workflowButtonList
         })
       }
-    }
-    // 读取按钮配置
-    if (this.status === 'start') {
-      this.buttons = [{ code: '_flow_start', name: '启动', isHide: '0' }]
-    } else if (this.processDefKey && this.taskDefKey) {
-      // 获取流程设计器配置按钮
-      findByDefIdAndTaskIdAndKey({
-        processDefId: this.processDefKey,
-        activityDefId: this.taskDefKey
-      }).then(({ data }) => {
-        this.buttons = data.workflowButtonList
-      })
-    }
-    // 读取历史任务列表
-    if (this.processInsId) {
-      getHistoryFlowChangeList(this.processInsId).then(({ data }) => {
-        this.historicTaskList = data
-      })
-    }
+      // 读取历史任务列表
+      if (this.processInsId) {
+        getHistoryFlowChangeList(this.processInsId).then(({ data }) => {
+          this.historicTaskList = data
+        })
+      }
+    })
   },
   methods: {
     init () {

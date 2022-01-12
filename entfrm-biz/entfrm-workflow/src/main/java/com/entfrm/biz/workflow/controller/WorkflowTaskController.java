@@ -90,17 +90,17 @@ public class WorkflowTaskController {
                 .eq(ActivityExtensionProperty::getActivityDefId, workflow.getTaskDefKey())
                 .eq(ActivityExtensionProperty::getKey, "formReadOnly"));
 
+        // 处理拿到表单核心数据
         String formType = "1";
         boolean formReadOnly = false;
         if (formTypeNode != null) {
             formType = formTypeNode.getValue();
             formReadOnly = "true".equals(formReadOnlyNode.getValue());
-        }
-        if (StrUtil.isNotBlank(formKey)) {
-            if (formKey.indexOf("/")>=0 && formKey.length() != 32) {
-                formType = "2";
-            } else  {
+        } else {
+            if(StrUtil.isBlank(formKey)) {
                 formType = "1";
+            } else  if (formKey.matches("^/[\\w\\W]+$")) {
+                formType = "2";
             }
         }
 

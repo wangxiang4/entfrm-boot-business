@@ -378,17 +378,17 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
                 .startedBy(SecurityUtil.getUser().getId() + "").includeProcessVariables().orderByProcessInstanceStartTime().desc();
 
         String title = MapUtil.getStr(params, " title");
-        Date beginDate = MapUtil.getDate(params, "beginDate"),
-                endDate = MapUtil.getDate(params, "endDate");
+        Date beginTime = MapUtil.getDate(params, "beginTime"),
+                endTime = MapUtil.getDate(params, "endTime");
 
         if (StrUtil.isNotBlank(title)) {
             query.variableValueLike(WorkflowConstant.TITLE, "%" + title + "%");
         }
-        if (beginDate != null) {
-            query.startedAfter(beginDate);
+        if (beginTime != null) {
+            query.startedAfter(beginTime);
         }
-        if (endDate != null) {
-            query.startedBefore(endDate);
+        if (endTime != null) {
+            query.startedBefore(endTime);
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);

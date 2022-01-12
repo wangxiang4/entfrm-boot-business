@@ -90,8 +90,8 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         // 设置查询条件
         String processDefKey = MapUtil.getStr(params, "processDefKey"),
                title = MapUtil.getStr(params, " title");
-        Date beginDate = MapUtil.getDate(params, "beginDate"),
-             endDate = MapUtil.getDate(params, "endDate");
+        Date beginTime = MapUtil.getDate(params, "beginTime"),
+             endTime = MapUtil.getDate(params, "endTime");
 
         if (StrUtil.isNotBlank(processDefKey)) {
             query.processDefinitionKey(processDefKey);
@@ -99,11 +99,11 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         if (StrUtil.isNotBlank(title)) {
             query.processVariableValueLike(WorkflowConstant.TITLE, "%" + title + "%");
         }
-        if (beginDate != null) {
-            query.taskCreatedAfter(beginDate);
+        if (beginTime != null) {
+            query.taskCreatedAfter(beginTime);
         }
-        if (endDate != null) {
-            query.taskCreatedBefore(endDate);
+        if (endTime != null) {
+            query.taskCreatedBefore(endTime);
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);
@@ -140,8 +140,8 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         // 设置查询条件
         String processDefKey = MapUtil.getStr(params, "processDefKey"),
                 title = MapUtil.getStr(params, " title");
-        Date beginDate = MapUtil.getDate(params, "beginDate"),
-                endDate = MapUtil.getDate(params, "endDate");
+        Date beginTime = MapUtil.getDate(params, "beginTime"),
+                endTime = MapUtil.getDate(params, "endTime");
 
         if (StrUtil.isNotBlank(processDefKey)) {
             query.processDefinitionKey(processDefKey);
@@ -149,11 +149,11 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         if (StrUtil.isNotBlank(title)) {
             query.processVariableValueLike(WorkflowConstant.TITLE, "%" + title + "%");
         }
-        if (beginDate != null) {
-            query.taskCreatedAfter(beginDate);
+        if (beginTime != null) {
+            query.taskCreatedAfter(beginTime);
         }
-        if (endDate != null) {
-            query.taskCreatedBefore(endDate);
+        if (endTime != null) {
+            query.taskCreatedBefore(endTime);
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);

@@ -94,15 +94,15 @@
                 :limit.sync="queryParams.size"
                 @pagination="getList"
     />
-    <!--<el-dialog title="查看进度" :close-on-click-modal="true" :visible.sync="visible" width="70%" height="600px">
-      <flow-chart ref="preview" :processInstanceId="processInstanceId"/>
+    <el-dialog title="查看进度" :close-on-click-modal="true" :visible.sync="visible" width="70%">
+      <flowable-chart ref="flowableChart" style="height:80vh"/>
     </el-dialog>
-    <user-select ref="userSelect" :limit="1" @doSubmit="selectUsersToTransferTask"/>-->
+    <!--<user-select ref="userSelect" :limit="1" @doSubmit="selectUsersToTransferTask"/>-->
   </div>
 </template>
 
 <script>
-import { listTodoTask } from "@/api/workflow/workflow/task"
+import { listTodoTask, getProcessInsFlowChart } from "@/api/workflow/workflow/task"
 export default {
   name: "Task",
   data() {
@@ -116,6 +116,7 @@ export default {
       },
       dateRange: [],
       showSearch: true,
+      visible: false,
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -169,6 +170,15 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = []
+    },
+    handleTrace (row) {
+      const { processInsId } = row.taskInfo
+      getProcessInsFlowChart(processInsId).then(response => {
+        this.visible = true
+        this.$nextTick(() => {
+          this.$refs.flowableChart.setHighlightImportDiagram(response)
+        })
+      })
     }
   }
 }

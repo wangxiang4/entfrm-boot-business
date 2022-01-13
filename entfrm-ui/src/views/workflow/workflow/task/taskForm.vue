@@ -20,7 +20,7 @@
             <div slot="header" class="clearfix">
               <span>流程图</span>
             </div>
-            <flowable-chart :options="processChat" style="height:100vh"/>
+            <flowable-chart ref="flowableChart" style="height:100vh"/>
           </el-card>
         </el-tab-pane>
         <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
@@ -186,8 +186,7 @@ export default {
         mesName: '',
         userIds: null,
         assignee: null
-      },
-      processChat: {}
+      }
     }
   },
   activated () {
@@ -196,11 +195,11 @@ export default {
       // 加载流程图数据
       if (this.processInsId) {
         getProcessInsFlowChart(this.processInsId).then(response => {
-          this.processChat = response
+          this.$refs.flowableChart.setHighlightImportDiagram(response)
         })
       } else {
         getProcessDefFlowChart(this.processDefId).then(({data}) => {
-          this.processChat = { bpmnXml: data }
+          this.$refs.flowableChart.setHighlightImportDiagram({ bpmnXml: data })
         })
       }
       // 读取外置表单

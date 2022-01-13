@@ -150,7 +150,7 @@ export const constantRoutes = [
         meta: { title: '流程表单' }
       },
       {
-        path: '/form/formDefinitionJson/:id',
+        path: '/workflow/formDefinitionJson/:id',
         component: require('@/views/workflow/extension/form/helper/formDefinitionJson.vue').default,
         name: 'FormDefinitionJson',
         meta: { title: '版本管理' }

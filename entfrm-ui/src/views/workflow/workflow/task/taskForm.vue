@@ -303,7 +303,7 @@ export default {
           }).then(({data}) => {
             this.$message.success(data.msg)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/transaction/todoTask')
+            this.$router.push('/workflow/transaction/TodoList')
             this.cc({ processInsId: data })
           })
         })
@@ -316,7 +316,7 @@ export default {
           assignee: this.auditForm.assignee
         }, ({data}) => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/workflow/transaction/todoTask')
+          this.$router.push('/workflow/transaction/TodoList')
           this.cc({ processInsId: data })
         })
       }
@@ -353,7 +353,7 @@ export default {
       }).then(({data}) => {
         this.$message.success(data.msg)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/todoTask')
+        this.$router.push('/workflow/transaction/TodoList')
         this.cc({ processInsId: data })
       })
     },
@@ -384,7 +384,7 @@ export default {
         askId: this.taskId, userId: user[0].id
       }).then(({ data }) => {
         this.$message.success(data)
-        this.$router.push('/workflow/transaction/todoTask')
+        this.$router.push('/workflow/transaction/TodoList')
       })
     },
     /** 委托 */
@@ -397,7 +397,7 @@ export default {
         userId: user[0].id
       }).then(({ data }) => {
         this.$message.success(data)
-        this.$router.push('/workflow/transaction/todoTask')
+        this.$router.push('/workflow/transaction/TodoList')
       })
     },
     /** 终止 */
@@ -412,7 +412,7 @@ export default {
           ...this.auditForm
         }).then(({ data }) => {
           this.$message.success(data)
-          this.$router.push('/workflow/transaction/todoTask')
+          this.$router.push('/workflow/transaction/TodoList')
         })
       })
     },
@@ -436,7 +436,7 @@ export default {
             if (data.success) {
               this.$message.success(data.msg)
               this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-              this.$router.push('/workflow/transaction/todoTask')
+              this.$router.push('/workflow/transaction/TodoList')
               this.cc(data)
             }
           })
@@ -452,7 +452,7 @@ export default {
         }, ({ data }) => {
           if (data.success) {
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/transaction/todoTask')
+            this.$router.push('/workflow/transaction/TodoList')
             this.cc(data)
           }
         })

@@ -94,15 +94,19 @@
                 :limit.sync="queryParams.size"
                 @pagination="getList"
     />
-    <el-dialog title="查看进度" :close-on-click-modal="true" :visible.sync="visible" width="70%">
-      <flowable-chart ref="flowableChart" style="height:80vh"/>
+    <el-dialog title="查看进度"
+               :close-on-click-modal="true"
+               :visible.sync="visible"
+               width="70%"
+    >
+      <flowable-chart ref="flowableChart" style="height:calc(100vh - 170px)"/>
     </el-dialog>
     <!--<user-select ref="userSelect" :limit="1" @doSubmit="selectUsersToTransferTask"/>-->
   </div>
 </template>
 
 <script>
-import { listTodoTask, getProcessInsFlowChart } from "@/api/workflow/workflow/task"
+import { listTodoTask, getProcessInsFlowChart, getTaskDefinition } from "@/api/workflow/workflow/task"
 export default {
   name: "Task",
   data() {
@@ -148,6 +152,7 @@ export default {
   },
   created() {
     this.getList()
+    window.router = this.$router
   },
   activated() {
     this.getList()
@@ -177,6 +182,34 @@ export default {
         this.visible = true
         this.$nextTick(() => {
           this.$refs.flowableChart.setHighlightImportDiagram(response)
+        })
+      })
+    },
+    handleTodo(row) {
+      const { taskInfo, vars } = row
+      getTaskDefinition({
+        taskId: taskInfo.id,
+        taskName: taskInfo.name,
+        taskDefKey: taskInfo.taskDefKey,
+        processInsId: taskInfo.processInsId,
+        processDefId: taskInfo.processDefId,
+        processDefKey: taskInfo.processDefKey
+      }).then(({ data }) => {
+        this.$router.push({
+          path: '/workflow/task/taskForm',
+          query: {
+            title: `审批【${taskInfo.name || ''}】`,
+            formTitle: `${vars.title}`,
+            formType: data.formType,
+            formKey: data.formKey,
+            formReadOnly: data.formReadOnly,
+            processInsId: data.processInsId,
+            processDefId: data.processDefId,
+            processDefKey: data.processDefKey,
+            taskId: data.taskId,
+            taskDefKey: data.taskDefKey,
+            businessId: data.businessId
+          }
         })
       })
     }

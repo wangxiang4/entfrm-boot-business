@@ -90,15 +90,14 @@ export function getProcessDefFlowChart (processDefId) {
 export function getTaskFormData (taskId) {
   return request({
     url: '/workflow/form/getTaskFormData/' + taskId,
-    method: 'get',
-    params: query
+    method: 'get'
   })
 }
 
 // 查找活动扩展数据
-export function findByDefIdAndTaskIdAndKey (query) {
+export function findByDefIdAndTaskId (query) {
   return request({
-    url: '/workflow/extension/activityExtensionData/findByDefIdAndTaskIdAndKey',
+    url: '/workflow/extension/activityExtensionData/findByDefIdAndTaskId',
     method: 'get',
     params: query
   })

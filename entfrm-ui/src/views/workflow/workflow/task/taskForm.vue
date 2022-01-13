@@ -131,7 +131,7 @@ import {
   getProcessDefFlowChart,
   getProcessInsFlowChart,
   getTaskFormData,
-  findByDefIdAndTaskIdAndKey,
+  findByDefIdAndTaskId,
   getHistoryFlowChangeList,
   workflowCopySave,
   startProcessDefinition,
@@ -175,7 +175,7 @@ export default {
       isCC: false,
       isAssign: false,
       printInfo: {
-        id: 'print',
+        id: 'printForm',
         popTitle: '',
         extraCss: '',
         extraHead: '<meta http-equiv="Content-Language" content="zh-cn"/>'
@@ -234,7 +234,7 @@ export default {
         this.buttons = [{ code: '_flow_start', name: '启动', isHide: '0' }]
       } else if (this.processDefKey && this.taskDefKey) {
         // 获取流程设计器配置按钮
-        findByDefIdAndTaskIdAndKey({
+        findByDefIdAndTaskId({
           processDefId: this.processDefKey,
           activityDefId: this.taskDefKey
         }).then(({ data }) => {
@@ -303,7 +303,7 @@ export default {
           }).then(({data}) => {
             this.$message.success(data.msg)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/workflow/task/TodoList')
+            this.$router.push('/workflow/transaction/todoTask')
             this.cc({ processInsId: data })
           })
         })
@@ -316,7 +316,7 @@ export default {
           assignee: this.auditForm.assignee
         }, ({data}) => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/workflow/workflow/task/TodoList')
+          this.$router.push('/workflow/transaction/todoTask')
           this.cc({ processInsId: data })
         })
       }
@@ -353,7 +353,7 @@ export default {
       }).then(({data}) => {
         this.$message.success(data.msg)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/workflow/task/TodoList')
+        this.$router.push('/workflow/transaction/todoTask')
         this.cc({ processInsId: data })
       })
     },
@@ -384,7 +384,7 @@ export default {
         askId: this.taskId, userId: user[0].id
       }).then(({ data }) => {
         this.$message.success(data)
-        this.$router.push('/workflow/workflow/task/TodoList')
+        this.$router.push('/workflow/transaction/todoTask')
       })
     },
     /** 委托 */
@@ -397,7 +397,7 @@ export default {
         userId: user[0].id
       }).then(({ data }) => {
         this.$message.success(data)
-        this.$router.push('/flowable/task/TodoList')
+        this.$router.push('/workflow/transaction/todoTask')
       })
     },
     /** 终止 */
@@ -412,7 +412,7 @@ export default {
           ...this.auditForm
         }).then(({ data }) => {
           this.$message.success(data)
-          this.$router.push('/workflow/workflow/task/TodoList')
+          this.$router.push('/workflow/transaction/todoTask')
         })
       })
     },
@@ -436,7 +436,7 @@ export default {
             if (data.success) {
               this.$message.success(data.msg)
               this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-              this.$router.push('/workflow/workflow/task/TodoList')
+              this.$router.push('/workflow/transaction/todoTask')
               this.cc(data)
             }
           })
@@ -452,7 +452,7 @@ export default {
         }, ({ data }) => {
           if (data.success) {
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/workflow/task/TodoList')
+            this.$router.push('/workflow/transaction/todoTask')
             this.cc(data)
           }
         })

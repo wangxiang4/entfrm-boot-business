@@ -4,8 +4,11 @@
              :visible.sync="visible"
              :appendToBody="true"
   >
-    <el-select v-model="rollBackTaskDefKey" style="width:100%" placeholder="请选择驳回节点">
-      <el-option v-for="item in rollBackTaskNodes"
+    <el-select v-model="rollBackTaskDefKey"
+               style="width:100%"
+               placeholder="请选择驳回节点"
+    >
+      <el-option v-for="item in rollBackTaskList"
                  :key="item.taskDefKey"
                  :label="item.taskName"
                  :value="item.taskDefKey"
@@ -21,18 +24,18 @@
 <script>
 import { rollBackTaskList } from '@/api/workflow/workflow/task'
 export default {
-  name: 'RollBackTaskNodes',
+  name: 'RollBackTaskSelect',
   data () {
     return {
       visible: false,
-      rollBackTaskNodes: [],
+      rollBackTaskList: [],
       rollBackTaskDefKey: ''
     }
   },
   methods: {
     init (taskId) {
       this.visible = true
-      rollBackTaskList(taskId).then(({data}) => { this.rollBackTaskNodes = data })
+      rollBackTaskList(taskId).then(({ data }) => { this.rollBackTaskList = data })
     },
     doConfirm () {
       this.visible = false

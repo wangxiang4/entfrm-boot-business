@@ -31,27 +31,13 @@
         </el-tab-pane>
       </el-tabs>
       <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
-        <el-form size="small"
-                 ref="auditForm"
-                 :model="auditForm"
-                 label-width="120px"
-        >
+        <el-form ref="auditForm" :model="auditForm" size="small" label-width="120px">
           <el-col :span="16">
-            <el-form-item v-if="!processInsId"
-                          label="流程标题"
-                          prop="formTitle"
-            >
+            <el-form-item v-if="!processInsId" label="流程标题" prop="formTitle">
               <el-input v-model="formTitle" placeholder="请输入流程标题"/>
             </el-form-item>
-            <el-form-item v-if="taskId"
-                          label="审批信息"
-                          prop="message"
-            >
-              <el-input v-model="auditForm.message"
-                        type="textarea"
-                        :rows="3"
-                        placeholder="请输入审批意见"
-              />
+            <el-form-item v-if="taskId" label="审批信息" prop="message">
+              <el-input v-model="auditForm.message" type="textarea" :rows="3" placeholder="请输入审批意见"/>
             </el-form-item>
           </el-col>
           <el-col :span="16">
@@ -60,11 +46,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="16">
-            <el-form-item v-if="isCC"
-                          label="抄送给"
-                          :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
-                          prop="userIds"
-            >
+            <el-form-item v-if="isCC" label="抄送给" prop="userIds" :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]">
               <user-select :value="auditForm.userIds" @getValue="(value) => { auditForm.userIds=value }"/>
             </el-form-item>
           </el-col>
@@ -74,11 +56,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="16">
-            <el-form-item v-if="isAssign"
-                          :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]"
-                          prop="assignee"
-                          label="指定"
-            >
+            <el-form-item v-if="isAssign" label="指定" prop="assignee" :rules="[{required: true, message: '用户不能为空', trigger: 'blur'}]">
               <user-select :limit="1" :value="auditForm.assignee" @getValue="(value) => {auditForm.assignee=value}"/>
             </el-form-item>
           </el-col>
@@ -106,20 +84,20 @@
         </template>
       </template>
     </div>
-    <roll-back-task-nodes ref="rollBackTaskNodes" @getRollBackTaskDefKey="back"/>
+    <roll-back-task-select ref="rollBackTaskSelect" @getRollBackTaskDefKey="handleRollBackTask"/>
     <user-select-dialog title="选择转办用户"
-                        ref="transferUserSelectDialog"
+                        ref="transferTaskSelect"
                         :limit="1"
-                        @doSubmit="selectUsersToTransferTask"
+                        @doSubmit="handleTransferTask"
     />
     <user-select-dialog title="选择委派用户"
-                        ref="delegateUserSelectDialog"
+                        ref="delegateTaskSelect"
                         :limit="1"
                         @doSubmit="handleDelegateTask"
     />
     <user-select-dialog title="选择加签用户"
-                        ref="addSignTaskUserSelectDialog"
-                        @doSubmit="selectUsersToAddSignTask"
+                        ref="addSignTaskSelect"
+                        @doSubmit="handleAddSignTask"
     />
   </div>
 </template>
@@ -127,7 +105,7 @@
 <script>
 import userSelect from '@/components/UserSelect'
 import workflowPreviewForm from './workflowPreviewForm'
-import rollBackTaskNodes from './rollBackTaskNodes'
+import rollBackTaskSelect from './rollBackTaskSelect'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
@@ -155,7 +133,7 @@ export default {
     userSelect,
     userSelectDialog,
     workflowPreviewForm,
-    rollBackTaskNodes,
+    rollBackTaskSelect,
     workflowStep,
     workflowTimeLine
   },
@@ -296,10 +274,11 @@ export default {
       this.printInfo.popTitle = this.formTitle
       this.isCC = false
       this.isAssign = false
-      this.auditForm.assignee = null
-      this.auditForm.userIds = null
+      this.auditForm.assignee = ''
+      this.auditForm.userIds = ''
       this.auditForm.message = ''
     },
+    /** 流程抄送 */
     cc (data) {
       if (this.isCC && this.auditForm.userIds) {
         this.$refs['auditForm'].validate((valid) => {
@@ -327,10 +306,8 @@ export default {
             processDefKey: this.processDefKey,
             businessTable: businessTable,
             businessId: businessId,
-            ...vars,
-            title: this.formTitle,
-            assignee: this.auditForm.assignee,
-          }).then(({data}) => {
+            ...vars
+          }).then(({ data }) => {
             this.$message.success(data.msg)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
             this.$router.push('/workflow/transaction/TodoList')
@@ -339,97 +316,39 @@ export default {
         })
       // 动态表单
       } else {
-        this.$refs.form.startFormProcessDefinition({
-          processDefId: this.processDefId,
-          ...vars,
-          title: this.formTitle,
-          assignee: this.auditForm.assignee
-        }, ({data}) => {
+        this.$refs.form.startFormProcessDefinition({ processDefId: this.processDefId, ...vars }, ({ data }) => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
           this.$router.push('/workflow/transaction/TodoList')
           this.cc({ processInsId: data })
         })
       }
     },
-    /** 同意 */
+    /** 同意任务 */
     agree (vars) {
-      this.commit(vars) // 同意
+      this.commit(vars)
     },
-    /** 驳回 */
+    /** 驳回任务 */
     reject () {
-      this.$confirm(`确定驳回流程吗?`, '提示', {
+      this.$confirm(`确定驳回任务吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         rollBackTaskList(this.taskId).then(({ data }) => {
           if (data.length > 0) {
-            let backTaskDefKey = data[data.length - 1].taskDefKey
-            this.back(backTaskDefKey)
+            const backTaskDefKey = data[data.length - 1].taskDefKey
+            this.handleRollBackTask(backTaskDefKey)
           }
         })
-      })
-    },
-    /** 驳回到任意节点 */
-    turnBack () {
-      this.$refs.taskBackNodes.init(this.taskId)
-    },
-    /** 回退到任意节点 */
-    back (backTaskDefKey) {
-      rejectTask({
-        currentTaskId: this.taskId,
-        rollBackTaskDefKey: backTaskDefKey,
-        comment: this.auditForm
-      }).then(({data}) => {
-        this.$message.success(data.msg)
-        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/TodoList')
-        this.cc({ processInsId: data })
-      })
-    },
-    /** 加签 */
-    addMultiInstance () {
-      // this.$refs.addSignTaskUserSelectDialog.init()
-    },
-    selectUsersToAddSignTask (users) {
-      const userIds = users.map(user => user.id).join(',')
-      addSignTask({
-        taskId: this.taskId,
-        userIds: userIds,
-        comment: '',
-        mark: false
-      }).then(({ data }) => {
-        this.$message.success(data)
-      })
-    },
-    /** 减签 */
-    delMultiInstance () {
+      }).catch(function (){})
     },
     /** 转办 */
     transfer () {
-      this.$refs.transferUserSelectDialog.init()
-    },
-    selectUsersToTransferTask (user) {
-      transferTask({
-        askId: this.taskId, userId: user[0].id
-      }).then(({ data }) => {
-        this.$message.success(data)
-        this.$router.push('/workflow/transaction/TodoList')
-      })
+      this.$refs.transferTaskSelect.init()
     },
     /** 委托 */
     delegate () {
-      this.$refs.delegateUserSelectDialog.init()
-    },
-    /** 处理任务委派 */
-    handleDelegateTask(userList) {
-      delegateTask({
-        taskId: this.taskId,
-        userId: userList[0].id
-      }).then(({ data }) => {
-        this.$message.success(data)
-        this.$router.push('/workflow/transaction/TodoList')
-      })
+      this.$refs.delegateTaskSelect.init()
     },
     /** 终止 */
     stop () {
@@ -450,6 +369,17 @@ export default {
     /** 打印 */
     print () {
       console.warn("---工作流表单打印成功!---")
+    },
+    /** 驳回到任意节点 */
+    rollBack () {
+      this.$refs.rollBackTaskSelect.init(this.taskId)
+    },
+    /** 加签 */
+    addMultiInstance () {
+      this.$refs.addSignTaskSelect.init()
+    },
+    /** 减签 */
+    delMultiInstance () {
     },
     /** 自定义按钮提交 */
     commit (vars) {
@@ -473,7 +403,7 @@ export default {
             }
           })
         })
-      // 动态表单
+        // 动态表单
       } else {
         this.$refs.form.auditFormTask({
           taskId: this.taskId,
@@ -490,8 +420,50 @@ export default {
         })
       }
     },
+    /** 处理回退到任意节点 */
+    handleRollBackTask (backTaskDefKey) {
+      rejectTask({
+        currentTaskId: this.taskId,
+        rollBackTaskDefKey: backTaskDefKey,
+        comment: this.auditForm
+      }).then(({ data }) => {
+        this.$message.success(data)
+        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+        this.$router.push('/workflow/transaction/TodoList')
+        this.cc({ processInsId: this.processInsId })
+      })
+    },
+    /** 处理加签任务 */
+    handleAddSignTask (userList) {
+      const userIds = userList.map(user => user.id).join(',')
+      addSignTask({
+        taskId: this.taskId,
+        userIds: userIds,
+        comment: '',
+        mark: false
+      }).then(({ data }) => {
+        this.$message.success(data)
+      })
+    },
+    /** 处理转派任务 */
+    handleTransferTask (userList) {
+      transferTask({ taskId: this.taskId, userId: userList[0].id }).then(({ data }) => {
+        this.$message.success(data)
+        this.$router.push('/workflow/transaction/TodoList')
+      })
+    },
+    /** 处理任务委派 */
+    handleDelegateTask(userList) {
+      delegateTask({
+        taskId: this.taskId,
+        userId: userList[0].id
+      }).then(({ data }) => {
+        this.$message.success(data)
+        this.$router.push('/workflow/transaction/TodoList')
+      })
+    },
     submit (button) {
-      // 存储流程变量
+      // 设置流程变量
       const vars = {}
       // 流程表单标题
       vars.title = this.formTitle
@@ -520,7 +492,7 @@ export default {
           break
         // 驳回到任意步骤
         case '_workflow_activity_roll_back':
-          this.turnBack()
+          this.rollBackList()
           break
         // 加签
         case '_workflow_activity_add_multi_instance':

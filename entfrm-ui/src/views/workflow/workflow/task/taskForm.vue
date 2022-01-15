@@ -178,7 +178,7 @@ export default {
   activated () {
     this.init()
     this.$nextTick(() => {
-      // 加载流程图数据
+      // 获取流程图数据
       if (this.processInsId) {
         getProcessInsFlowChart(this.processInsId).then(response => {
           this.$refs.flowableChart.setHighlightImportDiagram(response)
@@ -188,7 +188,7 @@ export default {
           this.$refs.flowableChart.setHighlightImportDiagram({ bpmnXml: data })
         })
       }
-      // 读取外置表单
+      // 初始化外置表单
       if (this.formType === '2') {
         if (this.formKey === '/404') {
           this.formPath = ''
@@ -196,30 +196,30 @@ export default {
         } else {
           this.formPath = require('@/views' + this.formKey + '.vue').default
         }
-        // 读取动态表单
+      // 初始化动态表单
       } else {
         if (this.formKey === '/404') {
           this.$refs.form.init('')
         } else {
           this.$refs.form.init(this.formKey)
         }
-        // 获取启动表单数据
+        // 获取启动事件表单数据
         if (this.status === 'start') {
           getProcessStartEventFormData(this.processDefId).then(({data}) => {
             this.taskFormData = data
           })
-          // 获取任务表单数据
+        // 获取任务表单数据
         } else {
           getFormTaskData(this.taskId).then(({data}) => {
             this.taskFormData = data.taskFormData
           })
         }
       }
-      // 读取按钮配置
+      // 设置启动按钮配置
       if (this.status === 'start') {
         this.buttons = [{ code: '_workflow_activity_start', name: '启动', isHide: '0' }]
+      // 获取bpmn设计器按钮配置
       } else if (this.processDefKey && this.taskDefKey) {
-        // 获取流程设计器配置按钮
         findByDefIdAndTaskId({
           processDefId: this.processDefKey,
           activityDefId: this.taskDefKey
@@ -227,7 +227,7 @@ export default {
           this.buttons = data.workflowButtonList
         })
       }
-      // 读取历史任务列表
+      // 获取历史任务流转列表
       if (this.processInsId) {
         getHistoryFlowChangeList(this.processInsId).then(({ data }) => {
           this.historyFlowChangeList = data

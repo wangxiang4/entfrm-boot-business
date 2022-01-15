@@ -274,6 +274,18 @@ export default {
     },
     /** 暂存草稿 */
     save () {
+      this.$notify({
+        title: '提示',
+        message: `
+          <p>工作流保存表单等输入信息不提交审批,方便下次用户提交审批使用!</p>
+          <p>这里提供两种解决方案</p>
+          <p>1.把信息保存进当前任务的流程变量中</p>
+          <p>2.新建立一个扩展crud专门用来存储信息</p>
+          <p>此功能过于简单,不做实现.</p>
+        `,
+        dangerouslyUseHTMLString: true,
+        type: 'warning'
+      });
     },
     /** 启动流程 */
     start (vars) {
@@ -346,7 +358,7 @@ export default {
     },
     /** 打印 */
     print () {
-      console.warn("---工作流表单打印成功!---")
+      console.warn("---工作流表单打印成功,此处可以做一些打印回调逻辑处理!---")
     },
     /** 驳回到任意节点 */
     rollBack () {
@@ -358,6 +370,11 @@ export default {
     },
     /** 减签 */
     delMultiInstance () {
+      this.$notify({
+        title: '提示',
+        message: `预留减签功能实现位置,一般情况在企业中减签用的很少这边不做实现,可以自行实现!`,
+        type: 'warning'
+      });
     },
     /** 自定义按钮提交 */
     commit (vars) {

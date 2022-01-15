@@ -209,8 +209,8 @@ export default {
           })
         // 获取任务表单数据
         } else {
-          getFormTaskData(this.taskId).then(({data}) => {
-            this.taskFormData = data.taskFormData
+          getFormTaskData(this.taskId).then(({ data }) => {
+            this.taskFormData = data
           })
         }
       }
@@ -385,9 +385,9 @@ export default {
             taskDefKey: this.taskDefKey,
             processInsId: this.processInsId,
             processDefId: this.processDefId,
-            vars: vars,
             activityCommentInfo: this.auditForm,
-            assignee: this.auditForm.assignee
+            assignee: this.auditForm.assignee,
+            vars: vars,
           }).then(({ data }) => {
             this.$message.success(data)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
@@ -400,9 +400,9 @@ export default {
         this.$refs.form.auditFormTask({
           taskId: this.taskId,
           processInsId: this.processInsId,
-          vars: vars,
           activityCommentInfo: this.auditForm,
-          assignee: this.auditForm.assignee
+          assignee: this.auditForm.assignee,
+          vars: vars,
         }, () => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
           this.$router.push('/workflow/transaction/TodoList')

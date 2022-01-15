@@ -2,7 +2,7 @@
  <div v-loading="loading" style="min-height:50px">
    <loquat-form v-if="visible"
                 ref="loquatForm"
-                :v-model="formData"
+                v-model="formData"
                 :option="options"
    />
  </div>
@@ -39,11 +39,12 @@ export default {
             if (!data.json) throw new Error('当前数据没有json结构体')
             this.options = eval('(' + data.json + ')')
             setTimeout(() => {
+              debugger
               const disableIds = []
               const showIds = []
               this.taskFormData.forEach((item) => {
                 if (item.value !== undefined) {
-                  this.formData[`${item.id}`] = item.value
+                  this.$set(this.formData, item.id, item.value)
                 }
                 if (item.readable === true) {
                   showIds.push(`${item.id}`)
@@ -78,6 +79,7 @@ export default {
       }).then(() => { this.loading = false })
     },
     auditFormTask (data, callback) {
+      debugger
       this.loading = true
       const processVarsity = Object.assign(data.vars || {}, this.formData)
       auditFormTask({

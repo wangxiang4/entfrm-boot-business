@@ -39,7 +39,6 @@ export default {
             if (!data.json) throw new Error('当前数据没有json结构体')
             this.options = eval('(' + data.json + ')')
             setTimeout(() => {
-              debugger
               const disableIds = []
               const showIds = []
               this.taskFormData.forEach((item) => {

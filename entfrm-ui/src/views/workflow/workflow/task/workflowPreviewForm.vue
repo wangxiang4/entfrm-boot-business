@@ -10,7 +10,7 @@
 
 <script>
 import { getFormDefinitionJson } from '@/api/workflow/extension/formDefinitionJson'
-import { startFormProcessDefinition, auditFormTask } from '@/api/workflow/workflow/task'
+import { startFormProcessDefinition, auditFormTask } from '@/api/workflow/workflow/form'
 
 export default {
   name: 'WorkflowPreviewForm',

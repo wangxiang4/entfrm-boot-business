@@ -21,9 +21,17 @@ export function listAllUser(query) {
 
 
 // 查询用户详细
-export function getUser(userIds) {
+export function getUsers(userIds) {
   return request({
     url: '/system/user/getByIds/' + userIds,
+    method: 'get'
+  })
+}
+
+// 查询用户详细
+export function getUser(userId) {
+  return request({
+    url: '/system/user/' + userId,
     method: 'get'
   })
 }

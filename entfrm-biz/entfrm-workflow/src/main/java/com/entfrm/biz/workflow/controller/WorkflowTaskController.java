@@ -149,7 +149,7 @@ public class WorkflowTaskController {
     public R addSignTask(@RequestBody Map<String,Object> params) throws Exception {
         String taskId = MapUtil.getStr(params, "taskId"),
                comment = MapUtil.getStr(params, "comment");
-        List<Integer> userIds = MapUtil.get(params, "userIds", List.class);
+        List<String> userIds = MapUtil.get(params, "userIds", List.class);
         Boolean mark = MapUtil.getBool(params, "mark");
         workflowTaskService.addSignTask(taskId, userIds, comment, mark);
         return R.ok("加签成功!");

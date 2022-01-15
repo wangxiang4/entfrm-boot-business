@@ -85,20 +85,9 @@
       </template>
     </div>
     <roll-back-task-select ref="rollBackTaskSelect" @getRollBackTaskDefKey="handleRollBackTask"/>
-    <user-select-dialog title="选择转办用户"
-                        ref="transferTaskSelect"
-                        :limit="1"
-                        @doSubmit="handleTransferTask"
-    />
-    <user-select-dialog title="选择委派用户"
-                        ref="delegateTaskSelect"
-                        :limit="1"
-                        @doSubmit="handleDelegateTask"
-    />
-    <user-select-dialog title="选择加签用户"
-                        ref="addSignTaskSelect"
-                        @doSubmit="handleAddSignTask"
-    />
+    <user-select-dialog ref="transferTaskSelect" title="选择转办用户" :limit="1" @doSubmit="handleTransferTask"/>
+    <user-select-dialog ref="delegateTaskSelect" title="选择委派用户" :limit="1" @doSubmit="handleDelegateTask"/>
+    <user-select-dialog ref="addSignTaskSelect" title="选择加签用户" @doSubmit="handleAddSignTask"/>
   </div>
 </template>
 
@@ -109,22 +98,11 @@ import rollBackTaskSelect from './rollBackTaskSelect'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
-import {
-  getProcessStartEventFormData,
-  getProcessDefFlowChart,
-  getProcessInsFlowChart,
-  getTaskFormData,
-  findByDefIdAndTaskId,
-  getHistoryFlowChangeList,
-  workflowCopySave,
-  startProcessDefinition,
-  auditTask,
-  rejectTask,
-  rollBackTaskList,
-  addSignTask,
-  transferTask,
-  delegateTask
-} from '@/api/workflow/workflow/task'
+import { getProcessInsFlowChart, getHistoryFlowChangeList, auditTask, rejectTask, rollBackTaskList, addSignTask, transferTask, delegateTask } from '@/api/workflow/workflow/task'
+import { getProcessStartEventFormData, getFormTaskData } from '@/api/workflow/workflow/form'
+import { getProcessDefFlowChart, startProcessDefinition } from '@/api/workflow/workflow/process'
+import { findByDefIdAndTaskId } from '@/api/workflow/extension/activityExtensionData'
+import { workflowCopySave } from '@/api/workflow/extension/workflowCopy'
 import { stopProcessInstance } from '@/api/workflow/workflow/process'
 
 export default {
@@ -443,6 +421,8 @@ export default {
         mark: false
       }).then(({ data }) => {
         this.$message.success(data)
+        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+        this.$router.push('/workflow/transaction/TodoList')
       })
     },
     /** 处理转派任务 */

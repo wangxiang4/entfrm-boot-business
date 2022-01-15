@@ -119,8 +119,8 @@
  *
  * @create: 2021-06-22
  */
-import { deptTree } from '@/api/system/dept'
-import { listUser } from '@/api/system/user'
+import { deptTree } from '@/api/workflow/workflow/task'
+import { listUser } from '@/api/workflow/workflow/task'
 
 export default {
   name: 'UserSelectDialog',

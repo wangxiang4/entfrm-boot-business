@@ -1,3 +1,12 @@
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 表单定义json结构 api
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2021-06-20
+ **/
 import request from "@/utils/request";
 
 // 查询表单定义json列表

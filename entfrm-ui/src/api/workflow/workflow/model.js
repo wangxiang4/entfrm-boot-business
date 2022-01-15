@@ -1,3 +1,12 @@
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 模型设计 api
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2022/1/15
+ */
 import request from '@/utils/request'
 
 // 查询模型列表

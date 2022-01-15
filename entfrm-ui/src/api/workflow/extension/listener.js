@@ -1,14 +1,13 @@
-import request from "@/utils/request";
-
 /**
- * @program: entfrm-boot
+ * @program: entfrm-ui
  *
- * @description: 监听器请求-API
+ * @description: 监听器请求 api
  *
  * @author: entfrm开发团队-王翔
  *
- * @create: 2021-06-20
- **/
+ * @create: 2022/1/15
+ */
+import request from "@/utils/request";
 
 // 查询监听器列表
 export function listListener(query) {

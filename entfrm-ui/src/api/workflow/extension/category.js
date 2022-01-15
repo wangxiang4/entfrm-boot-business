@@ -1,14 +1,13 @@
-import request from "@/utils/request";
-
 /**
- * @program: entfrm-boot
+ * @program: entfrm-ui
  *
- * @description: 流程分类管理API
+ * @description: 流程分类管理 api
  *
  * @author: entfrm开发团队-王翔
  *
- * @create: 2021-06-22
- **/
+ * @create: 2022/1/15
+ */
+import request from "@/utils/request";
 
 // 查询流程分类管理列表
 export function listCategory() {

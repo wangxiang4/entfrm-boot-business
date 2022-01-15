@@ -101,7 +101,6 @@
     >
       <flowable-chart ref="flowableChart" style="height:calc(100vh - 170px)"/>
     </el-dialog>
-    <!--<user-select ref="userSelect" :limit="1" @doSubmit="selectUsersToTransferTask"/>-->
   </div>
 </template>
 

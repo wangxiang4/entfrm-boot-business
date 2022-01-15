@@ -32,7 +32,7 @@
  * @create: 2021-06-22
  */
 import UserSelectDialog from './UserSelectDialog'
-import { getUser } from '@/api/system/user'
+import { getUser } from '@/api/workflow/workflow/task'
 export default {
   name: 'UserSelect',
   components: { UserSelectDialog },

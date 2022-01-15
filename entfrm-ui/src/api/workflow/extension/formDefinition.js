@@ -1,3 +1,12 @@
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 表单定义 api
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2022/1/15
+ */
 import request from '@/utils/request'
 
 // 查询表单定义列表

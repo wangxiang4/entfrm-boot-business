@@ -1,14 +1,13 @@
-import request from "@/utils/request";
-
 /**
- * @program: entfrm-boot
+ * @program: entfrm-ui
  *
- * @description: 常用按钮请求-API
+ * @description: 常用按钮请求 api
  *
  * @author: entfrm开发团队-王翔
  *
- * @create: 2021-06-20
- **/
+ * @create: 2022/1/15
+ */
+import request from "@/utils/request";
 
 // 查询常用按钮列表
 export function listButton(query) {

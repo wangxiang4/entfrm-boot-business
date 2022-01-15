@@ -100,7 +100,7 @@ public interface WorkflowTaskService {
      * comment:备注
      * mark:标记(true:后加签,false:前加签)
      */
-    void addSignTask(String taskId, List<Integer> userIds, String comment, Boolean mark) throws Exception;
+    void addSignTask(String taskId, List<String> userIds, String comment, Boolean mark) throws Exception;
 
 
     /**

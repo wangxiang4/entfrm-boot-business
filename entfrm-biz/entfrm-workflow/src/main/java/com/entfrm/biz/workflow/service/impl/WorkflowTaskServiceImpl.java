@@ -394,7 +394,54 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     @Override
-    public void addSignTask(String taskId, List<Integer> userIds, String comment, Boolean mark) throws Exception {
+    public Map getDiagram(String processInsId) {
+        Map m = new HashMap ();
+        try {
+            String processDefId;
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInsId).singleResult();
+            //流程走完的不显示图
+            if (pi == null) {
+                processDefId = historyService.createHistoricProcessInstanceQuery ().processInstanceId (processInsId).singleResult ().getProcessDefinitionId ();
+            } else {
+                processDefId = pi.getProcessDefinitionId ();
+            }
+            BpmnModel bpmnModel = repositoryService.getBpmnModel (processDefId);
+            List<HistoricActivityInstance> historyProcess = historyService // 历史相关Service
+                    .createHistoricActivityInstanceQuery () // 创建历史活动实例查询
+                    .processInstanceId (processInsId) // 执行流程实例id
+                    .finished ().orderByHistoricActivityInstanceEndTime ().asc ()
+                    .list ();
+            Set<String> activityIds = new LinkedHashSet<> ();
+            List<String> flows = new ArrayList<> ();
+            for (HistoricActivityInstance hi : historyProcess) {
+                String activityType = hi.getActivityType ();
+                if (activityType.equals (BpmnXMLConstants.ELEMENT_SEQUENCE_FLOW) || activityType.equals (BpmnXMLConstants.ELEMENT_GATEWAY_EXCLUSIVE)) {
+                    flows.add (hi.getActivityId ());
+                } else  if (StrUtil.isNotBlank (hi.getAssignee ())
+                        && historyService.createHistoricTaskInstanceQuery ().taskId (hi.getTaskId ()).count () != 0
+                        || BpmnXMLConstants.ELEMENT_TASK_USER.equals (hi.getActivityType ()) && hi.getEndTime () == null
+                        || BpmnXMLConstants.ELEMENT_EVENT_START.equals (hi.getActivityType ())
+                        || BpmnXMLConstants.ELEMENT_EVENT_END.equals (hi.getActivityType ())) {
+                    activityIds.add (hi.getActivityId ());
+                }
+            }
+            List<Task> tasks = taskService.createTaskQuery ().processInstanceId (processInsId).list ();
+            for (Task task : tasks) {
+                activityIds.add (task.getTaskDefinitionKey ());
+            }
+            byte[] bpmnBytes = modelService.getBpmnXML(bpmnModel);
+            m.put ("bpmnXml", new String (bpmnBytes));
+            m.put ("flows", flows);
+            m.put ("activityIds", activityIds);
+            return m;
+        } catch (Exception e) {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    @Override
+    public void addSignTask(String taskId, List<String> userIds, String comment, Boolean mark) throws Exception {
         TaskEntityImpl taskEntity = (TaskEntityImpl) taskService.createTaskQuery().taskId(taskId).singleResult();
         if (taskEntity != null) {
             String parentTaskId = taskEntity.getParentTaskId();
@@ -510,7 +557,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     }
 
     /** 创建加签子任务 */
-    private void createAddSignSubTasks(List<Integer> userIds, TaskEntity taskEntity) {
+    private void createAddSignSubTasks(List<String> userIds, TaskEntity taskEntity) {
         if (CollectionUtils.isNotEmpty(userIds)) {
             String parentTaskId = taskEntity.getParentTaskId();
             if (StrUtil.isBlank(parentTaskId)) {
@@ -519,7 +566,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
             String finalParentTaskId = parentTaskId;
             userIds.forEach(assignee -> {
                 if (ObjectUtil.isNotEmpty(assignee)) {
-                    this.createSubTask(taskEntity, finalParentTaskId, assignee + "");
+                    this.createSubTask(taskEntity, finalParentTaskId, assignee);
                 }
             });
             String taskId = taskEntity.getId();
@@ -556,53 +603,6 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
             taskService.saveTask(task);
         }
         return task;
-    }
-
-    @Override
-    public Map getDiagram(String processInsId) {
-        Map m = new HashMap ();
-        try {
-            String processDefId;
-            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInsId).singleResult();
-            //流程走完的不显示图
-            if (pi == null) {
-                processDefId = historyService.createHistoricProcessInstanceQuery ().processInstanceId (processInsId).singleResult ().getProcessDefinitionId ();
-            } else {
-                processDefId = pi.getProcessDefinitionId ();
-            }
-            BpmnModel bpmnModel = repositoryService.getBpmnModel (processDefId);
-            List<HistoricActivityInstance> historyProcess = historyService // 历史相关Service
-                    .createHistoricActivityInstanceQuery () // 创建历史活动实例查询
-                    .processInstanceId (processInsId) // 执行流程实例id
-                    .finished ().orderByHistoricActivityInstanceEndTime ().asc ()
-                    .list ();
-            Set<String> activityIds = new LinkedHashSet<> ();
-            List<String> flows = new ArrayList<> ();
-            for (HistoricActivityInstance hi : historyProcess) {
-                String activityType = hi.getActivityType ();
-                if (activityType.equals (BpmnXMLConstants.ELEMENT_SEQUENCE_FLOW) || activityType.equals (BpmnXMLConstants.ELEMENT_GATEWAY_EXCLUSIVE)) {
-                    flows.add (hi.getActivityId ());
-                } else  if (StrUtil.isNotBlank (hi.getAssignee ())
-                        && historyService.createHistoricTaskInstanceQuery ().taskId (hi.getTaskId ()).count () != 0
-                        || BpmnXMLConstants.ELEMENT_TASK_USER.equals (hi.getActivityType ()) && hi.getEndTime () == null
-                        || BpmnXMLConstants.ELEMENT_EVENT_START.equals (hi.getActivityType ())
-                        || BpmnXMLConstants.ELEMENT_EVENT_END.equals (hi.getActivityType ())) {
-                    activityIds.add (hi.getActivityId ());
-                }
-            }
-            List<Task> tasks = taskService.createTaskQuery ().processInstanceId (processInsId).list ();
-            for (Task task : tasks) {
-                activityIds.add (task.getTaskDefinitionKey ());
-            }
-            byte[] bpmnBytes = modelService.getBpmnXML(bpmnModel);
-            m.put ("bpmnXml", new String (bpmnBytes));
-            m.put ("flows", flows);
-            m.put ("activityIds", activityIds);
-            return m;
-        } catch (Exception e) {
-            e.printStackTrace ();
-        }
-        return null;
     }
 
 }

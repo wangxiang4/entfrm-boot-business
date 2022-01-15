@@ -1,3 +1,12 @@
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 待办任务 api
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2022/1/15
+ */
 import request from '@/utils/request'
 
 // 查询部门下拉树结构
@@ -17,37 +26,27 @@ export function listUser (query) {
   })
 }
 
-// 启动任务流程定义
-export function startTaskProcessDefinition (data) {
+// 获取用户详细
+export function getUser (userIds) {
   return request({
-    url: '/workflow/process/startProcessDefinition',
-    method: 'post',
-    data: data
+    url: '/system/user/getByIds/' + userIds,
+    method: 'get'
   })
 }
 
-// 启动表单流程定义
-export function startFormProcessDefinition (data) {
+// 待办任务列表
+export function listTodoTask (query) {
   return request({
-    url: '/workflow/form/startProcessDefinition',
-    method: 'post',
-    data: data
-  })
-}
-
-// 提交表单任务
-export function auditFormTask (data) {
-  return request({
-    url: '/workflow/form/auditTask',
-    method: 'post',
-    data: data
+    url: '/workflow/task/list',
+    method: 'get',
+    params: query
   })
 }
 
 // 可回滚任务列表
 export function rollBackTaskList (taskId) {
   return request({
-    url: '/workflow/form/rollBackTaskList/' + taskId,
+    url: '/workflow/task/rollBackTaskList/' + taskId,
     method: 'get'
   })
 }
@@ -61,14 +60,6 @@ export function getTaskDefinition (query) {
   })
 }
 
-// 获取流程开始事件表单数据
-export function getProcessStartEventFormData (processDefId) {
-  return request({
-    url: '/workflow/form/getProcessStartEventFormData/' + processDefId,
-    method: 'get'
-  })
-}
-
 // 获取流程实例工作流图
 export function getProcessInsFlowChart (processInsId) {
   return request({
@@ -77,55 +68,11 @@ export function getProcessInsFlowChart (processInsId) {
   })
 }
 
-
-// 获取流程定义工作流图
-export function getProcessDefFlowChart (processDefId) {
-  return request({
-    url: '/workflow/process/getFlowChart/' + processDefId,
-    method: 'get'
-  })
-}
-
-// 获取任务表单数据
-export function getTaskFormData (taskId) {
-  return request({
-    url: '/workflow/form/getTaskFormData/' + taskId,
-    method: 'get'
-  })
-}
-
-// 查找活动扩展数据
-export function findByDefIdAndTaskId (query) {
-  return request({
-    url: '/workflow/extension/activityExtensionData/findByDefIdAndTaskId',
-    method: 'get',
-    params: query
-  })
-}
-
 // 获取已办流转任务列表
 export function getHistoryFlowChangeList (processInsId) {
   return request({
     url: '/workflow/task/historyFlowChangeList/' + processInsId,
     method: 'get'
-  })
-}
-
-// 流程抄送保存
-export function workflowCopySave (userIds, data) {
-  return request({
-    url: '/workflow/extension/workflowCopy/save/' + userIds,
-    method: 'post',
-    data: data
-  })
-}
-
-// 启动流程定义
-export function startProcessDefinition (data) {
-  return request({
-    url: '/workflow/process/startProcessDefinition',
-    method: 'post',
-    data: data
   })
 }
 
@@ -170,15 +117,6 @@ export function delegateTask (query) {
   return request({
     url: '/workflow/task/delegateTask',
     method: 'post',
-    params: query
-  })
-}
-
-// 代表任务列表
-export function listTodoTask (query) {
-  return request({
-    url: '/workflow/task/list',
-    method: 'get',
     params: query
   })
 }

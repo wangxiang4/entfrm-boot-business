@@ -1,14 +1,13 @@
-import request from "@/utils/request";
-
 /**
- * @program: entfrm-boot
+ * @program: entfrm-ui
  *
- * @description: 表单分类管理API
+ * @description: 表单分类管理 api
  *
  * @author: entfrm开发团队-王翔
  *
- * @create: 2021-12-30
- **/
+ * @create: 2022/1/15
+ */
+import request from "@/utils/request";
 
 // 查询表单分类管理列表
 export function listFormCategory() {

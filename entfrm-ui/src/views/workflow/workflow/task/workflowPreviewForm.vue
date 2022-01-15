@@ -83,11 +83,11 @@ export default {
       auditFormTask({
         ...data,
         vars: processVarsity
-      }).then(response => {
+      }).then(({ data }) => {
         this.visible = false
         this.loading = false
-        this.$message.success(response.msg)
-        callback(response)
+        this.$message.success(data)
+        callback()
       }).then(() => { this.loading = false })
     }
   }

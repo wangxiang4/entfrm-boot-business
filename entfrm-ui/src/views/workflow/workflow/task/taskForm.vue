@@ -352,7 +352,9 @@ export default {
           ...this.auditForm
         }).then(({ data }) => {
           this.$message.success(data)
+          this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
           this.$router.push('/workflow/transaction/TodoList')
+          this.cc({ processInsId: this.processInsId })
         })
       }).catch(function() {})
     },
@@ -378,7 +380,7 @@ export default {
     },
     /** 自定义按钮提交 */
     commit (vars) {
-      // 外置表单
+      // 外置表单审批
       if (this.formType === '2') {
         this.$refs.form.saveForm((businessTable, businessId) => {
           auditTask({
@@ -389,16 +391,14 @@ export default {
             vars: vars,
             activityCommentInfo: this.auditForm,
             assignee: this.auditForm.assignee
-          }).then(({data}) => {
-            if (data.success) {
-              this.$message.success(data.msg)
-              this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-              this.$router.push('/workflow/transaction/TodoList')
-              this.cc(data)
-            }
+          }).then(({ data }) => {
+            this.$message.success(data)
+            this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+            this.$router.push('/workflow/transaction/TodoList')
+            this.cc({ processInsId: this.processInsId })
           })
         })
-        // 动态表单
+      // 动态表单审批
       } else {
         this.$refs.form.auditFormTask({
           taskId: this.taskId,
@@ -406,12 +406,10 @@ export default {
           vars: vars,
           activityCommentInfo: this.auditForm,
           assignee: this.auditForm.assignee
-        }, ({ data }) => {
-          if (data.success) {
-            this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/transaction/TodoList')
-            this.cc(data)
-          }
+        }, () => {
+          this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
+          this.$router.push('/workflow/transaction/TodoList')
+          this.cc({ processInsId: this.processInsId })
         })
       }
     },
@@ -440,13 +438,16 @@ export default {
         this.$message.success(data)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
         this.$router.push('/workflow/transaction/TodoList')
+        this.cc({ processInsId: this.processInsId })
       })
     },
     /** 处理转派任务 */
     handleTransferTask (userList) {
       transferTask({ taskId: this.taskId, userId: userList[0].id }).then(({ data }) => {
         this.$message.success(data)
+        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
         this.$router.push('/workflow/transaction/TodoList')
+        this.cc({ processInsId: this.processInsId })
       })
     },
     /** 处理任务委派 */
@@ -456,7 +457,9 @@ export default {
         userId: userList[0].id
       }).then(({ data }) => {
         this.$message.success(data)
+        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
         this.$router.push('/workflow/transaction/TodoList')
+        this.cc({ processInsId: this.processInsId })
       })
     },
     submit (button) {

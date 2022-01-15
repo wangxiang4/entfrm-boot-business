@@ -144,17 +144,6 @@ public class WorkflowTaskController {
         }
     }
 
-    /** 加签任务 */
-    @PostMapping("/addSignTask")
-    public R addSignTask(@RequestBody Map<String,Object> params) throws Exception {
-        String taskId = MapUtil.getStr(params, "taskId"),
-               comment = MapUtil.getStr(params, "comment");
-        List<String> userIds = MapUtil.get(params, "userIds", List.class);
-        Boolean mark = MapUtil.getBool(params, "mark");
-        workflowTaskService.addSignTask(taskId, userIds, comment, mark);
-        return R.ok("加签成功!");
-    }
-
     /** 审批任务 */
     @PostMapping("/auditTask")
     public R auditTask(@RequestBody Workflow workflow) {

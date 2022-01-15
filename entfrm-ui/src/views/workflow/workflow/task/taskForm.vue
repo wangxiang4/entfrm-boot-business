@@ -210,7 +210,7 @@ export default {
           })
           // 获取任务表单数据
         } else {
-          getTaskFormData(this.taskId).then(({data}) => {
+          getFormTaskData(this.taskId).then(({data}) => {
             this.taskFormData = data.taskFormData
           })
         }
@@ -472,7 +472,7 @@ export default {
           break
         // 驳回到任意步骤
         case '_workflow_activity_roll_back':
-          this.rollBackList()
+          this.rollBack()
           break
         // 加签
         case '_workflow_activity_add_multi_instance':

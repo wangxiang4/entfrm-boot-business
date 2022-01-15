@@ -78,7 +78,6 @@ export default {
       }).then(() => { this.loading = false })
     },
     auditFormTask (data, callback) {
-      debugger
       this.loading = true
       const processVarsity = Object.assign(data.vars || {}, this.formData)
       auditFormTask({

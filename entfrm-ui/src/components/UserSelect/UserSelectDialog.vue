@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog :title="title"
-               class="userDialog"
+               class="userSelectDialog"
                width="155vh"
                :close-on-click-modal="false"
                :append-to-body="true"
                :visible.sync="visible"
     >
-      <el-container style="height: 500px">
+      <el-container style="height:500px">
         <el-aside width="200px">
           <el-card class="org">
             <div slot="header" class="clearfix">
@@ -64,15 +64,15 @@
                       v-loading="loading"
                       size="small"
                       ref="userTable"
-                      @selection-change="selectionChangeHandle"
+                      @selection-change="handleSelectionChange"
                       height="calc(100% - 60px)"
                       style="width: 100%;"
             >
               <el-table-column v-if="limit <= 1" header-align="center" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-radio :label="scope.row.id"
-                            :value="dataListAllSelections[0]&&dataListAllSelections[0].id"
-                            @change.native="getTemplateRow(scope.$index,scope.row)"
+                  <el-radio :label="scope.row[idKey]"
+                            :value="dataSelectionAllList[0] && dataSelectionAllList[0][idKey]"
+                            @change.native="getRadioRowData(scope.$index, scope.row)"
                   ><span/></el-radio>
                 </template>
               </el-table-column>
@@ -87,18 +87,18 @@
                            :page-size="searchForm.size"
                            :total="total"
                            layout="total, sizes, prev, pager, next, jumper"
-                           @size-change="sizeChangeHandle"
-                           @current-change="currentChangeHandle"
+                           @size-change="handleSizeChangeHandle"
+                           @current-change="handleCurrentChangeHandle"
             />
           </el-main>
         </el-container>
         <el-aside width="200px">
-          <el-tag v-for="tag in dataListAllSelections"
-                  :key="tag.id"
+          <el-tag v-for="data in dataSelectionAllList"
+                  :key="data[idKey]"
                   closable
                   :disable-transitions="false"
-                  @close="del(tag)"
-          >{{tag.userName}}</el-tag>
+                  @close="handleDelSelectData(data)"
+          >{{data.userName}}</el-tag>
         </el-aside>
       </el-container>
       <span slot="footer" class="dialog-footer">
@@ -110,6 +110,15 @@
 </template>
 
 <script>
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 通用用户选择组件(弹出框)
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2021-06-22
+ */
 import { deptTree } from '@/api/system/dept'
 import { listUser } from '@/api/system/user'
 
@@ -131,6 +140,7 @@ export default {
   },
   data () {
     return {
+      // 搜索表单
       searchForm: {
         current: 1,
         size: 10,
@@ -138,16 +148,23 @@ export default {
         deptId: undefined,
         status: 0
       },
+      // 过滤名称
       filterText: '',
-      // 所有选中的数据包含跨页数据
-      dataListAllSelections: [],
-      dataListSelections: [],
+      // 记录所有选中的数据含跨页数据
+      dataSelectionAllList: [],
+      // 记录当前页数据
+      dataSelectionList: [],
       // 标识列表数据中每一行的唯一键的名称(需要按自己的数据改一下)
       idKey: 'id',
+      // 表格数据
       dataList: [],
+      // 组织架构数据
       officeTreeData: [],
+      // 分页总数量
       total: 0,
+      // 遮罩层
       loading: false,
+      // 显示
       visible: false
     }
   },
@@ -157,14 +174,16 @@ export default {
     }
   },
   methods: {
+    /** 初始化对话框 */
     init () {
       this.visible = true
       this.$nextTick(() => {
-        this.dataListAllSelections = JSON.parse(JSON.stringify(this.selectData))
+        this.dataSelectionAllList = JSON.parse(JSON.stringify(this.selectData))
         this.refreshTree()
         this.resetSearch()
       })
     },
+    /** 设置组织架构渲染结构 */
     renderContent (h, { node, data, store }) {
       return (
         <span>
@@ -173,56 +192,54 @@ export default {
         </span>
       )
     },
-    /** 获取选中数据 */
-    getTemplateRow (index, row) {
-      this.dataListSelections = [row]
-      this.$nextTick(() => {
-        this.changePageCoreRecordData()
-      })
+    /** 获取单选框选中行数据 */
+    getRadioRowData (index, row) {
+      this.dataSelectionList = [row]
+      this.$nextTick(() => { this.handleTableRecordData() })
     },
-    /** 设置选中的方法 */
-    setSelectRow () {
-      if (!this.dataListAllSelections || this.dataListAllSelections.length <= 0) {
+    /** 设置表格自动选中行 */
+    setTableSelectRow () {
+      if (!this.dataSelectionAllList || this.dataSelectionAllList.length <= 0) {
         this.$refs.userTable.clearSelection()
         return
       }
       // 标识当前行的唯一键的名称
-      let idKey = this.idKey
-      let selectAllIds = []
-      this.dataListAllSelections.forEach(row => {
-        selectAllIds.push(row[idKey])
-      })
+      const idKey = this.idKey
+      const selectAllIds = []
+      this.dataSelectionAllList.forEach(row => { selectAllIds.push(row[idKey]) })
       this.$refs.userTable.clearSelection()
-      for (let i = 0; i < this.dataList.length; i++) {
+      for (let i = 0; i < this.dataList.length; ++i) {
         if (selectAllIds.indexOf(this.dataList[i][idKey]) >= 0) {
           this.$refs.userTable.toggleRowSelection(this.dataList[i], true)
         }
       }
     },
-    /** 记忆选择核心方法 */
-    changePageCoreRecordData () {
+    /** 处理表格记录数据 */
+    handleTableRecordData () {
+      const that = this
       // 标识当前行的唯一键的名称
-      let idKey = this.idKey
-      let that = this
-      // 如果总记忆中还没有选择的数据，那么就直接取当前页选中的数据，不需要后面一系列计算
-      if (this.dataListAllSelections.length <= 0) {
-        this.dataListSelections.forEach(row => { that.dataListAllSelections.push(row) })
+      const idKey = this.idKey
+      // 如果总记录数据还没有选择的数据,那么就直接取当前页选中的数据,不需要后面一系列分页记录处理
+      if (this.dataSelectionAllList.length <= 0) {
+        this.dataSelectionList.forEach(row => { that.dataSelectionAllList.push(row) })
         return
       }
-      // 总选择里面的key集合
-      let selectAllIds = []
-      this.dataListAllSelections.forEach(row => { selectAllIds.push(row[idKey]) })
-      let selectIds = []
-      // 获取当前页选中的id
-      this.dataListSelections.forEach(row => {
+      // 总记录选择数据key集合
+      const selectAllIds = []
+      this.dataSelectionAllList.forEach(row => { selectAllIds.push(row[idKey]) })
+      // 本页记录选择数据key集合
+      const selectIds = []
+      // 获取本页选中的id
+      this.dataSelectionList.forEach(row => {
         selectIds.push(row[idKey])
-        // 如果总选择里面不包含当前页选中的数据，那么就加入到总选择集合里
+        // 如果总记录选择数据中不包含本页记录选中的数据,那么就加入到总记录选择数据集合里
         if (selectAllIds.indexOf(row[idKey]) < 0) {
-          that.dataListAllSelections.push(row)
+          that.dataSelectionAllList.push(row)
         }
       })
-      let noSelectIds = []
-      // 得到当前页没有选中的id
+      // 本页记录未选择数据key集合
+      const noSelectIds = []
+      // 获取本页未选中的id
       this.dataList.forEach(row => {
         if (selectIds.indexOf(row[idKey]) < 0) {
           noSelectIds.push(row[idKey])
@@ -230,10 +247,10 @@ export default {
       })
       noSelectIds.forEach(id => {
         if (selectAllIds.indexOf(id) >= 0) {
-          for (let i = 0; i < that.dataListAllSelections.length; i++) {
-            if (that.dataListAllSelections[i][idKey] === id) {
-              // 如果总选择中有未被选中的，那么就删除这条
-              that.dataListAllSelections.splice(i, 1)
+          for (let i = 0; i < that.dataSelectionAllList.length; ++i) {
+            if (that.dataSelectionAllList[i][idKey] === id) {
+              // 如果总记录选择数据集合中有未被选中的,则进行移除
+              that.dataSelectionAllList.splice(i, 1)
               break
             }
           }
@@ -242,75 +259,70 @@ export default {
     },
     /** 得到选中的所有数据 */
     getAllSelectionData () {
-       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
-      this.changePageCoreRecordData()
+       // 再执行一次表格记录数据处理,目的是为了在当前页操作勾选后直接获取选中数据
+      this.handleTableRecordData()
     },
+    /** 设置组织架构过滤逻辑 */
     filterNode (value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    del (tag) {
-      this.dataListAllSelections.splice(this.dataListAllSelections.indexOf(tag), 1)
-      this.$nextTick(() => {
-        this.setSelectRow()
-      })
+    /** 处理删除选择数据 */
+    handleDelSelectData (data) {
+      this.dataSelectionAllList.splice(this.dataSelectionAllList.indexOf(data), 1)
+      this.$nextTick(() => { this.setTableSelectRow() })
     },
-    /** 获取数据列表 */
+    /** 刷新表格数据列表 */
     refreshList () {
       this.loading = true
       listUser(this.searchForm).then(response => {
           this.dataList = response.data
           this.total = response.total
           this.loading = false
-          this.$nextTick(() => {
-            this.setSelectRow()
-          })
-      })
+          this.$nextTick(() => { this.setTableSelectRow() })
+      }).catch(() => { this.loading = false })
     },
+    /** 刷新组织架构树 */
     refreshTree () {
-      deptTree().then(({data}) => {
-        this.officeTreeData = data
-      })
+      deptTree().then(({data}) => { this.officeTreeData = data })
     },
-    // 每页数
-    sizeChangeHandle (val) {
+    /** 处理分页数量改动 */
+    handleSizeChangeHandle (val) {
       this.searchForm.size = val
       this.searchForm.current = 1
       this.refreshList()
-      this.$nextTick(() => {
-        this.changePageCoreRecordData()
-      })
+      this.$nextTick(() => { this.handleTableRecordData() })
     },
-    // 当前页
-    currentChangeHandle (val) {
+    /** 处理分页当前页改动 */
+    handleCurrentChangeHandle (val) {
       this.searchForm.current = val
       this.refreshList()
-      this.$nextTick(() => {
-        this.changePageCoreRecordData()
-      })
+      this.$nextTick(() => { this.handleTableRecordData() })
     },
-    selectionChangeHandle (val) {
-      this.dataListSelections = val
-      this.$nextTick(() => {
-        this.changePageCoreRecordData()
-      })
+    /** 处理表格选择改动 */
+    handleSelectionChange (val) {
+      this.dataSelectionList = val
+      this.$nextTick(() => { this.handleTableRecordData() })
     },
+    /** 处理树点击 */
     handleNodeClick (node) {
       this.searchForm.deptId = node.deptId
       this.refreshList()
     },
+    /** 处理重置搜索 */
     resetSearch () {
       this.$refs.officeTree.setCurrentKey(null)
       this.$refs.searchForm.resetFields()
       this.refreshList()
     },
+    /** 提交当前数据 */
     doSubmit () {
-      if (this.limit < this.dataListAllSelections.length) {
+      if (this.limit < this.dataSelectionAllList.length) {
         this.$message.error(`你最多只能选择${this.limit}个用户`)
         return
       }
       this.visible = false
-      this.$emit('doSubmit', this.dataListAllSelections)
+      this.$emit('doSubmit', this.dataSelectionAllList)
     }
   }
 }
@@ -329,7 +341,8 @@ export default {
     overflow: auto;
   }
 }
-.userDialog {
+
+.userSelectDialog {
   ::v-deep .el-dialog__body {
     padding: 10px 0px 0px 10px;
     color: #606266;

@@ -115,7 +115,7 @@
     <user-select-dialog title="选择委派用户"
                         ref="delegateUserSelectDialog"
                         :limit="1"
-                        @doSubmit="selectUsersToDeleteTask"
+                        @doSubmit="handleDelegateTask"
     />
     <user-select-dialog title="选择加签用户"
                         ref="addSignTaskUserSelectDialog"
@@ -212,8 +212,10 @@ export default {
         message: '',
         mesCode: '',
         mesName: '',
-        userIds: null,
-        assignee: null
+        // 抄送用户ID
+        userIds: '',
+        // 任务代理人ID
+        assignee: ''
       }
     }
   },
@@ -419,10 +421,11 @@ export default {
     delegate () {
       this.$refs.delegateUserSelectDialog.init()
     },
-    selectUsersToDeleteTask (user) {
+    /** 处理任务委派 */
+    handleDelegateTask(userList) {
       delegateTask({
         taskId: this.taskId,
-        userId: user[0].id
+        userId: userList[0].id
       }).then(({ data }) => {
         this.$message.success(data)
         this.$router.push('/workflow/transaction/TodoList')
@@ -442,10 +445,11 @@ export default {
           this.$message.success(data)
           this.$router.push('/workflow/transaction/TodoList')
         })
-      })
+      }).catch(function() {})
     },
     /** 打印 */
     print () {
+      console.warn("---工作流表单打印成功!---")
     },
     /** 自定义按钮提交 */
     commit (vars) {

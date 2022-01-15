@@ -4,24 +4,33 @@
               :size="size"
               :disabled="disabled"
               :readonly="readonly"
-              v-model="label"
+              v-model="userNames"
               class="input-with-select"
     >
       <el-button slot="append"
                  icon="el-icon-search"
                  :disabled="disabled"
                  :readonly="readonly"
-                 @click="showUserSelect"
+                 @click="initUserSelectDialog"
       />
     </el-input>
-    <user-select-dialog ref="userSelect"
+    <user-select-dialog ref="userSelectDialog"
                         :limit="limit"
                         :selectData="selectData"
-                        @doSubmit="selectUsersToInput"
+                        @doSubmit="handleDialogSelectUser"
     />
   </div>
 </template>
 <script>
+/**
+ * @program: entfrm-ui
+ *
+ * @description: 通用用户选择组件(输入框)
+ *
+ * @author: entfrm开发团队-王翔
+ *
+ * @create: 2021-06-22
+ */
 import UserSelectDialog from './UserSelectDialog'
 import { getUser } from '@/api/system/user'
 export default {
@@ -49,8 +58,8 @@ export default {
   },
   data () {
     return {
-      label: '',
-      labelValue: this.value,
+      userIds: this.value,
+      userNames: '',
       selectData: []
     }
   },
@@ -58,33 +67,32 @@ export default {
     value: {
       handler (newVal) {
         if (newVal) {
-          getUser(newVal).then(({data}) => {
-            if (data.length != 0) {
-              this.selectData = data
-            }
+          getUser(newVal).then(({ data }) => {
+            if (data.length) this.selectData = data
           })
         }
       },
-      immediate: true,
-      deep: false
+      immediate: true
     },
     selectData: {
       handler (newVal) {
-        this.label = newVal.map(user => user.userName).join(',')
+        this.userNames = newVal.map(user => user.userName).join(',')
       },
       immediate: true,
       deep: false
     }
   },
   methods: {
-    selectUsersToInput (users) {
-      this.selectData = users
-      this.labelValue = users.map(user => user.id).join(',')
-      this.label = users.map(user => user.userName).join(',')
-      this.$emit('getValue', this.labelValue, this.label)
+    /** 处理对话框选中的用户 */
+    handleDialogSelectUser (userList) {
+      this.selectData = userList
+      this.userIds = userList.map(user => user.id).join(',')
+      this.userNames = userList.map(user => user.userName).join(',')
+      this.$emit('getValue', this.userIds, this.userNames)
     },
-    showUserSelect () {
-      this.$refs.userSelect.init()
+    /** 初始化用户选择弹出框 */
+    initUserSelectDialog() {
+      this.$refs.userSelectDialog.init()
     }
   }
 }

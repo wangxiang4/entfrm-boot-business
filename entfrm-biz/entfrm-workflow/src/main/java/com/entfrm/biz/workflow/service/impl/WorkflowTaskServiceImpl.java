@@ -445,10 +445,10 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         TaskEntityImpl taskEntity = (TaskEntityImpl)taskService.createTaskQuery().taskId(taskId).singleResult();
         if (taskEntity != null) {
             String parentTaskId = taskEntity.getParentTaskId();
-            // 创建多实例父级任务,子级为多实例加签用户任务
+            // 创建多实例父级任务,子级为多实例加签用户任务,因为后续加签运行完毕还要回到创建加签操作的这个任务中
             if (StrUtil.isBlank(parentTaskId)) {
                 taskEntity.setOwner(SecurityUtil.getUser().getId() + "");
-                taskEntity.setAssignee(null);
+                taskEntity.setAssignee(SecurityUtil.getUser().getId() + "");
                 taskEntity.setCountEnabled(true);
                 if (mark) {
                     taskEntity.setScopeType(WorkflowConstant.AFTER_ADD_SIGN);
@@ -559,7 +559,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
     /** 创建多实例加签子任务 */
     private void createAddSignSubTasks(List<String> userIds, TaskEntity taskEntity) {
         if (CollectionUtil.isNotEmpty(userIds)) {
-            // 检测父任务是否有父级任务ID,如果没有把当前任务设置为多实例子任务父级ID
+            // 检测父任务是否有父级任务ID,如果没有把当前任务设置为多实例子任务父级ID,运行完毕加签然后回调当前任务中
             String parentTaskId = taskEntity.getParentTaskId();
             if (StrUtil.isBlank(parentTaskId)) {
                 parentTaskId = taskEntity.getId();

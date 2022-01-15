@@ -3,16 +3,14 @@
     <el-main style="min-height: 100vh">
       <h4 style="text-align:center">{{formTitle}}</h4>
       <el-tabs type="border-card" v-model="taskSelectedTab">
-        <el-tab-pane label="表单信息" name="formInfo">
+        <el-tab-pane label="表单信息" name="formInfo" id="printForm">
           <!-- 动态表单:内置使用枇杷表单设计器 -->
           <workflow-preview-form v-if="formType !== '2'"
-                                 id="printForm"
                                  ref="form"
                                  :taskFormData="taskFormData"
           />
           <!-- 外置表单:内置使用用户自定义的vue页面,手动填写页面路径即可 -->
           <component v-if="formType === '2'"
-                     id="printForm"
                      ref="form"
                      :is="formPath"
                      :formReadOnly="formReadOnly"

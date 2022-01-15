@@ -87,7 +87,6 @@
     <roll-back-task-select ref="rollBackTaskSelect" @getRollBackTaskDefKey="handleRollBackTask"/>
     <user-select-dialog ref="transferTaskSelect" title="选择转办用户" :limit="1" @doSubmit="handleTransferTask"/>
     <user-select-dialog ref="delegateTaskSelect" title="选择委派用户" :limit="1" @doSubmit="handleDelegateTask"/>
-    <user-select-dialog ref="addSignTaskSelect" title="选择加签用户" @doSubmit="handleAddSignTask"/>
   </div>
 </template>
 
@@ -98,7 +97,7 @@ import rollBackTaskSelect from './rollBackTaskSelect'
 import workflowStep from './workflowStep'
 import workflowTimeLine from './workflowTimeLine'
 import userSelectDialog from '@/components/UserSelect/UserSelectDialog'
-import { getProcessInsFlowChart, getHistoryFlowChangeList, auditTask, rejectTask, rollBackTaskList, addSignTask, transferTask, delegateTask } from '@/api/workflow/workflow/task'
+import { getProcessInsFlowChart, getHistoryFlowChangeList, auditTask, rejectTask, rollBackTaskList, transferTask, delegateTask } from '@/api/workflow/workflow/task'
 import { getProcessStartEventFormData, getFormTaskData } from '@/api/workflow/workflow/form'
 import { getProcessDefFlowChart, startProcessDefinition } from '@/api/workflow/workflow/process'
 import { findByDefIdAndTaskId } from '@/api/workflow/extension/activityExtensionData'
@@ -368,7 +367,12 @@ export default {
     },
     /** 加签 */
     addMultiInstance () {
-      this.$refs.addSignTaskSelect.init()
+      // flowable开源版加签会导致模板数量急剧扩大,需要经过内部讨论是否有比较好的解决方案:http://www.pangubpm.com/doc58.html
+      this.$notify({
+        title: '提示',
+        message: `功能正在开发中...`,
+        type: 'warning'
+      });
     },
     /** 减签 */
     delMultiInstance () {
@@ -419,21 +423,6 @@ export default {
         currentTaskId: this.taskId,
         rollBackTaskDefKey: backTaskDefKey,
         comment: this.auditForm
-      }).then(({ data }) => {
-        this.$message.success(data)
-        this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/TodoList')
-        this.cc({ processInsId: this.processInsId })
-      })
-    },
-    /** 处理加签任务 */
-    handleAddSignTask (userList) {
-      const userIds = userList.map(user => user.id).join(',')
-      addSignTask({
-        taskId: this.taskId,
-        userIds: userIds,
-        comment: '',
-        mark: false
       }).then(({ data }) => {
         this.$message.success(data)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})

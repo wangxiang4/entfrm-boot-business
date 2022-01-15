@@ -440,31 +440,6 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         return null;
     }
 
-    @Override
-    public void addSignTask(String taskId, List<String> userIds, String comment, Boolean mark) throws Exception {
-        TaskEntityImpl taskEntity = (TaskEntityImpl)taskService.createTaskQuery().taskId(taskId).singleResult();
-        if (taskEntity != null) {
-            String parentTaskId = taskEntity.getParentTaskId();
-            // 创建多实例父级任务,子级为多实例加签用户任务,因为后续加签运行完毕还要回到创建加签操作的这个任务中
-            if (StrUtil.isBlank(parentTaskId)) {
-                taskEntity.setOwner(SecurityUtil.getUser().getId() + "");
-                taskEntity.setAssignee(SecurityUtil.getUser().getId() + "");
-                taskEntity.setCountEnabled(true);
-                if (mark) {
-                    taskEntity.setScopeType(WorkflowConstant.AFTER_ADD_SIGN);
-                } else {
-                    taskEntity.setScopeType(WorkflowConstant.BEFORE_ADD_SIGN);
-                }
-                taskService.saveTask(taskEntity);
-            }
-            this.createAddSignSubTasks(userIds, taskEntity);
-            String type = mark ? ExtendMessage.ACTIVITY_ADD_AFTER_MULTI_INSTANCE.toString() : ExtendMessage.ACTIVITY_ADD_BEFORE_MULTI_INSTANCE.toString();
-            taskService.addComment(taskId, taskEntity.getProcessInstanceId(), type, comment);
-        } else {
-            throw  new Exception("不存在任务实例,请确认!");
-        }
-    }
-
     /** 是否可以回滚任务 */
     private boolean rollBackTask(HistoricTaskInstance historicTaskInstance) {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
@@ -554,56 +529,6 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
             workflow.setActivityCommentInfo(activityCommentInfo);
         }
         return workflow;
-    }
-
-    /** 创建多实例加签子任务 */
-    private void createAddSignSubTasks(List<String> userIds, TaskEntity taskEntity) {
-        if (CollectionUtil.isNotEmpty(userIds)) {
-            // 检测父任务是否有父级任务ID,如果没有把当前任务设置为多实例子任务父级ID,运行完毕加签然后回调当前任务中
-            String parentTaskId = taskEntity.getParentTaskId();
-            if (StrUtil.isBlank(parentTaskId)) {
-                parentTaskId = taskEntity.getId();
-            }
-            String finalParentTaskId = parentTaskId;
-            userIds.forEach(assignee -> {
-                if (ObjectUtil.isNotEmpty(assignee)) {
-                    this.createSubTask(taskEntity, finalParentTaskId, assignee);
-                }
-            });
-            String taskId = taskEntity.getId();
-            if (StrUtil.isBlank(taskEntity.getParentTaskId())) {
-                Task task = this.createSubTask(taskEntity, finalParentTaskId, SecurityUtil.getUser().getId() + "");
-                taskId = task.getId();
-            }
-            Task taskInfo = taskService.createTaskQuery().taskId(taskId).singleResult();
-            if (null != taskInfo) {
-                taskService.complete(taskId);
-            }
-            long candidateCount = taskService.createTaskQuery().taskId(parentTaskId).taskCandidateUser(SecurityUtil.getUser().getId() + "").count();
-            if (candidateCount > 0) taskService.deleteCandidateUser(parentTaskId, SecurityUtil.getUser().getId() + "");
-        }
-    }
-
-    /** 创建子任务 */
-    private TaskEntity createSubTask(TaskEntity taskEntity, String parentTaskId, String assignee) {
-        TaskEntity task = null;
-        if (taskEntity != null) {
-            task = (TaskEntity) taskService.newTask(UUID.randomUUID().toString());
-            task.setCategory(taskEntity.getCategory());
-            task.setDescription(taskEntity.getDescription());
-            task.setTenantId(taskEntity.getTenantId());
-            task.setAssignee(assignee);
-            task.setName(taskEntity.getName());
-            task.setParentTaskId(parentTaskId);
-            task.setProcessDefinitionId(taskEntity.getProcessDefinitionId());
-            task.setProcessInstanceId(taskEntity.getProcessInstanceId());
-            task.setTaskDefinitionKey(taskEntity.getTaskDefinitionKey());
-            task.setTaskDefinitionId(taskEntity.getTaskDefinitionId());
-            task.setPriority(taskEntity.getPriority());
-            task.setCreateTime(new Date());
-            taskService.saveTask(task);
-        }
-        return task;
     }
 
 }

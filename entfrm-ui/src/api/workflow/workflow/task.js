@@ -94,15 +94,6 @@ export function rejectTask (data) {
   })
 }
 
-// 加签任务
-export function addSignTask (data) {
-  return request({
-    url: '/workflow/task/addSignTask',
-    method: 'post',
-    data: data
-  })
-}
-
 // 转移任务
 export function transferTask (query) {
   return request({

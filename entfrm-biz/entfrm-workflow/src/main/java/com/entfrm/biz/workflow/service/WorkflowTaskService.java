@@ -94,15 +94,6 @@ public interface WorkflowTaskService {
     List<Workflow> rollBackTaskList(String taskId);
 
     /**
-     * 加签任务
-     * taskId:任务ID
-     * userIds:加签人列表
-     * comment:备注
-     * mark:标记(true:后加签,false:前加签)
-     */
-    void addSignTask(String taskId, List<String> userIds, String comment, Boolean mark) throws Exception;
-
-    /**
      * 读取流程历史数据,用于渲染流程图
      * processInsId:流程实例ID
      */

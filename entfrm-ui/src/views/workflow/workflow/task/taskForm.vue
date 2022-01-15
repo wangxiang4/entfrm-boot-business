@@ -4,26 +4,31 @@
       <h4 style="text-align:center">{{formTitle}}</h4>
       <el-tabs type="border-card" v-model="taskSelectedTab">
         <el-tab-pane label="表单信息" name="formInfo">
+          <!-- 动态表单:内置使用枇杷表单设计器 -->
+          <workflow-preview-form v-if="formType !== '2'"
+                                 id="printForm"
+                                 ref="form"
+                                 :taskFormData="taskFormData"
+          />
+          <!-- 外置表单:内置使用用户自定义的vue页面,手动填写页面路径即可 -->
           <component v-if="formType === '2'"
+                     id="printForm"
                      ref="form"
                      :is="formPath"
                      :formReadOnly="formReadOnly"
                      :businessId="businessId"
           />
-          <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
         </el-tab-pane>
         <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
           <workflow-time-line :history-flow-change-list="historyFlowChangeList"/>
         </el-tab-pane>
         <el-tab-pane label="流程图" name="processChart">
           <el-card class="box-card" shadow="hover">
-            <div slot="header" class="clearfix">
-              <span>流程图</span>
-            </div>
+            <div slot="header" class="clearfix"><span>流程图</span></div>
             <flowable-chart ref="flowableChart" style="height:100vh"/>
           </el-card>
         </el-tab-pane>
-        <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
+        <el-tab-pane v-if="processInsId" label="流转记录" name="flowRecord">
           <workflow-step :history-flow-change-list="historyFlowChangeList"/>
         </el-tab-pane>
       </el-tabs>
@@ -156,30 +161,53 @@ export default {
   },
   data () {
     return {
-      formKey: '',
-      formType: '',
-      formPath: '',
-      formReadOnly: false,
-      taskSelectedTab: 'formInfo',
-      historyFlowChangeList: [],
-      processDefId: '',
-      processInsId: '',
-      processDefKey: '',
-      taskId: '',
-      taskDefKey: '',
-      taskFormData: [],
-      status: '',
+      // 流程表单标题
       formTitle: '',
+      // 流程表单key
+      formKey: '',
+      // 表单类型(1:动态表单,2:外置表单)
+      formType: '',
+      // 外置表单路径
+      formPath: '',
+      // 外置表单是否只读
+      formReadOnly: false,
+      // 外置表单业务数据绑定ID
       businessId: '',
+      // 动态表单字段配置数据
+      taskFormData: [],
+
+      // 设置选择任务选项卡
+      taskSelectedTab: 'formInfo',
+      // 流程任务ID
+      taskId: '',
+      // 流程任务定义key
+      taskDefKey: '',
+
+      // 流程定义ID
+      processDefId: '',
+      // 流程实例ID
+      processInsId: '',
+      // 流程定义Key
+      processDefKey: '',
+
+      // 当前任务表单操作状态
+      status: '',
+      // 历史流转信息
+      historyFlowChangeList: [],
+      // 当前操作按钮配置信息
       buttons: [],
+      // 是否抄送
       isCC: false,
+      // 是否指定代理人
       isAssign: false,
+      // 打印表单信息
       printInfo: {
         id: 'printForm',
         popTitle: '',
         extraCss: '',
         extraHead: '<meta http-equiv="Content-Language" content="zh-cn"/>'
       },
+      // 审批表单信息
       auditForm: {
         message: '',
         mesCode: '',

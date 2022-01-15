@@ -3,28 +3,28 @@
     <div slot="header" class="clearfix">
       <span>流转记录</span>
     </div>
-    <el-steps :active="historyTaskStepNodeList.length">
-      <el-step v-for="(node, index) in historyTaskStepNodeList"
+    <el-steps :active="historyFlowChangeStepList.length">
+      <el-step v-for="(historyFlowChangeStep, index) in historyFlowChangeStepList"
                :key="index"
-               :title="node.activityName" finish-status="success"
-               :description="node.assigneeName + node.time"
+               :title="historyFlowChangeStep.activityName" finish-status="success"
+               :description="historyFlowChangeStep.assigneeName + historyFlowChangeStep.time"
       />
     </el-steps>
-    <el-table size="small" :data="historyTaskStepNodeList" style="width: 100%">
-      <el-table-column prop="histIns.activityName" label="执行环节" width="180"/>
-      <el-table-column prop="assigneeName" label="执行人" width="180"/>
-      <el-table-column prop="histIns.startTime" label="开始时间">
+    <el-table size="small" :data="historyFlowChangeList" style="width: 100%">
+      <el-table-column prop="historicActivityInstance.activityName" label="执行环节"/>
+      <el-table-column prop="assigneeName" label="执行人"/>
+      <el-table-column prop="historicActivityInstance.startTime" label="开始时间">
       <template slot-scope="scope">
-        {{scope.row.histIns.startTime | formatDate}}
+        {{getHistoricActivityInstance(scope.row).startTime | formatDate}}
       </template>
     </el-table-column>
-      <el-table-column prop="histIns.endTime" label="结束时间">
+      <el-table-column prop="historicActivityInstance.endTime" label="结束时间">
         <template slot-scope="scope">
-          {{scope.row.histIns.endTime | formatDate}}
+          {{getHistoricActivityInstance(scope.row).endTime | formatDate}}
         </template>
       </el-table-column>
-      <el-table-column prop="comment.status" label="办理状态"/>
-      <el-table-column prop="comment.message" label="审批意见"/>
+      <el-table-column prop="activityCommentInfo.mesName" label="办理状态"/>
+      <el-table-column prop="activityCommentInfo.message" label="审批意见"/>
       <el-table-column prop="durationTime" label="任务历时">
         <template slot-scope="scope">
           {{scope.row.durationTime || '0秒'}}
@@ -34,44 +34,30 @@
   </el-card>
 </template>
 <script>
-import { parseTime } from '@/utils/entfrm'
-
 export default {
   name: 'WorkflowStep',
   props: {
-    historyTaskList: {
+    historyFlowChangeList: {
       type: Array,
       default: []
     }
   },
   computed: {
-    historyTaskStepNodeList () {
-      const taskStepNode = []
-      this.historyTaskMap.forEach((item) => {
-        const obj = {activityName: '', assigneeName: '', time: ''}
-        item.forEach((node) => {
-          obj.activityName = node.historicActivityInstance.activityName
-          obj.assigneeName += (node.assigneeName || '') + ','
-          obj.time = (!node.historicActivityInstance.startTime ? '--' : this.parseTime(node.histIns.startTime, 'YYYY-MM-DD HH:mm:ss'))
+    historyFlowChangeStepList() {
+      const historyFlowChangeStepList = []
+      this.historyFlowChangeList.forEach((item) => {
+        historyFlowChangeStepList.push({
+          activityName: this.getHistoricActivityInstance(item).activityName,
+          assigneeName: (item.assigneeName || '') + ',',
+          time: (!this.getHistoricActivityInstance(item).startTime ? '--' : this.parseTime(this.getHistoricActivityInstance(item).startTime))
         })
-        taskStepNode.push(obj)
       })
-      return taskStepNode
-    },
-    historyTaskMap () {
-      let map = new Map()
-      this.historyTaskList.forEach((task) => {
-        const key = task.historicActivityInstance.activityId + parseInt(task.historicActivityInstance.startTime / 1000)
-        const val = map.get(key)
-        if (val) {
-          val.push(task)
-        } else {
-          const array = []
-          array.push(task)
-          map.set(key, array)
-        }
-      })
-      return map
+      return historyFlowChangeStepList
+    }
+  },
+  methods: {
+    getHistoricActivityInstance (historyFlowChange) {
+      return historyFlowChange.historicActivityInstance || {}
     }
   }
 }

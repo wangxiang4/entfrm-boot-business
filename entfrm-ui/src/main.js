@@ -15,6 +15,7 @@ import router from './router'
 import permission from './directive/permission'
 
 import './assets/icons' // icon
+import '@/utils/filter' // vue filter
 import './permission' // permission control
 import {getDicts} from "@/api/system/dictData";
 import {getByKey} from "@/api/system/config";

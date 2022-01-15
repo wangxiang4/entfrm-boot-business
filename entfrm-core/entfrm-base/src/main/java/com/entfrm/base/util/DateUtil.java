@@ -3,6 +3,7 @@ package com.entfrm.base.util;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author yong
@@ -36,4 +37,11 @@ public class DateUtil extends cn.hutool.core.date.DateUtil {
     public static final String parseDateToStr(final String format, final Date date) {
         return new SimpleDateFormat(format).format(date);
     }
+
+    public static final String formatUTC(final Date date, final String format) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return simpleDateFormat.format(date);
+    }
+
 }

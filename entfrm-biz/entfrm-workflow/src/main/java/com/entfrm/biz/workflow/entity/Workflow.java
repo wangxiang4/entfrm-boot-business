@@ -1,6 +1,7 @@
 package com.entfrm.biz.workflow.entity;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.entfrm.base.util.TimeUtils;
 import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -92,6 +93,15 @@ public class Workflow implements Serializable {
         } else if (historicProcessInstance != null && historicProcessInstance.getBusinessKey() != null) {
             setBusinessId(historicProcessInstance.getBusinessKey());
         }
+    }
+
+    /** 获取流程运行持续时间 */
+    public String getDurationTime() {
+        if (historicActivityInstance != null && historicActivityInstance.getDurationInMillis() != null) {
+            System.out.println("测试 ： " +TimeUtils.toTimeString(historicActivityInstance.getDurationInMillis()));
+            return TimeUtils.toTimeString(historicActivityInstance.getDurationInMillis());
+        }
+        return "";
     }
 
 }

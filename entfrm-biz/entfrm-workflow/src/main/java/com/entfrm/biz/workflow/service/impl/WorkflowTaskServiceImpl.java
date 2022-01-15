@@ -460,7 +460,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
                     Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER_BY_ID, historicProcessInstanceList.get(0).getStartUserId());
                     if (user != null) {
                         workflow.setAssignee(historicActivityInstance.getAssignee());
-                        workflow.setAssigneeName(MapUtil.getStr(user, "name"));
+                        workflow.setAssigneeName(MapUtil.getStr(user, "userName"));
                     }
                 }
             }
@@ -486,7 +486,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
             Map<String, Object> user = jdbcTemplate.queryForMap(SqlConstants.QUERY_USER_BY_ID,historicActivityInstance.getAssignee());
             if (user != null) {
                 workflow.setAssignee(historicActivityInstance.getAssignee());
-                workflow.setAssigneeName(MapUtil.getStr(user, "name"));
+                workflow.setAssigneeName(MapUtil.getStr(user, "userName"));
             }
         }
 

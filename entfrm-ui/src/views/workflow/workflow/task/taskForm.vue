@@ -13,7 +13,7 @@
           <workflow-preview-form v-if="formType !== '2'" ref="form" :taskFormData="taskFormData"/>
         </el-tab-pane>
         <el-tab-pane v-if="processInsId" label="流程信息" name="processInfo">
-          <workflow-time-line :historicTaskList="historicTaskList"/>
+          <workflow-time-line :history-flow-change-list="historyFlowChangeList"/>
         </el-tab-pane>
         <el-tab-pane label="流程图" name="processChart">
           <el-card class="box-card" shadow="hover">
@@ -24,7 +24,7 @@
           </el-card>
         </el-tab-pane>
         <el-tab-pane label="流转记录" v-if="processInsId" name="flowRecord">
-          <workflow-step :historicTaskList="historicTaskList"/>
+          <workflow-step :history-flow-change-list="historyFlowChangeList"/>
         </el-tab-pane>
       </el-tabs>
       <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
@@ -161,7 +161,7 @@ export default {
       formPath: '',
       formReadOnly: false,
       taskSelectedTab: 'formInfo',
-      historicTaskList: [],
+      historyFlowChangeList: [],
       processDefId: '',
       processInsId: '',
       processDefKey: '',
@@ -244,7 +244,7 @@ export default {
       // 读取历史任务列表
       if (this.processInsId) {
         getHistoryFlowChangeList(this.processInsId).then(({ data }) => {
-          this.historicTaskList = data
+          this.historyFlowChangeList = data
         })
       }
     })

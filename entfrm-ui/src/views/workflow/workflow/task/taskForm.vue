@@ -88,18 +88,20 @@
     <div class="workflow-form-footer">
       <template v-for="(button, index) in buttons">
         <template v-show="button.isHide === '0'">
-          <el-button v-if="button.code !== '_flow_print'"
+          <!-- 渲染配置按钮 -->
+          <el-button v-if="button.code !== '_workflow_activity_print'"
                      plain
                      type="primary"
                      :key="index"
-                     @click="submit(button, buttons)"
+                     @click="submit(button)"
           >{{button.name}}</el-button>
-          <el-button v-if="button.code === '_flow_print'"
+          <!-- 渲染打印按钮 -->
+          <el-button v-if="button.code === '_workflow_activity_print'"
                      plain
                      type="primary"
                      v-print="printInfo"
                      :key="index"
-                     @click="submit(button, buttons)"
+                     @click="submit(button)"
           >{{button.name}}</el-button>
         </template>
       </template>
@@ -257,7 +259,7 @@ export default {
       }
       // 读取按钮配置
       if (this.status === 'start') {
-        this.buttons = [{ code: '_flow_start', name: '启动', isHide: '0' }]
+        this.buttons = [{ code: '_workflow_activity_start', name: '启动', isHide: '0' }]
       } else if (this.processDefKey && this.taskDefKey) {
         // 获取流程设计器配置按钮
         findByDefIdAndTaskId({
@@ -484,62 +486,65 @@ export default {
         })
       }
     },
-    submit (currentBtn, buttons) {
+    submit (button) {
       // 存储流程变量
-      let vars = {}
-      // 把当前操作对应的自定义按钮(以_flow_开头的是系统按钮，排除在外）的编码，存储为对应的流程变量，值设置为true，其余自定义按钮编码对应的流程变量值为false。
-      buttons.forEach((btn) => {
-        if (btn.code && !btn.code.startsWith('_flow_')) {
-          vars[btn.code] = false
-        }
-      })
-      if (currentBtn.code && !currentBtn.code.startsWith('_flow_')) {
-        vars[currentBtn.code] = true
-      }
-      // 流程标题
+      const vars = {}
+      // 流程表单标题
       vars.title = this.formTitle
       // 指定的下一步骤处理人
       vars.assignee = this.auditForm.assignee
-      // 提交类型
-      this.auditForm.mesCode = currentBtn.code
-      // 按钮文字
-      this.auditForm.mesName = currentBtn.name
-      switch (currentBtn.code) {
-        case '_flow_start': // 自动流程
+      // 操作类型
+      this.auditForm.mesCode = button.code
+      // 操作名称
+      this.auditForm.mesName = button.name
+      switch (button.code) {
+        // 启动流程
+        case '_workflow_activity_start':
           this.start(vars)
           break
-        case '_flow_save': // 保存草稿
+        // 保存草稿
+        case '_workflow_activity_save':
           this.save()
           break
-        case '_flow_agree': // 同意
+        // 同意
+        case '_workflow_activity_agree':
           this.agree()
           break
-        case '_flow_reject': // 驳回
+        // 驳回
+        case '_workflow_activity_reject':
           this.reject()
           break
-        case '_flow_back': // 驳回到任意步骤
+        // 驳回到任意步骤
+        case '_workflow_activity_roll_back':
           this.turnBack()
           break
-        case '_flow_add_multi_instance': // 加签
+        // 加签
+        case '_workflow_activity_add_multi_instance':
           this.addMultiInstance()
           break
-        case '_flow_del_multi_instance': // 减签
+        // 减签
+        case '_workflow_activity_del_multi_instance':
           this.delMultiInstance()
           break
-        case '_flow_transfer': // 转办
+        // 转办
+        case '_workflow_activity_transfer':
           this.transfer()
           break
-        case '_flow_delegate':// 外派
+        // 外派
+        case '_workflow_activity_delegate':
           this.delegate()
           break
-        case '_flow_stop':// 终止
+        // 终止
+        case '_workflow_activity_stop':
           this.stop()
           break
-        case '_flow_print':// 打印
+        // 打印
+        case '_workflow_activity_print':
           this.print()
           break
+        // 自定义按钮提交
         default:
-          this.commit(vars) // 自定义按钮提交
+          this.commit(vars)
       }
     }
   }

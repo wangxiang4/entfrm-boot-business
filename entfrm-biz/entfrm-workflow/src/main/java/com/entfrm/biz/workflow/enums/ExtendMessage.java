@@ -21,7 +21,7 @@ public enum ExtendMessage {
     ACTIVITY_REJECT("驳回", "_workflow_activity_reject", "danger"),
     ACTIVITY_ROLL_BACK("指定回退", "_workflow_activity_roll_back", "danger"),
     ACTIVITY_ADD_MULTI_INSTANCE("加签", "_workflow_activity_add_multi_instance", "primary"),
-    ACTIVITY_DEL_MULTI_INSTANCE("减签", "_workflow_activity_add_multi_instance", "primary"),
+    ACTIVITY_DEL_MULTI_INSTANCE("减签", "_workflow_activity_del_multi_instance", "primary"),
     ACTIVITY_TRANSFER("转办", "_workflow_activity_transfer", "primary"),
     ACTIVITY_DELEGATE("委派", "_workflow_activity_delegate", "primary"),
     ACTIVITY_STOP("终止", "_workflow_activity_stop", "info"),

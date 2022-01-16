@@ -49,7 +49,7 @@
                          }"
                          :clearable="true"
                          :accordion="true"
-                         @getValue="(value, label) => { queryParams.categoryId = value, queryParams.category = label }"
+                         @getValue="(value, label) => { queryParams.categoryId = value }"
             />
           </el-form-item>
           <el-form-item label="流程名称" prop="name">
@@ -100,7 +100,9 @@
         <el-table v-loading="loading" :data="processDefinitionList" :default-sort = "{prop:'deploymentTime',order:'descending'}">
           <el-table-column label="流程名称" prop="name" show-overflow-tooltip/>
           <el-table-column label="流程KEY" prop="key" show-overflow-tooltip/>
-          <el-table-column label="流程分类" prop="category" align="center" show-overflow-tooltip/>
+          <el-table-column label="流程分类" prop="category" align="center" show-overflow-tooltip>
+            <template slot-scope="scope">{{ String(scope.row.category).split(",")[1] }}</template>
+          </el-table-column>
           <el-table-column label="流程版本" prop="version" align="center" show-overflow-tooltip>
             <template slot-scope="scope">
               <el-tag>{{scope.row.version}}</el-tag>
@@ -153,7 +155,6 @@ export default {
         current: 1,
         size: 10,
         name: undefined,
-        category: undefined,
         categoryId: undefined
       },
       // 流程定义数据
@@ -209,7 +210,6 @@ export default {
     },
     /** 处理流程分类节点点击操作 */
     handleCategoryNodeClick (node) {
-      this.queryParams.category = node.name
       this.queryParams.categoryId = node.id
       this.handleQuery()
     },

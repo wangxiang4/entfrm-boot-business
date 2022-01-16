@@ -5,7 +5,7 @@
              :close-on-click-modal="false"
   >
     <div v-loading="loading">
-      {{selectCategoryName}}
+      {{selectCategoryName || '当前为选择,请选择分类'}}
       <el-tree class="filter-tree"
                :data="categoryTreeData"
                :props="{
@@ -65,7 +65,7 @@ export default {
       }).catch(() => { this.loading = false })
     },
     handleNodeClick (data) {
-      this.form.category = data.name
+      this.form.category = `${data.id},${data.name}`
       this.selectCategoryName = '已选类型: ' + data.name
     },
     handleSubmitForm () {

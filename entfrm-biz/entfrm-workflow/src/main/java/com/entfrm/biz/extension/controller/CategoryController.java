@@ -39,18 +39,16 @@ public class CategoryController {
 
     @PostMapping("/save")
     public R save(@RequestBody Category category) {
-        if (categoryService.list(new LambdaQueryWrapper<Category>().eq(Category::getName, category.getName())).size() > 0) {
-            return R.error("当前不支持名字有重复,强行添加流程分类查询会有问题,后期需要改工作流内部表添加冗余字段解决");
-        }
+        // 过滤名称分割字符,后续流程分类有关功能有用到
+        category.setName(category.getName().replaceAll(",",""));
         categoryService.save(category);
         return R.ok();
     }
 
     @PutMapping("/update")
     public R update(@RequestBody Category category) {
-        if (categoryService.list(new LambdaQueryWrapper<Category>().eq(Category::getName, category.getName())).size() > 0) {
-            return R.error("当前不支持名字有重复,强行添加流程分类查询会有问题,后期需要改工作流内部表添加冗余字段解决");
-        }
+        // 过滤名称分割字符,后续流程分类有关功能有用到
+        category.setName(category.getName().replaceAll(",",""));
         categoryService.updateById(category);
         return R.ok();
     }

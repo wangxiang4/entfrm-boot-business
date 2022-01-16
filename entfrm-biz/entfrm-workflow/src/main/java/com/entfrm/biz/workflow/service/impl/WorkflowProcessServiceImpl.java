@@ -87,13 +87,13 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
                 .active().latestVersion().orderByProcessDefinitionKey().asc();
 
         String name = MapUtil.getStr(params, "name"),
-               category = MapUtil.getStr(params, "category");
+               categoryId = MapUtil.getStr(params, "categoryId");
 
         if (StrUtil.isNotBlank(name)) {
             query.processDefinitionNameLike("%"+name+"%");
         }
-        if (StrUtil.isNotBlank(category)) {
-            query.processDefinitionCategory(category);
+        if (StrUtil.isNotBlank(categoryId)) {
+            query.processDefinitionCategoryLike(categoryId+"%");
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);

@@ -56,6 +56,8 @@
 
 <script>
 import { listWorkflowCopy, delWorkflowCopy } from '@/api/workflow/extension/workflowCopy'
+import { getTaskDefinition } from '@/api/workflow/workflow/task'
+
 export default {
   name: 'WorkflowCopy',
   data () {
@@ -111,7 +113,26 @@ export default {
     },
     /** 处理查阅审批 */
     handleViewAudit (row) {
-
+      getTaskDefinition({
+        processInsId: row.processInsId,
+        processDefId: row.processDefId
+      }).then(({ data }) => {
+        this.$router.push({
+          path: '/workflow/task/taskFormView',
+          query: {
+            title: row.processInsName,
+            formTitle: row.processInsName,
+            formType: data.formType,
+            formKey: data.formKey,
+            processDefKey: data.processDefKey,
+            taskDefKey: data.taskDefKey,
+            processInsId: data.processInsId,
+            processDefId: data.processDefId,
+            taskId: data.taskId,
+            businessId: data.businessId
+          }
+        })
+      })
     }
   }
 }

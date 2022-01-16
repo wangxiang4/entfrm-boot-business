@@ -61,3 +61,11 @@ export function getProcessDefFlowChart (processDefId) {
     method: 'get'
   })
 }
+
+// 查询流程状态
+export function queryProcessStatus (processInsId) {
+  return request({
+    url: '/workflow/process/queryProcessStatus/' + processInsId,
+    method: 'get'
+  })
+}

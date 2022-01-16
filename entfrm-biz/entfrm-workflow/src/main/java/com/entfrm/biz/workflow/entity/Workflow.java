@@ -98,7 +98,6 @@ public class Workflow implements Serializable {
     /** 获取流程运行持续时间 */
     public String getDurationTime() {
         if (historicActivityInstance != null && historicActivityInstance.getDurationInMillis() != null) {
-            System.out.println("测试 ： " +TimeUtils.toTimeString(historicActivityInstance.getDurationInMillis()));
             return TimeUtils.toTimeString(historicActivityInstance.getDurationInMillis());
         }
         return "";

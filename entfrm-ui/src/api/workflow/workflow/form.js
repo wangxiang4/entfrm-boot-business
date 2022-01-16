@@ -42,3 +42,12 @@ export function getFormTaskData (taskId) {
     method: 'get'
   })
 }
+
+// 获取历史表单任务数据
+export function getHistoryFormTaskData (query) {
+  return request({
+    url: '/workflow/form/getHistoryFormTaskData',
+    method: 'get',
+    params: query
+  })
+}

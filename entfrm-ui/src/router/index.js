@@ -150,6 +150,12 @@ export const constantRoutes = [
         meta: { title: '流程表单' }
       },
       {
+        path: '/workflow/task/taskFormView',
+        component: require('@/views/workflow/workflow/task/taskFormView.vue').default,
+        name: 'TaskFormView',
+        meta: { title: '流程表单预览' }
+      },
+      {
         path: '/workflow/formDefinitionJson/:id',
         component: require('@/views/workflow/extension/form/helper/formDefinitionJson.vue').default,
         name: 'FormDefinitionJson',

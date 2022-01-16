@@ -13,7 +13,6 @@
         a.process_ins_name AS "processInsName",
         a.create_by AS "createBy",
         a.create_time AS "createTime"
-        b.user_name AS "userName"
     </sql>
 
     <sql id="WorkflowCopyJoins">

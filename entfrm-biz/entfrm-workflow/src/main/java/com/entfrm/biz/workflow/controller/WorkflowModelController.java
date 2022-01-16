@@ -23,6 +23,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.Pool;
+import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
@@ -50,6 +52,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -89,7 +92,8 @@ public class WorkflowModelController {
         IPage<WorkflowModel> result = workflowModelService.page(page, getLambdaQueryWrapper(workflowModel));
         // 存储流程实例
         result.getRecords().forEach(item -> {
-            ProcessDefinition processDefinition = workflowProcessService.getProcessDefinitionByKey(item.getModelKey());
+            List<String> modelKeyList = StrUtil.split(item.getModelKey(), new Character(','));
+            ProcessDefinition processDefinition = workflowProcessService.getProcessDefinitionByKey(modelKeyList.get(0));
             if(processDefinition != null){
                 String deploymentId = processDefinition.getDeploymentId();
                 Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
@@ -115,7 +119,6 @@ public class WorkflowModelController {
     public String getBpmnXml(@PathVariable String id) {
         return workflowModelService.getBpmnXml(id);
     }
-
 
     /** 删除模型 */
     @DeleteMapping("/remove/{ids}")

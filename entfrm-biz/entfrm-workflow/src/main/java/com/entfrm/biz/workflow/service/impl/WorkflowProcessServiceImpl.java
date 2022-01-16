@@ -3,13 +3,18 @@ package com.entfrm.biz.workflow.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.base.constant.CommonConstants;
 import com.entfrm.biz.workflow.constant.WorkflowConstant;
 import com.entfrm.biz.workflow.entity.Workflow;
+import com.entfrm.biz.workflow.entity.WorkflowModel;
 import com.entfrm.biz.workflow.enums.ExtendMessage;
 import com.entfrm.biz.workflow.mapper.WorkflowMapper;
+import com.entfrm.biz.workflow.mapper.WorkflowModelMapper;
+import com.entfrm.biz.workflow.service.WorkflowBpmnModelService;
+import com.entfrm.biz.workflow.service.WorkflowModelService;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
 import com.entfrm.biz.workflow.vo.ActivityCommentInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
@@ -35,6 +40,7 @@ import org.flowable.engine.runtime.ProcessInstanceQuery;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.api.Task;
 import org.flowable.variable.api.history.HistoricVariableInstance;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,11 +73,13 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
 
     private final TaskService taskService;
 
-    private final WorkflowBpmnModelServiceImpl WorkflowBpmnModelService;
+    private final WorkflowBpmnModelService workflowBpmnModelService;
 
     private final WorkflowMapper workflowMapper;
 
     private final IdentityService identityService;
+
+    private final WorkflowModelMapper workflowModelMapper;
 
     @Override
     public IPage<ProcessDefinitionInfoVo> list(Map<String, Object> params) {
@@ -103,6 +111,12 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
                 processDefinitionInfo.setCategory(processDefinition.getCategory());
                 processDefinitionInfo.setKey(processDefinition.getKey());
                 processDefinitionInfo.setName(processDefinition.getName());
+                // 校验协助池也称泳道池,如果流程名称未填写,获取模型名称补充
+                if (StrUtil.isBlank(processDefinition.getName())) {
+                    WorkflowModel workflowModel = workflowModelMapper.selectOne(
+                            new LambdaQueryWrapper<WorkflowModel>().like(WorkflowModel::getModelKey,"%" + processDefinition.getKey() + "%"));
+                    processDefinitionInfo.setName(workflowModel != null ? workflowModel.getName() : null);
+                }
                 processDefinitionInfo.setVersion("V:" + processDefinition.getVersion());
                 processDefinitionInfo.setResourceName(processDefinition.getResourceName());
                 processDefinitionInfo.setDiagramResourceName(processDefinition.getDiagramResourceName());
@@ -248,7 +262,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
                 taskService.claim(task.getId(), SecurityUtil.getUser().getId() + "");
             }
             runtimeService.setVariable(processInsId, WorkflowConstant.PROCESS_STATUS_CODE, extendMessage.getMesCode());
-            List<EndEvent> endNodes = WorkflowBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
+            List<EndEvent> endNodes = workflowBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
             String endId = endNodes.get(0).getId();
 
             // 执行终止流程

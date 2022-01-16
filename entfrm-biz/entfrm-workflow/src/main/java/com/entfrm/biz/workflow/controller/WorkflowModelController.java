@@ -127,9 +127,6 @@ public class WorkflowModelController {
         return R.ok("删除成功");
     }
 
-    public static void main(String[] args) {
-        System.out.println("Process_"+ UUID.randomUUID());
-    }
     /** 复制模型 */
     @PostMapping("/copy/{id}")
     public R copy(@PathVariable String id) throws Exception {

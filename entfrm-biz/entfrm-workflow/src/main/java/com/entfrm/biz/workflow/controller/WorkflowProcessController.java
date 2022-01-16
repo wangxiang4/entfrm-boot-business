@@ -93,8 +93,11 @@ public class WorkflowProcessController {
 
     /** 设置流程分类 */
     @PutMapping("/setProcessCategory")
-    public R setProcessCategory(String processDefId, String category) {
-        workflowProcessService.setProcessInstanceCategory(processDefId, category);
+    public R setProcessCategory(String[] processDefKeys, String category) {
+        Arrays.asList(processDefKeys).forEach(processDefKey -> {
+            ProcessDefinition processDefinition = workflowProcessService.getProcessDefinitionByKey(processDefKey);
+            workflowProcessService.setProcessInstanceCategory(processDefinition.getId(), category);
+        });
         return R.ok("流程分类设置成功!");
     }
 

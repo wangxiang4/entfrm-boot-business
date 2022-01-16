@@ -1,22 +1,23 @@
 <template>
-  <el-dialog v-loading="loading"
-             title="请选择流程分类"
+  <el-dialog title="请选择流程分类"
              :visible.sync="visible"
              width="70vh"
              :close-on-click-modal="false"
   >
-    {{selectCategoryName}}
-    <el-tree class="filter-tree"
-             :data="categoryTreeData"
-             :props="{
-                       value: 'id',             // ID字段名
-                       label: 'name',           // 显示名称
-                       children: 'children'     // 子级字段名
-                     }"
-             default-expand-all
-             :expand-on-click-node="false"
-             @node-click="handleNodeClick"
-    />
+    <div v-loading="loading">
+      {{selectCategoryName}}
+      <el-tree class="filter-tree"
+               :data="categoryTreeData"
+               :props="{
+                         value: 'id',             // ID字段名
+                         label: 'name',           // 显示名称
+                         children: 'children'     // 子级字段名
+                       }"
+               default-expand-all
+               :expand-on-click-node="false"
+               @node-click="handleNodeClick"
+      />
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="small"
                  @click="visible = false"
@@ -47,7 +48,7 @@ export default {
   methods: {
     init (id) {
       this.visible = true
-      this.form.processDefId = id
+      this.form.processDefKeys = id
       this.form.category = ''
       this.$nextTick(() => {
         this.selectCategoryName = ''

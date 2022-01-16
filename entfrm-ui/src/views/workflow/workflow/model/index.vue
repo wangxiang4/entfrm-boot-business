@@ -232,9 +232,9 @@ export default {
     },
     /** 设置流程分类 */
     setProcessCategory() {
-      let row = this.selections[0]
+      const row = this.selections[0]
       if (row.processDefinition) {
-        this.$refs.categoryForm.init(row.processDefinition.id)
+        this.$refs.categoryForm.init(row.modelKey)
       } else {
         this.$message.error('未发布的流程不能设置分类,请先发布流程')
       }

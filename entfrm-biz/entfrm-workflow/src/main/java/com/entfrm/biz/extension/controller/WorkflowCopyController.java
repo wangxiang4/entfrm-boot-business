@@ -6,6 +6,7 @@ import com.entfrm.base.api.R;
 import com.entfrm.biz.extension.entity.Button;
 import com.entfrm.biz.extension.entity.WorkflowCopy;
 import com.entfrm.biz.extension.service.WorkflowCopyService;
+import com.entfrm.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class WorkflowCopyController {
 
     @GetMapping("/list")
     public R list(Page page, WorkflowCopy workflowCopy) {
+        workflowCopy.setUserId(SecurityUtil.getUser().getId());
         IPage<WorkflowCopy> result = workflowCopyService.findList(page, workflowCopy);
         return R.ok(result.getRecords(), result.getTotal());
     }

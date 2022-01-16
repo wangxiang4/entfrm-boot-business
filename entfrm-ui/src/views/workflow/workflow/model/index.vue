@@ -81,7 +81,7 @@
       <el-table-column prop="name" show-overflow-tooltip label="流程名称"/>
       <el-table-column prop="modelKey" show-overflow-tooltip label="流程KEY"/>
       <el-table-column prop="processDefinition.category" label="分类">
-        <template slot-scope="scope">{{ String(getProcessDefinition(scope.row).category).split(",")[1] }}</template>
+        <template slot-scope="scope">{{ String(getProcessDefinition(scope.row).category).split(",")[1] || '未分类' }}</template>
       </el-table-column>
       <el-table-column prop="processDefinition.version" label="流程版本">
         <template slot-scope="scope">

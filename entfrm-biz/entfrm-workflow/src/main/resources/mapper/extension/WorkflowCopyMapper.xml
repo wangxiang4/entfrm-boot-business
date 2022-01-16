@@ -13,6 +13,7 @@
         a.process_ins_name AS "processInsName",
         a.create_by AS "createBy",
         a.create_time AS "createTime"
+        b.user_name AS "userName"
     </sql>
 
     <sql id="WorkflowCopyJoins">
@@ -37,7 +38,7 @@
             <if test="ew.processDefName != null and ew.processDefName != ''">
                 AND a.process_def_name LIKE CONCAT('%', #{ew.processDefName}, '%')
             </if>
-            <if test="ew.procInsName != null and ew.procInsName != ''">
+            <if test="ew.processInsName != null and ew.processInsName != ''">
                 AND a.process_ins_name LIKE CONCAT('%', #{ew.processInsName}, '%')
             </if>
         </where>

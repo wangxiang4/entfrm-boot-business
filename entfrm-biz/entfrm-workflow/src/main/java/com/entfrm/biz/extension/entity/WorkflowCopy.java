@@ -1,5 +1,6 @@
 package com.entfrm.biz.extension.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.entfrm.data.entity.CommonEntity;

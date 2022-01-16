@@ -101,7 +101,7 @@
           <el-table-column label="流程名称" prop="name" show-overflow-tooltip/>
           <el-table-column label="流程KEY" prop="key" show-overflow-tooltip/>
           <el-table-column label="流程分类" prop="category" align="center" show-overflow-tooltip>
-            <template slot-scope="scope">{{ String(scope.row.category).split(",")[1] }}</template>
+            <template slot-scope="scope">{{ String(scope.row.category).split(",")[1] || '未分类' }}</template>
           </el-table-column>
           <el-table-column label="流程版本" prop="version" align="center" show-overflow-tooltip>
             <template slot-scope="scope">
@@ -109,9 +109,7 @@
             </template>
           </el-table-column>
           <el-table-column label="上次发布时间" prop="deploymentTime" show-overflow-tooltip>
-            <template slot-scope="scope">
-              {{parseTime(scope.row.deploymentTime)}}
-            </template>
+            <template slot-scope="scope">{{scope.row.deploymentTime | formatDate}}</template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="120">
             <template slot-scope="scope">

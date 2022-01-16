@@ -83,7 +83,7 @@ public class WorkflowModelController {
     private LambdaQueryWrapper<WorkflowModel> getLambdaQueryWrapper(WorkflowModel workflowModel) {
         return new LambdaQueryWrapper<WorkflowModel>()
                 .like(StrUtil.isNotBlank(workflowModel.getName()), WorkflowModel::getName, workflowModel.getName())
-                .orderByDesc(WorkflowModel::getCreated);
+                .orderByDesc(WorkflowModel::getLastUpdated);
     }
 
     /** 流程模型列表 */
@@ -127,6 +127,9 @@ public class WorkflowModelController {
         return R.ok("删除成功");
     }
 
+    public static void main(String[] args) {
+        System.out.println("Process_"+ UUID.randomUUID());
+    }
     /** 复制模型 */
     @PostMapping("/copy/{id}")
     public R copy(@PathVariable String id) throws Exception {
@@ -136,7 +139,6 @@ public class WorkflowModelController {
         modelRepresentation.setName(sourceModel.getName()+"_copy");
         modelRepresentation.setModelType(0);
         modelRepresentation.setDescription("");
-        modelRepresentation.setKey(modelRepresentation.getKey().replaceAll(" ", ""));
         this.checkForDuplicateKey(modelRepresentation);
         String modelJson = modelService.createModelJson(modelRepresentation);
         // 设置模型用户信息

@@ -103,8 +103,11 @@ public class WorkflowProcessController {
 
     /** 挂起、激活流程实例 */
     @PutMapping("/setProcessInstanceStatus")
-    public R setProcessInstanceStatus(String processDefId, String status) {
-        workflowProcessService.setProcessInstanceStatus(processDefId, status);
+    public R setProcessInstanceStatus(String[] processDefKeys, String status) {
+        Arrays.asList(processDefKeys).forEach(processDefKey -> {
+            ProcessDefinition processDefinition = workflowProcessService.getProcessDefinitionByKey(processDefKey);
+            workflowProcessService.setProcessInstanceStatus(processDefinition.getId(), status);
+        });
         return R.ok();
     }
 

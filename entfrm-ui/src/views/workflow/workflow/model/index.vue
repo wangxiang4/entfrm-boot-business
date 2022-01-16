@@ -284,8 +284,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        const processDefId = this.getProcessDefinition(row).id
-        return setProcessInstanceStatus({ processDefId, status: 'active'}).then(() => {
+        const { modelKey } = row
+        return setProcessInstanceStatus({ processDefKeys: modelKey, status: 'active'}).then(() => {
           this.msgSuccess("激活成功")
           this.getList()
         })
@@ -299,8 +299,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        const processDefId = this.getProcessDefinition(row).id
-        return setProcessInstanceStatus({ processDefId, status: 'suspend'}).then(() => {
+        const { modelKey } = row
+        return setProcessInstanceStatus({ processDefKeys: modelKey, status: 'suspend'}).then(() => {
           this.msgSuccess("挂起成功")
           this.getList()
         })

@@ -1,5 +1,6 @@
 package com.entfrm.biz.workflow.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.entfrm.biz.extension.entity.ActivityExtensionProperty;
@@ -76,7 +77,8 @@ public class WorkflowModelServiceImpl extends ServiceImpl<WorkflowModelMapper, W
     public void remove(String id) {
         Model model = modelService.getModel(id);
         try {
-            this.deleteDeployment(model.getKey());
+            List<String> modelKeyList = StrUtil.split(model.getKey(), new Character(','));
+            modelKeyList.forEach(modelKey -> this.deleteDeployment(modelKey));
             this.modelService.deleteModel(model.getId());
             activityExtensionDataService.deleteByProcessDefId(model.getKey());
             activityExtensionPropertyService.remove(new LambdaUpdateWrapper<ActivityExtensionProperty>()

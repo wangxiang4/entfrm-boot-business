@@ -18,6 +18,15 @@ export function listProcessDefinition(query) {
   })
 }
 
+// 查询我发起的流程实例列表
+export function selfProcessInstanceList(query) {
+  return request({
+    url: '/workflow/process/selfProcessInstanceList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 设置流程定义分类
 export function setProcessCategory(query) {
   return request({
@@ -67,5 +76,13 @@ export function queryProcessStatus (processInsId) {
   return request({
     url: '/workflow/process/queryProcessStatus/' + processInsId,
     method: 'get'
+  })
+}
+
+// 流程撤回
+export function undoProcessInstance(processInsId) {
+  return request({
+    url: '/workflow/process/undoProcessInstance/' + processInsId,
+    method: 'put'
   })
 }

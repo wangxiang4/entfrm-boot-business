@@ -4,6 +4,7 @@
                 ref="loquatForm"
                 v-model="formData"
                 :option="options"
+                :disabled="disabled"
    />
  </div>
 </template>
@@ -18,6 +19,10 @@ export default {
     taskFormData: {
       type: Array,
       default: () => []
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

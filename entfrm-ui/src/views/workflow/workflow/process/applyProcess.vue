@@ -6,7 +6,7 @@
              :inline="true"
              label-width="68px"
     >
-      <el-form-item label="完成时间">
+      <el-form-item label="创建时间">
         <el-date-picker v-model="dateRange"
                         type="daterange"
                         size="small"
@@ -59,31 +59,24 @@
     </el-row>
     <el-table v-loading="loading" :data="dataList">
       <el-table-column type="selection" header-align="center" width="50" align="center"/>
-      <el-table-column prop="name" show-overflow-tooltip label="任务">
-        <template slot-scope="scope">
-          {{scope.row.name}}
-          <el-button v-if="scope.row.rollBack"
-                     type="warning"
-                     size="mini"
-                     @click="callback(scope.row)"
-          >撤销</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="vars.title" show-overflow-tooltip label="实例标题"/>
+      <el-table-column prop="vars.title" show-overflow-tooltip min-width="180px" label="流程标题"/>
       <el-table-column prop="processDefName" show-overflow-tooltip label="流程名称"/>
-      <el-table-column prop="mesName" label="办理状态">
+      <el-table-column prop="taskName" show-overflow-tooltip label="当前节点"/>
+      <el-table-column prop="mesName" label="流程状态">
         <template slot-scope="scope">
-          <el-tag>{{scope.row.mesName}}</el-tag>
+          <el-tag :type="scope.row.mesLevel" effect="dark" size="small">{{scope.row.mesName}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="vars.userName" label="流程发起人"/>
-      <el-table-column prop="endTime" show-overflow-tooltip label="完成时间">
-        <template slot-scope="scope">{{scope.row.endTime | formatDate}}</template>
+      <el-table-column prop="startTime" show-overflow-tooltip label="发起时间 / 结束时间">
+        <template slot-scope="scope">
+          <p style="margin:0;padding:0;">{{scope.row.startTime | formatDate}}</p>
+          <p style="margin:0;padding:0;color:#999!important;">{{scope.row.endTime | formatDate}}</p>
+        </template>
       </el-table-column>
       <el-table-column fixed="right"
                        header-align="center"
                        align="center"
-                       width="180"
+                       width="150"
                        label="操作"
       >
         <template slot-scope="scope">
@@ -91,6 +84,17 @@
                      size="small"
                      @click="handleProcessView(scope.row)"
           >历史</el-button>
+          <el-button v-if="scope.row.mesCode == '_workflow_process_waiting'"
+                     type="text"
+                     size="small"
+                     @click="handleRevoke(scope.row)"
+          >撤销</el-button>
+          <el-button v-if="scope.row.mesCode == '_workflow_process_revoke' || scope.row.mesCode == '_workflow_process_reject'"
+                     type="text"
+                     color="red"
+                     size="small"
+                     @click="handleRestartSubmit(scope.row)"
+          >编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -104,7 +108,9 @@
 </template>
 
 <script>
-import { listHistoryList, getTaskDefinition } from "@/api/workflow/workflow/task"
+import { getTaskDefinition } from "@/api/workflow/workflow/task"
+import { selfProcessInstanceList, undoProcessInstance } from '@/api/workflow/workflow/process'
+
 export default {
   name: "HistoryTask",
   data() {
@@ -155,10 +161,10 @@ export default {
     this.getList()
   },
   methods: {
-    /** 查询已办任务列表 */
+    /** 查询列表 */
     getList() {
       this.loading = true
-      listHistoryList(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      selfProcessInstanceList(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.dataList = response.data
         this.total = response.total
         this.loading = false
@@ -176,7 +182,6 @@ export default {
     /** 处理流程查看 */
     handleProcessView(row) {
       getTaskDefinition({
-        taskDefKey: row.taskDefKey,
         processInsId: row.processInsId,
         processDefId: row.processDefId,
       }).then(({ data }) => {
@@ -189,12 +194,39 @@ export default {
             formType: data.formType,
             formKey: data.formKey,
             processDefKey: data.processDefKey,
-            taskDefKey: data.taskDefKey,
             processInsId: data.processInsId,
             processDefId: data.processDefId,
             businessId: data.businessId
           }
         })
+      })
+    },
+    /** 处理撤销申请 */
+    handleRevoke(row) {
+      this.$confirm(`确定要撤销该流程吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        undoProcessInstance(row.processInsId).then(({ data }) => {
+            this.$message.success(data.msg)
+            this.getList()
+        })
+      }).catch(() => { this.loading = false })
+    },
+    /** 处理重新提交 */
+    handleRestartSubmit (row) {
+      getTaskDefinition({
+        processInsId: row.processInsId,
+        processDefId: row.processDefId,
+      }).then(({ data }) => {
+        if (data.success) {
+          this.$router.push({
+            path: '/flowable/task/TaskFormEdit',
+            query: {status: 'start', title: row.vars.title, formTitle: row.vars.title, ...pick(data.flow, 'formType', 'formUrl', 'procDefKey', 'taskDefKey', 'procInsId', 'procDefId', 'taskId', 'status', 'title', 'businessId')}
+          })
+        }
       })
     }
   }

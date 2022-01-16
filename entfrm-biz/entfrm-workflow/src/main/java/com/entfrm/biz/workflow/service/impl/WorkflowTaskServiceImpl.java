@@ -167,7 +167,7 @@ public class WorkflowTaskServiceImpl implements WorkflowTaskService {
         for (HistoricTaskInstance historicTask : historicTaskList) {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(historicTask.getProcessDefinitionId()).singleResult();
-            HistoryTaskInfoVo HistoryTaskInfo = new HistoryTaskInfoVo();
+            HistoryTaskInfoVo HistoryTaskInfo = new HistoryTaskInfoVo(historicTask);
             HistoryTaskInfo.setProcessDefName(processDefinition.getName());
             HistoryTaskInfo.setRollBack(this.rollBackTask(historicTask));
             List<Task> taskList = taskService.createTaskQuery().processInstanceId(historicTask.getProcessInstanceId()).list();

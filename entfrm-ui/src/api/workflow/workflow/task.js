@@ -43,6 +43,15 @@ export function listTodoTask (query) {
   })
 }
 
+// 历史任务列表
+export function listHistoryList (query) {
+  return request({
+    url: '/workflow/task/historyList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 可回滚任务列表
 export function rollBackTaskList (taskId) {
   return request({
@@ -54,7 +63,7 @@ export function rollBackTaskList (taskId) {
 // 获取任务定义信息
 export function getTaskDefinition (query) {
   return request({
-    url: '/workflow/task/getTaskDefinition/',
+    url: '/workflow/task/getTaskDefinition',
     method: 'get',
     params: query
   })

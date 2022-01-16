@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.flowable.task.api.history.HistoricTaskInstance;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -61,10 +63,30 @@ public class HistoryTaskInfoVo {
     /** 流程操作级别 */
     private String mesLevel;
 
+    /** 任务创建时间 */
+    private Date createTime;
+
+    /** 任务结束时间 */
+    private Date endTime;
+
     /** 流程当前任务 */
     private TaskInfoVo taskInfo;
 
     /** 流程变量 */
     private Map<String, Object> vars = CollectionUtil.newHashMap();
+
+    public HistoryTaskInfoVo(HistoricTaskInstance historicTaskInstance){
+        this.id = historicTaskInstance.getId ();
+        this.name = historicTaskInstance.getName ();
+        this.assignee = historicTaskInstance.getAssignee ();
+        this.executionId = historicTaskInstance.getExecutionId ();
+        this.taskDefKey = historicTaskInstance.getTaskDefinitionKey ();
+        this.createTime = historicTaskInstance.getCreateTime ();
+        this.endTime = historicTaskInstance.getEndTime ();
+        this.executionId = historicTaskInstance.getExecutionId ();
+        this.processDefId = historicTaskInstance.getProcessDefinitionId ();
+        this.vars = historicTaskInstance.getProcessVariables ();
+        this.processInsId = historicTaskInstance.getProcessInstanceId ();
+    }
 
 }

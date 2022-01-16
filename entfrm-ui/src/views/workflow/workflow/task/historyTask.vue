@@ -6,7 +6,7 @@
              :inline="true"
              label-width="68px"
     >
-      <el-form-item label="创建时间">
+      <el-form-item label="完成时间">
         <el-date-picker v-model="dateRange"
                         type="daterange"
                         size="small"
@@ -59,16 +59,26 @@
     </el-row>
     <el-table v-loading="loading" :data="dataList">
       <el-table-column type="selection" header-align="center" width="50" align="center"/>
+      <el-table-column prop="name" show-overflow-tooltip label="任务">
+        <template slot-scope="scope">
+          {{scope.row.name}}
+          <el-button v-if="scope.row.rollBack"
+                     type="warning"
+                     size="mini"
+                     @click="callback(scope.row)"
+          >撤销</el-button>
+        </template>
+      </el-table-column>
       <el-table-column prop="vars.title" show-overflow-tooltip label="实例标题"/>
       <el-table-column prop="processDefName" show-overflow-tooltip label="流程名称"/>
-      <el-table-column prop="taskInfo.name" label="当前环节">
+      <el-table-column prop="mesName" label="办理状态">
         <template slot-scope="scope">
-          <el-tag>{{scope.row.taskInfo.name}}</el-tag>
+          <el-tag>{{scope.row.mesName}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="vars.userName" label="流程发起人"/>
-      <el-table-column prop="taskInfo.createTime" show-overflow-tooltip label="创建时间">
-        <template slot-scope="scope">{{parseTime(scope.row.taskInfo.createTime)}}</template>
+      <el-table-column prop="endTime" show-overflow-tooltip label="完成时间">
+        <template slot-scope="scope">{{scope.row.endTime | formatDate}}</template>
       </el-table-column>
       <el-table-column fixed="right"
                        header-align="center"
@@ -79,12 +89,8 @@
         <template slot-scope="scope">
           <el-button type="text"
                      size="small"
-                     @click="handleTodo(scope.row)"
-          >办理</el-button>
-          <el-button type="text"
-                     size="small"
-                     @click="handleTrace(scope.row)"
-          >进度</el-button>
+                     @click="handleHistoryTaskView(scope.row)"
+          >历史</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -94,20 +100,13 @@
                 :limit.sync="queryParams.size"
                 @pagination="getList"
     />
-    <el-dialog title="查看进度"
-               :close-on-click-modal="true"
-               :visible.sync="visible"
-               width="70%"
-    >
-      <flowable-chart ref="flowableChart" style="height:calc(100vh - 170px)"/>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listTodoTask, getProcessInsFlowChart, getTaskDefinition } from "@/api/workflow/workflow/task"
+import { listHistoryList, getTaskDefinition } from "@/api/workflow/workflow/task"
 export default {
-  name: "Task",
+  name: "HistoryTask",
   data() {
     return {
       loading: true,
@@ -156,10 +155,10 @@ export default {
     this.getList()
   },
   methods: {
-    /** 查询代表任务列表 */
+    /** 查询已办任务列表 */
     getList() {
       this.loading = true
-      listTodoTask(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listHistoryList(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.dataList = response.data
         this.total = response.total
         this.loading = false
@@ -174,38 +173,25 @@ export default {
     resetQuery() {
       this.dateRange = []
     },
-    handleTrace (row) {
-      const { processInsId } = row.taskInfo
-      getProcessInsFlowChart(processInsId).then(response => {
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs.flowableChart.setHighlightImportDiagram(response)
-        })
-      })
-    },
-    handleTodo(row) {
-      const { taskInfo, vars } = row
+    /** 处理历史任务查看 */
+    handleHistoryTaskView(row) {
       getTaskDefinition({
-        taskId: taskInfo.id,
-        taskName: taskInfo.name,
-        taskDefKey: taskInfo.taskDefKey,
-        processInsId: taskInfo.processInsId,
-        processDefId: taskInfo.processDefId,
-        processDefKey: taskInfo.processDefKey
+        taskDefKey: row.taskDefKey,
+        processInsId: row.processInsId,
+        processDefId: row.processDefId,
       }).then(({ data }) => {
         this.$router.push({
-          path: '/workflow/task/taskForm',
+          path: '/workflow/task/taskFormView',
           query: {
-            title: `审批【${taskInfo.name || ''}】`,
-            formTitle: `${vars.title}`,
+            taskId: row.taskId,
+            title: `${row.processDefName}【${row.name}】`,
+            formTitle: `${row.processDefName}`,
             formType: data.formType,
             formKey: data.formKey,
-            formReadOnly: data.formReadOnly,
+            processDefKey: data.processDefKey,
+            taskDefKey: data.taskDefKey,
             processInsId: data.processInsId,
             processDefId: data.processDefId,
-            processDefKey: data.processDefKey,
-            taskId: data.taskId,
-            taskDefKey: data.taskDefKey,
             businessId: data.businessId
           }
         })

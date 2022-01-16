@@ -177,6 +177,7 @@ public class WorkflowFormController {
                         formPropertyMap.put("name", formProperty.getName());
                         formPropertyMap.put("value", historicVariableMap.get(formProperty.getId()));
                         formPropertyMap.put("readable", true);
+                        formPropertyMap.put("writable", false);
                         list.add(formPropertyMap);
                     }
                 }catch (Exception e){ e.printStackTrace(); }
@@ -193,6 +194,7 @@ public class WorkflowFormController {
                         formPropertyMap.put("name", formProperty.getName());
                         formPropertyMap.put("value", historicVariableMap.get(formProperty.getId()));
                         formPropertyMap.put("readable", true);
+                        formPropertyMap.put("writable", false);
                         list.add(formPropertyMap);
                     }
                 }catch (Exception e){ e.printStackTrace(); }

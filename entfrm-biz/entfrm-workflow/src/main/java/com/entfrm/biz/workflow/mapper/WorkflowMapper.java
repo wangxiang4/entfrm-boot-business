@@ -16,6 +16,6 @@ import java.util.Map;
 public interface WorkflowMapper {
 
     /** 修改业务表流程ID */
-    int updateProcInsIdByBusinessId(Workflow workflow);
+    int updateProcessInsIdByBusinessId(Workflow workflow);
 
 }

@@ -70,8 +70,6 @@ export default {
 
       // 设置选择任务选项卡
       taskSelectedTab: 'formInfo',
-      // 流程任务ID
-      taskId: '',
       // 流程任务定义key
       taskDefKey: '',
 
@@ -144,7 +142,6 @@ export default {
       this.processDefKey = this.$route.query.processDefKey
       this.formType = this.$route.query.formType
       this.formKey = this.$route.query.formKey
-      this.taskId = this.$route.query.taskId
       this.taskDefKey = this.$route.query.taskDefKey
       this.formTitle = this.$route.query.formTitle
       this.businessId = this.$route.query.businessId

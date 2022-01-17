@@ -1,8 +1,11 @@
 package com.entfrm.biz.workflow.controller;
 
 import cn.hutool.core.io.IoUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.entfrm.base.api.R;
+import com.entfrm.biz.extension.entity.WorkflowCopy;
+import com.entfrm.biz.extension.service.WorkflowCopyService;
 import com.entfrm.biz.workflow.entity.Workflow;
 import com.entfrm.biz.workflow.enums.ExtendMessage;
 import com.entfrm.biz.workflow.service.WorkflowProcessService;
@@ -10,6 +13,7 @@ import com.entfrm.biz.workflow.vo.ProcessDefinitionInfoVo;
 import com.entfrm.biz.workflow.vo.ProcessInstanceInfoVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.task.api.Task;
@@ -39,6 +43,10 @@ public class WorkflowProcessController {
     private final TaskService taskService;
 
     private final WorkflowProcessService workflowProcessService;
+
+    private final HistoryService historyService;
+
+    private final WorkflowCopyService workflowCopyService;
 
     /** 流程定义列表 */
     @GetMapping("/list")
@@ -171,6 +179,16 @@ public class WorkflowProcessController {
             }
         }
         return R.ok(processInsId, "启动成功");
+    }
+
+    /** 删除历史流程实例 */
+    @DeleteMapping("/removeHistoryProcessIns/{ids}")
+    public R removeHistoryProcessIns(@PathVariable String[] ids) {
+       Arrays.asList(ids).forEach(id ->{
+           historyService.deleteHistoricProcessInstance(id);
+           workflowCopyService.remove(new LambdaUpdateWrapper<WorkflowCopy>().eq(WorkflowCopy::getProcessInsId, id));
+       });
+       return R.ok("删除成功，流程实例ID=" + ids);
     }
 
 }

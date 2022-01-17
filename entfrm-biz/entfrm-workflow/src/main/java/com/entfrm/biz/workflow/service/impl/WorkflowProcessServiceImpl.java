@@ -133,14 +133,14 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
     public IPage<ProcessInstanceInfoVo> runList(Map<String, Object> params) {
         ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().includeProcessVariables();
 
-        String procInsId = MapUtil.getStr(params, "procInsId"),
-               procDefKey = MapUtil.getStr(params, "procDefKey");
+        String processInsId = MapUtil.getStr(params, "processInsId"),
+                processDefKey = MapUtil.getStr(params, "processDefKey");
 
-        if (StrUtil.isNotBlank(procInsId)) {
-            query.processInstanceId(procInsId);
+        if (StrUtil.isNotBlank(processInsId)) {
+            query.processInstanceId(processInsId);
         }
-        if (StrUtil.isNotBlank(procDefKey)) {
-            query.processDefinitionKey(procDefKey);
+        if (StrUtil.isNotBlank(processDefKey)) {
+            query.processDefinitionKey(processDefKey);
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);
@@ -155,10 +155,10 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
             ProcessInstanceInfoVo processInstanceInfo = queryProcessState(processInstance.getId());
             processInstanceInfo.setProcessInsId(processInstance.getProcessInstanceId());
             processInstanceInfo.setProcessDefId(processInstance.getProcessDefinitionId());
-            processInstanceInfo.setProcessDefName(processInstance.getProcessDefinitionName ());
-            processInstanceInfo.setActivityId(processInstance.getActivityId ());
+            processInstanceInfo.setProcessDefName(processInstance.getProcessDefinitionName());
+            processInstanceInfo.setActivityId(processInstance.getActivityId());
             processInstanceInfo.setVars(processInstance.getProcessVariables());
-            result.getRecords().add(processInstance);
+            result.getRecords().add(processInstanceInfo);
         }
         return result;
     }
@@ -168,15 +168,15 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().includeProcessVariables().finished()
                 .orderByProcessInstanceEndTime().desc();
 
-        String procInsId = MapUtil.getStr(params, "procInsId"),
-               procDefKey = MapUtil.getStr(params, "procDefKey");
+        String processInsId = MapUtil.getStr(params, "processInsId"),
+                processDefKey = MapUtil.getStr(params, "processDefKey");
 
-        if (StrUtil.isNotBlank(procInsId)) {
-            query.processInstanceId(procInsId);
+        if (StrUtil.isNotBlank(processInsId)) {
+            query.processInstanceId(processInsId);
         }
 
-        if (StrUtil.isNotBlank(procDefKey)) {
-            query.processDefinitionKey(procDefKey);
+        if (StrUtil.isNotBlank(processDefKey)) {
+            query.processDefinitionKey(processDefKey);
         }
 
         int current = MapUtil.getInt(params, CommonConstants.CURRENT);
@@ -462,7 +462,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
         workflow.setBusinessTable(businessTable);
         workflow.setBusinessId(businessId);
         workflow.setProcessInsId(processInsId);
-        workflowMapper.updateProcInsIdByBusinessId(workflow);
+        workflowMapper.updateProcessInsIdByBusinessId(workflow);
         return processInsId;
     }
 

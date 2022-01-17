@@ -18,6 +18,24 @@ export function listProcessDefinition(query) {
   })
 }
 
+// 查询历史流程定义列表
+export function listHistoryProcessDefinition(query) {
+  return request({
+    url: '/workflow/process/historyList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询正在运行流程定义列表
+export function listRunProcessDefinition(query) {
+  return request({
+    url: '/workflow/process/runList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询我发起的流程实例列表
 export function selfProcessInstanceList(query) {
   return request({
@@ -84,5 +102,22 @@ export function undoProcessInstance(processInsId) {
   return request({
     url: '/workflow/process/undoProcessInstance/' + processInsId,
     method: 'put'
+  })
+}
+
+// 删除历史流程实例
+export function removeHistoryProcessIns(processInsIds) {
+  return request({
+    url: '/workflow/process/removeHistoryProcessIns/' + processInsIds,
+    method: 'delete'
+  })
+}
+
+// 删除流程实例
+export function removeProcessInstance(query) {
+  return request({
+    url: '/workflow/process/removeProcessInstance/',
+    method: 'delete',
+    params: query
   })
 }

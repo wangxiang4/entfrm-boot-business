@@ -103,6 +103,15 @@ export function rejectTask (data) {
   })
 }
 
+// 回滚任务
+export function undoTask (data) {
+  return request({
+    url: '/workflow/task/undoTask',
+    method: 'post',
+    data: data
+  })
+}
+
 // 转移任务
 export function transferTask (query) {
   return request({

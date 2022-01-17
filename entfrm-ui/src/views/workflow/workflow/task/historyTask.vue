@@ -66,7 +66,7 @@
                      type="warning"
                      size="mini"
                      @click="callback(scope.row)"
-          >撤销</el-button>
+          >回滚任务</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="vars.title" show-overflow-tooltip label="实例标题"/>
@@ -104,12 +104,12 @@
 </template>
 
 <script>
-import { listHistoryList, getTaskDefinition } from "@/api/workflow/workflow/task"
+import { listHistoryList, getTaskDefinition, undoTask } from "@/api/workflow/workflow/task"
 export default {
   name: "HistoryTask",
   data() {
     return {
-      loading: true,
+      loading: false,
       total: 0,
       dataList: [],
       queryParams: {
@@ -196,6 +196,27 @@ export default {
           }
         })
       })
+    },
+    /** 处理回滚任务 */
+    handleRollBackTask(row) {
+      this.$confirm(`确定回滚该已办任务吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        const { taskInfo } = row
+        undoTask({
+          processInsId: row.processInsId,
+          currentTaskId: taskInfo.id,
+          currentTaskDefKey: taskInfo.taskDefKey,
+          undoTaskId: row.id,
+          undoTaskDefKey: row.taskDefKey
+        }).then(({ data }) => {
+          this.$message.success(data)
+          this.getList()
+        })
+      }).catch(() => { this.loading = false })
     }
   }
 }

@@ -148,7 +148,7 @@ public class WorkflowFormController {
         return R.ok("提交成功");
     }
 
-    /** 获取历史表单任务数据 */
+    /** 获取历史表单任务数据,主要用于拿取已经运行完毕的任务表单配置 */
     @GetMapping("/getHistoryFormTaskData")
     public R getHistoryFormTaskData(String processInsId, String processDefId, String taskDefKey) {
         List<HistoricVariableInstance> historicVariableInstances = historyService.createHistoricVariableInstanceQuery()

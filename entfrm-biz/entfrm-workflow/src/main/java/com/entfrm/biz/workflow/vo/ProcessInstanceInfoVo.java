@@ -29,6 +29,9 @@ public class ProcessInstanceInfoVo {
     /** 流程定义ID */
     private String processDefId;
 
+    /** 流程定义key */
+    private String processDefKey;
+
     /** 流程定义名称 */
     private String processDefName;
 

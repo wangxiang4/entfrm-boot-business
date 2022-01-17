@@ -178,18 +178,18 @@ export default {
       getTaskDefinition({
         taskDefKey: row.taskDefKey,
         processInsId: row.processInsId,
-        processDefId: row.processDefId,
+        processDefId: row.processDefId
       }).then(({ data }) => {
         this.$router.push({
           path: '/workflow/task/taskFormView',
           query: {
-            taskId: row.taskId,
+            taskId: row.id,
+            taskDefKey: data.taskDefKey,
             title: `${row.processDefName}【${row.name}】`,
             formTitle: `${row.processDefName}`,
             formType: data.formType,
             formKey: data.formKey,
             processDefKey: data.processDefKey,
-            taskDefKey: data.taskDefKey,
             processInsId: data.processInsId,
             processDefId: data.processDefId,
             businessId: data.businessId

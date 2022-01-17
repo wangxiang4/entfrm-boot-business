@@ -13,6 +13,7 @@
         <workflow-preview-form v-if="formType !== '2'"
                                ref="form"
                                :taskFormData="taskFormData"
+                               :disabled="true"
         />
         <!-- 外置表单:内置使用用户自定义的vue页面,手动填写页面路径即可 -->
         <component v-if="formType === '2'"

@@ -419,6 +419,7 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
             processInstanceInfo.setStartTime(historicProcessInstance.getStartTime());
             processInstanceInfo.setProcessDefId(historicProcessInstance.getProcessDefinitionId());
             processInstanceInfo.setProcessInsId(historicProcessInstance.getId());
+            processInstanceInfo.setProcessDefKey(historicProcessInstance.getProcessDefinitionKey());
             processInstanceInfo.setVars(historicProcessInstance.getProcessVariables());
             processInstanceInfo.setProcessDefName(historicProcessInstance.getProcessDefinitionName());
             processInstanceInfo.setVersion( historicProcessInstance.getProcessDefinitionVersion());

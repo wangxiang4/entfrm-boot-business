@@ -112,7 +112,7 @@ import { getTaskDefinition } from "@/api/workflow/workflow/task"
 import { selfProcessInstanceList, undoProcessInstance } from '@/api/workflow/workflow/process'
 
 export default {
-  name: "HistoryTask",
+  name: "ApplyProcess",
   data() {
     return {
       loading: true,
@@ -181,16 +181,16 @@ export default {
     },
     /** 处理流程查看 */
     handleProcessView(row) {
+      const { vars } = row
       getTaskDefinition({
         processInsId: row.processInsId,
-        processDefId: row.processDefId,
+        processDefId: row.processDefId
       }).then(({ data }) => {
         this.$router.push({
           path: '/workflow/task/taskFormView',
           query: {
-            taskId: row.taskId,
-            title: `${row.processDefName}【${row.name}】`,
-            formTitle: `${row.processDefName}`,
+            title: vars.title,
+            formTitle: vars.title,
             formType: data.formType,
             formKey: data.formKey,
             processDefKey: data.processDefKey,
@@ -210,23 +210,28 @@ export default {
       }).then(() => {
         this.loading = true
         undoProcessInstance(row.processInsId).then(({ data }) => {
-            this.$message.success(data.msg)
+            this.$message.success(data)
             this.getList()
         })
       }).catch(() => { this.loading = false })
     },
     /** 处理重新提交 */
     handleRestartSubmit (row) {
-      getTaskDefinition({
-        processInsId: row.processInsId,
-        processDefId: row.processDefId,
-      }).then(({ data }) => {
-        if (data.success) {
-          this.$router.push({
-            path: '/flowable/task/TaskFormEdit',
-            query: {status: 'start', title: row.vars.title, formTitle: row.vars.title, ...pick(data.flow, 'formType', 'formUrl', 'procDefKey', 'taskDefKey', 'procInsId', 'procDefId', 'taskId', 'status', 'title', 'businessId')}
-          })
-        }
+      const { vars, processInsId, processDefId, processDefKey } = row
+      getTaskDefinition( { processDefId: processDefId }).then(({ data }) => {
+        this.$router.push({
+          path: '/workflow/task/taskForm',
+          query: {
+            status: 'start',
+            title: vars.title,
+            formTitle: vars.title,
+            formType: data.formType,
+            formKey: data.formKey,
+            processDefId: processDefId,
+            processDefKey: processDefKey,
+            processInsId: processInsId
+          }
+        })
       })
     }
   }

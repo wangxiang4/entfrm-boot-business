@@ -222,7 +222,7 @@ export default {
         this.$router.push({
           path: '/workflow/task/taskForm',
           query: {
-            status: 'start',
+            status: 'reStart',
             title: vars.title,
             formTitle: vars.title,
             formType: data.formType,

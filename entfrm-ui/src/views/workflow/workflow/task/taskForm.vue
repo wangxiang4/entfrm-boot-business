@@ -30,10 +30,10 @@
           <workflow-step :history-flow-change-list="historyFlowChangeList"/>
         </el-tab-pane>
       </el-tabs>
-      <el-card v-if="!processInsId || taskId" style="margin-top:10px;margin-bottom:66px;">
+      <el-card v-if="!processInsId || taskId || status === 'reStart'" style="margin-top:10px;margin-bottom:66px;">
         <el-form ref="auditForm" :model="auditForm" size="small" label-width="120px">
           <el-col :span="16">
-            <el-form-item v-if="!processInsId" label="流程标题" prop="formTitle">
+            <el-form-item v-if="!processInsId || status === 'reStart'" label="流程标题" prop="formTitle">
               <el-input v-model="formTitle" placeholder="请输入流程标题"/>
             </el-form-item>
             <el-form-item v-if="taskId" label="审批信息" prop="message">
@@ -203,7 +203,7 @@ export default {
           this.$refs.form.init(this.formKey)
         }
         // 获取启动事件表单数据
-        if (this.status === 'start') {
+        if (this.status === 'start' || this.status === 'reStart') {
           getProcessStartEventFormData(this.processDefId).then(({data}) => {
             this.taskFormData = data
           })
@@ -215,7 +215,7 @@ export default {
         }
       }
       // 设置启动按钮配置
-      if (this.status === 'start') {
+      if (this.status === 'start' || this.status === 'reStart') {
         this.buttons = [{ code: '_workflow_activity_start', name: '启动', isHide: '0' }]
       // 获取bpmn设计器按钮配置
       } else if (this.processDefKey && this.taskDefKey) {

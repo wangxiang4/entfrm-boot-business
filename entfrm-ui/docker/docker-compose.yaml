@@ -1,0 +1,22 @@
+# VERSION: 1.0.0
+# Author: 康来生物科技有限公司-王翔
+
+# https://support.websoft9.com/docs/docker/zh/solution-compose.html#command
+version: '3'
+services:
+  kicc-ui:
+    build:
+      context: .
+    restart: always
+    container_name: entfrm-ui
+    image: entfrm-ui
+    networks:
+      - docker-cloud_default
+    external_links:
+      - kicc-gateway
+    ports:
+      - 80:80
+
+networks:
+  docker-cloud_default:
+    external: true

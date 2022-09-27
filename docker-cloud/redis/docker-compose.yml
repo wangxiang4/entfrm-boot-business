@@ -1,0 +1,23 @@
+# VERSION: 1.0.0
+# Author: 康来生物科技有限公司-王翔
+
+# https://support.websoft9.com/docs/docker/zh/solution-compose.html#command
+version: '3'
+services:
+  # redis服务器
+  redis:
+    image: redis:6.2.6
+    container_name: redis
+    hostname: redis
+    restart: always
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass springboot2.0
+    volumes:
+      - redis:/data
+      - /usr/software/dockerDatabase/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+# 配置卷
+volumes:
+  redis:
+    driver: local

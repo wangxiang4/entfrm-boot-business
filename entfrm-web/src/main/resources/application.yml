@@ -62,13 +62,13 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: localhost
-    # host: 101.42.231.100
+    # host: localhos
     # 端口，默认为6379
     port: 6379
     # 密码
-    password:
-    # password: entfrm9300
+    # password:
+    host: 101.42.231.100
+    password: springboot2.0
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -86,12 +86,12 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/entfrm-boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true&nullCatalogMeansCurrent=true
-      username: root
-      password: root
-      # jdbc-url: jdbc:mysql://101.42.231.100:3306/entfrm-boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true&nullCatalogMeansCurrent=true
+      # jdbc-url: jdbc:mysql://127.0.0.1:3306/entfrm-boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true&nullCatalogMeansCurrent=true
       # username: root
-      # password: entfrm9300
+      # password: root
+      jdbc-url: jdbc:mysql://101.42.231.100:8052/entfrm-boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true&nullCatalogMeansCurrent=true
+      username: root
+      password: springboot2.0
       # 初始连接数
       initialSize: 5
       # 最小连接池数量

@@ -4,7 +4,7 @@
 # https://support.websoft9.com/docs/docker/zh/solution-compose.html#command
 version: '3'
 services:
-  kicc-ui:
+  entfrm-ui:
     build:
       context: .
     restart: always
@@ -13,7 +13,7 @@ services:
     networks:
       - docker-cloud_default
     external_links:
-      - kicc-gateway
+      - entfrm-web
     ports:
       - 80:80
 

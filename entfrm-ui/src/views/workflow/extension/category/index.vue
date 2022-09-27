@@ -72,7 +72,7 @@
                @checkbox-change="handleSelectionChange"
                @checkbox-all="handleSelectionChange"
     >
-      <vxe-table-column type="checkbox" width="40px"/>
+      <vxe-table-column type="checkbox" width="50px"/>
       <vxe-table-column title="名称" field="name" align="left" tree-node/>
       <vxe-table-column title="备注信息" field="remarks" align="center"/>
       <vxe-table-column title="操作" width="300px" fixed="right" align="center">

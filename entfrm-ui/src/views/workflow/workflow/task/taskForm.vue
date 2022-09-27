@@ -292,7 +292,7 @@ export default {
           }).then(({ data }) => {
             this.$message.success(data.msg)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/transaction/TodoList')
+            this.$router.push('/workflow/transaction/todo')
             this.cc({ processInsId: data })
           })
         })
@@ -300,7 +300,7 @@ export default {
       } else {
         this.$refs.form.startFormProcessDefinition({ processDefId: this.processDefId, ...vars }, ({ data }) => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/workflow/transaction/TodoList')
+          this.$router.push('/workflow/transaction/todo')
           this.cc({ processInsId: data })
         })
       }
@@ -345,7 +345,7 @@ export default {
         }).then(({ data }) => {
           this.$message.success(data)
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/workflow/transaction/TodoList')
+          this.$router.push('/workflow/transaction/todo')
           this.cc({ processInsId: this.processInsId })
         })
       }).catch(function() {})
@@ -391,7 +391,7 @@ export default {
           }).then(({ data }) => {
             this.$message.success(data)
             this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-            this.$router.push('/workflow/transaction/TodoList')
+            this.$router.push('/workflow/transaction/todo')
             this.cc({ processInsId: this.processInsId })
           })
         })
@@ -405,7 +405,7 @@ export default {
           vars: vars,
         }, () => {
           this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-          this.$router.push('/workflow/transaction/TodoList')
+          this.$router.push('/workflow/transaction/todo')
           this.cc({ processInsId: this.processInsId })
         })
       }
@@ -419,7 +419,7 @@ export default {
       }).then(({ data }) => {
         this.$message.success(data)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/TodoList')
+        this.$router.push('/workflow/transaction/todo')
         this.cc({ processInsId: this.processInsId })
       })
     },
@@ -428,7 +428,7 @@ export default {
       transferTask({ taskId: this.taskId, userId: userList[0].id }).then(({ data }) => {
         this.$message.success(data)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/TodoList')
+        this.$router.push('/workflow/transaction/todo')
         this.cc({ processInsId: this.processInsId })
       })
     },
@@ -440,7 +440,7 @@ export default {
       }).then(({ data }) => {
         this.$message.success(data)
         this.$store.dispatch('tagsView/delView', {fullPath: this.$route.fullPath})
-        this.$router.push('/workflow/transaction/TodoList')
+        this.$router.push('/workflow/transaction/todo')
         this.cc({ processInsId: this.processInsId })
       })
     },

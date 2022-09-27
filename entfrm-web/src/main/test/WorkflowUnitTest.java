@@ -1,5 +1,4 @@
 import com.entfrm.web.WebApplication;
-import lombok.AllArgsConstructor;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)//初始化spring上下文
 @SpringBootTest(classes = WebApplication.class,webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AllArgsConstructor
 public class WorkflowUnitTest {
 
-    private final ProcessEngineConfiguration engineConfiguration;
+    @Autowired
+    private ProcessEngineConfiguration engineConfiguration;
 
     @Test
     @Transactional

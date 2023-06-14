@@ -849,7 +849,7 @@
       display: inline-block;
       margin: 0 16px 8px 0;
 
-      /deep/ .el-checkbox__label {
+      ::v-deep .el-checkbox__label {
         padding-left: 5px;
       }
     }

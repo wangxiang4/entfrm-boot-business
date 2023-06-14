@@ -67,7 +67,7 @@
       margin-bottom: 16px;
     }
 
-    /deep/ .box-card .el-card__body {
+    ::v-deep .box-card .el-card__body {
       padding: 0;
       overflow-x: auto;
 

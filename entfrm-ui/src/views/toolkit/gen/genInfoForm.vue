@@ -303,7 +303,7 @@
   };
 </script>
 <style scoped>
-  /deep/ .el-form-item--medium .el-form-item__content {
+::v-deep .el-form-item--medium .el-form-item__content {
     line-height: 34px;
   }
 </style>

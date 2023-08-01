@@ -153,6 +153,7 @@ export default {
           // 返回第一层
           return father.parentId === rootId
         })
+        console.log(TreeData, '测试')
       } else {
         TreeData = this.valueData
       }
